@@ -1,10 +1,9 @@
 import React from 'react';
-import { Text } from 'react-native';
+import RouteProvider from './Routes/RouteProvider';
 
-function App():JSX.Element{
-
+function App(){
     return (
-        <Text>Heyy</Text>
+        <RouteProvider/>
     )
 }
 
