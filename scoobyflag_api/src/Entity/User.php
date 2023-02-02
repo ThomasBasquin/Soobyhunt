@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -35,6 +37,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     #[Groups(["User:read"])]
     private ?string $pseudo = null;
+
+    #[ORM\OneToMany(mappedBy: 'gameMaster', targetEntity: GameTemplate::class)]
+    private Collection $gameTemplates;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserGame::class)]
+    private Collection $userGames;
+
+    public function __construct()
+    {
+        $this->gameTemplates = new ArrayCollection();
+        $this->userGames = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -114,6 +128,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, GameTemplate>
+     */
+    public function getGameTemplates(): Collection
+    {
+        return $this->gameTemplates;
+    }
+
+    public function addGameTemplate(GameTemplate $gameTemplate): self
+    {
+        if (!$this->gameTemplates->contains($gameTemplate)) {
+            $this->gameTemplates->add($gameTemplate);
+            $gameTemplate->setGameMaster($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameTemplate(GameTemplate $gameTemplate): self
+    {
+        if ($this->gameTemplates->removeElement($gameTemplate)) {
+            // set the owning side to null (unless already changed)
+            if ($gameTemplate->getGameMaster() === $this) {
+                $gameTemplate->setGameMaster(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserGame>
+     */
+    public function getUserGames(): Collection
+    {
+        return $this->userGames;
+    }
+
+    public function addUserGame(UserGame $userGame): self
+    {
+        if (!$this->userGames->contains($userGame)) {
+            $this->userGames->add($userGame);
+            $userGame->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserGame(UserGame $userGame): self
+    {
+        if ($this->userGames->removeElement($userGame)) {
+            // set the owning side to null (unless already changed)
+            if ($userGame->getUser() === $this) {
+                $userGame->setUser(null);
+            }
+        }
 
         return $this;
     }
