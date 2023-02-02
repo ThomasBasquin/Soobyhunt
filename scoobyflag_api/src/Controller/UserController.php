@@ -2,20 +2,38 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 #[Route('/user', name: 'app_user_')]
 class UserController extends AbstractController
 {
-    #[Route('/create', name: 'create', methods:['POST'])]
-    public function create(): JsonResponse
+    private SerializerInterface $serializer;
+    private UserService $userService;
+
+    public function __construct(SerializerInterface $serializer, UserService $userService)
     {
-        
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/UserController.php',
-        ]);
+        $this->serializer = $serializer;
+        $this->userService = $userService;
+    }
+
+    #[Route('/create', name: 'create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
+    {
+        $user = new User;
+        $data = $request->toArray();
+        $this->serializer->deserialize($request->getContent(), User::class, "json", ["groups" => ["User:read"], AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+        $this->userService->setUserPassword($user, $data['password']);
+
+        return $this->json($user,201,[], ["groups" => ["User:read"]] );
     }
 }
