@@ -1,4 +1,4 @@
 module.exports = {
 
-	test: ()=>[],
+	test: ()=>`<h1>Heyy</h1>`,
 };
