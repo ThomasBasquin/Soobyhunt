@@ -1,5 +1,1 @@
-
-
-export default function AuthRoutes(){
-    
-}
+export default function AuthRoutes() {}
