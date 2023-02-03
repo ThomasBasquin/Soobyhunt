@@ -21,6 +21,9 @@ class GameZone
     #[ORM\OneToMany(mappedBy: 'gameZone', targetEntity: Location::class)]
     private Collection $locations;
 
+    #[ORM\Column(length: 255)]
+    private ?string $type = null;
+
     public function __construct()
     {
         $this->locations = new ArrayCollection();
@@ -69,6 +72,18 @@ class GameZone
                 $location->setGameZone(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

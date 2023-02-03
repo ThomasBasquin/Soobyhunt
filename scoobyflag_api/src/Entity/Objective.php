@@ -22,6 +22,12 @@ class Objective
     #[ORM\Column(length: 255)]
     private ?string $longitude = null;
 
+    #[ORM\Column]
+    private ?int $visionRange = null;
+
+    #[ORM\Column(length: 255)]
+    private ?int $activeRange = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +65,30 @@ class Objective
     public function setLongitude(string $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getVisionRange(): ?int
+    {
+        return $this->visionRange;
+    }
+
+    public function setVisionRange(int $visionRange): self
+    {
+        $this->visionRange = $visionRange;
+
+        return $this;
+    }
+
+    public function getActiveRange(): ?int
+    {
+        return $this->activeRange;
+    }
+
+    public function setActiveRange(int $activeRange): self
+    {
+        $this->activeRange = $activeRange;
 
         return $this;
     }

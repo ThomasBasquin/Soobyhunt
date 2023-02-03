@@ -33,12 +33,16 @@ class GameTemplate
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Game::class)]
     private Collection $games;
 
+    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Item::class)]
+    private Collection $items;
+
     public function __construct()
     {
         $this->gameLocations = new ArrayCollection();
         $this->gameZones = new ArrayCollection();
         $this->objectives = new ArrayCollection();
         $this->games = new ArrayCollection();
+        $this->items = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,6 +188,36 @@ class GameTemplate
             // set the owning side to null (unless already changed)
             if ($game->getGameTemplate() === $this) {
                 $game->setGameTemplate(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Item>
+     */
+    public function getItems(): Collection
+    {
+        return $this->items;
+    }
+
+    public function addItem(Item $item): self
+    {
+        if (!$this->items->contains($item)) {
+            $this->items->add($item);
+            $item->setGameTemplate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeItem(Item $item): self
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getGameTemplate() === $this) {
+                $item->setGameTemplate(null);
             }
         }
 
