@@ -1,22 +1,21 @@
-import React from "react";
-import { View, Text, Button } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { setUser } from "../../Services/reducers/userSlice";
+import {View} from 'react-native';
+import MapView, { UrlTile } from 'react-native-maps';
 
-
-export default function Home({navigation}){
-
-    const user = useSelector(state => state.user);
-    const dispatch = useDispatch();
-
-    dispatch(setUser({email:"hello",firstname:"hello",lastname:"hello"}));
-
-    return (
-        <View>
-            <Text>Envoie fesse</Text>
-            <Text>{user.email}</Text>
-            <Button title="Signin" onPress={()=> navigation.navigate('Signin')}  />
-            <Button title="Signup" onPress={()=> navigation.navigate('Signup')}  />
-        </View>
-    )
+export default function Home({navigation}) {
+  return (
+    <View>
+    <MapView
+      initialRegion={{
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}>
+       <UrlTile
+        urlTemplate="http://a.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+        maximumZ={19}
+        />
+      </MapView>
+    </View>
+  );
 }
