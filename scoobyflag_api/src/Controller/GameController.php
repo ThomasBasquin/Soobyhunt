@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+
 #[Route('/game', name: 'game_')]
 class GameController extends AbstractController
 {
@@ -32,16 +33,11 @@ class GameController extends AbstractController
     #[Route('/create', name: 'create', methods: 'POST')]
     public function createGame(Request $request)
     {
-        $options = json_decode($request->getContent(), true);
+        $response = new JsonResponse();
+        $response->headers->set('Access-Control-Allow-Origin', '*');
         $process = new Process([ 'docker' , 'run' , 'totomadne/game-server' ]);
         $process->run();
-
-        // executes after the command finishes
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
         
-        echo $process->getOutput();
-        return $this->json(json_encode($options));
+        return $response;
     }
 }
