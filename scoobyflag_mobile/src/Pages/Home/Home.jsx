@@ -1,8 +1,12 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect} from 'react';
-import {View} from 'react-native';
-import MapView, {Marker, PROVIDER_DEFAULT, UrlTile} from 'react-native-maps';
-import useInterval from '../../Constantes/Hooks/useInterval';
+import {Image, Text, View} from 'react-native';
+import MapView, {
+  Marker,
+  Polygon,
+  PROVIDER_DEFAULT,
+  UrlTile,
+} from 'react-native-maps';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -38,6 +42,7 @@ export default function Home({navigation}) {
     );
   }
 
+
   useEffect(() => {
     getCurrentPosition(true);
   }, []);
@@ -49,17 +54,45 @@ export default function Home({navigation}) {
         provider={PROVIDER_DEFAULT}
         style={{width: '100%', height: '100%'}}
         mapType={'none'}
-        minZoomLevel={5}
-        maxZoomLevel={16}
+        minZoomLevel={11}
+        maxZoomLevel={18}
         pitchEnabled={false}
         followsUserLocation={true}
         initialRegion={region}
-        showsCompass={true}
-        onRegionChange={setRegion}>
+        showsCompass={true}>
         <UrlTile
-          urlTemplate={"https://b.tile.openstreetmap.de/{z}/{x}/{y}.png"}
+          urlTemplate={'https://b.tile.openstreetmap.de/{z}/{x}/{y}.png'}
           maximumZ={19}
-          shouldReplaceMapContent={true} 
+          shouldReplaceMapContent={true}
+        />
+        <Polygon
+          zIndex={100}
+          strokeWidth={3}
+          geodesic={true}
+          strokeColor={'rgba(255, 0, 0,0.9)'}
+          fillColor={'rgba(255, 102, 102,.3)'}
+          coordinates={[
+            {
+              latitude: currentPosition.latitude + 0.01,
+              longitude: currentPosition.longitude + 0.01,
+            },
+            {
+              latitude: currentPosition.latitude + 0.02,
+              longitude: currentPosition.longitude + 0.02,
+            },
+            {
+              latitude: currentPosition.latitude + 0.01,
+              longitude: currentPosition.longitude - 0.01,
+            },
+            {
+              latitude: currentPosition.latitude - 0.01,
+              longitude: currentPosition.longitude - 0.01,
+            },
+            {
+              latitude: currentPosition.latitude - 0.01,
+              longitude: currentPosition.longitude + 0.01,
+            },
+          ]}
         />
         <Marker
           tappable={false}
@@ -67,7 +100,11 @@ export default function Home({navigation}) {
             latitude: currentPosition.latitude + 0.001,
             longitude: currentPosition.longitude + 0.001,
           }}
-        />
+          description={"Le vilan est possédé par l'équipe MOUGOU"}
+          title={"Le grand méchant vilan"}
+        >
+          <Image source={require("./flag.png")} style={{width:100,height:140}} />
+        </Marker>
         <Marker
           tappable={false}
           coordinate={{
