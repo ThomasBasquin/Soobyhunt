@@ -2,11 +2,32 @@ import { Link } from "react-router-dom";
 import "../css/main.css";
 
 export default function Index() {
-    return (<div className="fondSamy">
-        <div className="infoAccueil">
-        <div className="titre">CTF Grandeur nature !</div>
-        <div className="presentation">Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur le thème Scooby-Doo</div>
-        <Link className="createGame" to="/dashboard">Créer une partie</Link>
-        </div>
-    </div>)
+  async function createGame() {
+    const response = await fetch("http://localhost:8000/api/game/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "test",
+        description: "test",
+        maxPlayer: 10,
+      }),
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
+  return (
+    <>
+      <div className="titre">CTF Grandeur nature !</div>
+      <div className="presentation">
+        Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur
+        le thème Scooby-Doo
+      </div>
+      <Link to="/dashboard" onClick={() => createGame()}>
+        Créer une partie
+      </Link>
+    </>
+  );
 }
