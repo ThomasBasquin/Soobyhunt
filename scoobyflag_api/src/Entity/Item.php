@@ -28,6 +28,9 @@ class Item
     #[ORM\Column(length: 255)]
     private ?string $latitude = null;
 
+    #[ORM\ManyToOne(inversedBy: 'items')]
+    private ?ItemType $itemType = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,18 @@ class Item
     public function setLatitude(string $latitude): self
     {
         $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getItemType(): ?ItemType
+    {
+        return $this->itemType;
+    }
+
+    public function setItemType(?ItemType $itemType): self
+    {
+        $this->itemType = $itemType;
 
         return $this;
     }
