@@ -5,7 +5,7 @@ namespace App\Enum;
 class ItemEnumType extends EnumType
 {
     const LOUPE = 'Loupe';
-    const PIEGE = 'Pièege';
+    const PIEGE = 'Piège';
     const VERAGLASSES = 'Lunette de véra';
     const SCOOBY_BACK_PACK = 'Sac à dos de scooby';
 

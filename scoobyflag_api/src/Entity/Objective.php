@@ -28,6 +28,12 @@ class Objective
     #[ORM\Column(length: 255)]
     private ?int $activeRange = null;
 
+    public function __construct()
+    {
+        $this->visionRange = 10;
+        $this->activeRange = 10;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

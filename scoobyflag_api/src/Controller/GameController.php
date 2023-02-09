@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\GameService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,19 +12,18 @@ use Symfony\Component\Routing\Annotation\Route;
 class GameController extends AbstractController
 {
 
-    // private 
-    // public function __construct()
-    // {
-
-    // }
+    private GameService $gameService;
+    public function __construct(GameService $gameService)
+    {
+        $this->gameService = $gameService;
+    }
 
     #[Route('/create/template', name: 'create_template', methods: 'POST')]
     public function create(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/GameController.php',
-        ]);
+        $this->gameService->createTemplate($data);
+        dump($data);
+        return $this->json(json_encode($data));
     }
 }

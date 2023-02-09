@@ -5,6 +5,8 @@ namespace App\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\GameRepository;
 use App\Entity\Game;
+use App\Entity\Item;
+use App\Entity\Location;
 use Symfony\Component\PasswordHasher\Hasher\GamePasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -28,6 +30,15 @@ class GameService
 
     public function createTemplate($data)
     {
+        foreach ($data['location'] as $location) {
+            $newLocation = new Location();
+        }
+        foreach ($data['items'] as $item) {
+            $newItem = new Item();
+        }
+        foreach ($data['objective'] as $objective) {
+            $newObjective = new Location();
+        }
         // $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
         // $user->setPassword($hashedPassword);
     }
