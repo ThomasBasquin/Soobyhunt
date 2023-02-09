@@ -1,8 +1,10 @@
-import { MapContainer, TileLayer, useMap, Marker, Popup, Polygon, LayerGroup, useMapEvents, LayersControl } from 'react-leaflet';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, LayerGroup, useMapEvents, LayersControl } from 'react-leaflet';
+import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import "../css/map.css";
-import test from "../assets/react.svg"
+import flag from "../assets/react.svg";
+import point from "../assets/vite.svg";
+import pointInPolygon from "point-in-polygon";
 
 export default function Map() {
     const [latitude, setLatitude] = useState(0.0);
@@ -14,11 +16,9 @@ export default function Map() {
     const markerRef = useRef([]);
     const flagsRef = useRef([]);
 
-    var polygon = [
-        points.map((point) => {
-            return [point.lat, point.lng]
-        })
-    ]
+    var polygon = points.map((point) => {
+        return [point.lat, point.lng]
+    })
 
     useEffect(() => {
         getLocation();
@@ -41,10 +41,16 @@ export default function Map() {
         }
     }
 
+    const flagIcon = new L.icon({
+        iconUrl: flag,
+        iconSize: [25, 25],
+        iconAnchor: [12.5, 12.5]
+    })
+
     const markerIcon = new L.icon({
-        iconUrl: test,
-        iconSize: [25],
-        iconAnchor: [0, 0]
+        iconUrl: point,
+        iconSize: [25, 25],
+        iconAnchor: [12.5, 12.5]
     })
 
     const changeMode = () => {
@@ -58,44 +64,13 @@ export default function Map() {
         }
     }
 
-    const eventHandlers = useMemo(
-        () => ({
-            dragend() {
-                const marker = markerRef.current[0]
-                if (marker != null) {
-                    console.log(marker.getLatLng());
-                }
-            },
-            drag() {
-                const marker = markerRef.current[0]
-                var pointsTemp = [...points];
-                pointsTemp[0] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
-                setPoints(pointsTemp);
-            }
-        }),
-        [],
-    )
-
-    const eventHandlersMarker = {
-        drag(index) {
+    const dragMarker = (index) => {
+        setTimeout(() => {
             const marker = markerRef.current[index]
             var pointsTemp = [...points];
             pointsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
             setPoints(pointsTemp);
-        },
-        click(index) {
-            console.log(index);
-            var pointsTemp = [...points];
-            pointsTemp.splice(index, 1);
-            setPoints(pointsTemp);
-        }
-    }
-
-    const dragMarker = (index) => {
-        const marker = markerRef.current[index]
-        var pointsTemp = [...points];
-        pointsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
-        setPoints(pointsTemp);
+        }, 1)
     }
 
     const removeMarker = (index) => {
@@ -105,10 +80,14 @@ export default function Map() {
     }
 
     const dragFlag = (index) => {
-        const marker = flagsRef.current[index]
-        var flagsTemp = [...flags];
-        flagsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
-        setFlags(flagsTemp);
+        setTimeout(() => {
+            const marker = flagsRef.current[index]
+            var flagsTemp = [...flags];
+            flagsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
+            setFlags(flagsTemp);
+
+            console.log(pointInPolygon([marker.getLatLng().lat, marker.getLatLng().lng], polygon))
+        }, 1)
     }
 
     const removeFlag = (index) => {
@@ -164,14 +143,14 @@ export default function Map() {
                     <LayerGroup eventHandlers={layerListener}>
                         <Polygon pathOptions={{ color: 'purple' }} positions={polygon} />
                         {points.map((point, index) => {
-                            return <Marker position={[point.lat, point.lng]} draggable={true} /*eventHandlers={eventHandlers}*/ eventHandlers={{ drag: () => dragMarker(index), click: () => removeMarker(index) }} ref={el => markerRef.current[index] = el} key={index} />
+                            return <Marker position={[point.lat, point.lng]} draggable={true} eventHandlers={{ dragend: () => dragMarker(index), click: () => removeMarker(index) }} ref={el => markerRef.current[index] = el} key={index} icon={markerIcon} />
                         })}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay checked name='Drapeaux'>
                     <LayerGroup eventHandlers={layerListener}>
                         {flags.map((flag, index) => {
-                            return <Marker position={[flag.lat, flag.lng]} key={index} draggable={true} eventHandlers={{ drag: () => dragFlag(index) }} ref={el => flagsRef.current[index] = el}>
+                            return <Marker position={[flag.lat, flag.lng]} key={index} draggable={true} eventHandlers={{ dragend: () => dragFlag(index) }} ref={el => flagsRef.current[index] = el} icon={flagIcon}>
                                 <Popup>
                                     <button onClick={() => removeFlag(index)}>Supprimer</button>
                                 </Popup>
