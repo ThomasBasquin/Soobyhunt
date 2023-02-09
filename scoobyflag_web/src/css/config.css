@@ -1,0 +1,8 @@
+.fondViolet {
+    background-color: var(--bleuPastel);
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+}
