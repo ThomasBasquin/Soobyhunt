@@ -5,6 +5,7 @@ import Auth from "./route/Auth";
 import Home from "./route/Home";
 import Index from "./route/Index";
 import Map from "./route/Map";
+import Config from "./route/Config";
 import Header from "./components/Header";
 import "./css/main.css";
 
@@ -28,7 +29,11 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/map",
         element: <Map />
-      }
+      },
+      {
+        path: "/dashboard/config",
+        element: <Config />
+      },
     ],
   }
 ]);

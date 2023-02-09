@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import "../css/main.css";
 
 export default function Index() {
-    return (<>
+    return (<div className="fondSamy">
         <div className="titre">CTF Grandeur nature !</div>
         <div className="presentation">Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur le thème Scooby-Doo</div>
-        <Link to="/dashboard">Créer une partie</Link>
-    </>)
+        <Link className="createGame" to="/dashboard">Créer une partie</Link>
+    </div>)
 }
