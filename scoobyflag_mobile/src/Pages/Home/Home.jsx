@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
-import {useState, useEffect, useCallback, useRef} from 'react';
-import {View, Button} from 'react-native';
+import {useState, useEffect} from 'react';
+import {View} from 'react-native';
 import MapView, {Marker, PROVIDER_DEFAULT, UrlTile} from 'react-native-maps';
 import useInterval from '../../Constantes/Hooks/useInterval';
 
@@ -42,10 +42,6 @@ export default function Home({navigation}) {
     getCurrentPosition(true);
   }, []);
 
-  useInterval(() => {
-    getCurrentPosition();
-  }, 10000);
-
   return region.longitude && region.latitude ? (
     <View>
       <MapView
@@ -61,18 +57,31 @@ export default function Home({navigation}) {
         showsCompass={true}
         onRegionChange={setRegion}>
         <UrlTile
-          style={{width: '100%', height: '100%'}}
-          urlTemplate={`http://tile.stamen.com/terrain/{z}/{x}/{y}.png`}
-          shouldReplaceMapContent={true}
+          urlTemplate={"https://b.tile.openstreetmap.de/{z}/{x}/{y}.png"}
           maximumZ={19}
-          flipY={false}
+          shouldReplaceMapContent={true} 
         />
-        {/* <Marker
+        <Marker
           tappable={false}
           coordinate={{
-            latitude: currentPosition.latitude,
-            longitude: currentPosition.longitude,
-          }} /> */}
+            latitude: currentPosition.latitude + 0.001,
+            longitude: currentPosition.longitude + 0.001,
+          }}
+        />
+        <Marker
+          tappable={false}
+          coordinate={{
+            latitude: currentPosition.latitude - 0.001,
+            longitude: currentPosition.longitude - 0.001,
+          }}
+        />
+        <Marker
+          tappable={false}
+          coordinate={{
+            latitude: currentPosition.latitude - 0.001,
+            longitude: currentPosition.longitude + 0.001,
+          }}
+        />
       </MapView>
     </View>
   ) : null;
