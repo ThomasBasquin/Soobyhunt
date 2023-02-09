@@ -1,7 +1,8 @@
 import Geolocation from '@react-native-community/geolocation';
-import {useState, useEffect} from 'react';
-import {Image, Text, View} from 'react-native';
+import {useState, useEffect, useRef, useMemo, useCallback} from 'react';
+import {Image, View} from 'react-native';
 import MapView, {
+  Circle,
   Marker,
   Polygon,
   PROVIDER_DEFAULT,
@@ -12,8 +13,6 @@ export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
   });
   const [region, setRegion] = useState({
     latitude: null,
@@ -21,6 +20,7 @@ export default function Home({navigation}) {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [markers, setMarkers] = useState([]);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
@@ -36,18 +36,73 @@ export default function Home({navigation}) {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
         });
+        setMarkers([
+          {
+            title: 'Willy',
+            equip: 'MOUGOU',
+            coordinates: {
+              latitude: pos.coords.latitude + 0.001,
+              longitude: pos.coords.longitude + 0.001,
+            },
+          },
+          {
+            title: 'Billy',
+            equip: null,
+            coordinates: {
+              latitude: pos.coords.latitude + 0.003,
+              longitude: pos.coords.longitude - 0.003,
+            },
+          },
+          {
+            title: 'Slimane',
+            equip: 'Lolo',
+            coordinates: {
+              latitude: pos.coords.latitude - 0.001,
+              longitude: pos.coords.longitude + 0.001,
+            },
+          },
+        ]);
       },
       error => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
       {enableHighAccuracy: true},
     );
   }
 
+  const renderMarkers = useCallback(() => {
+    return markers.map((marker, i) => (
+      <Marker
+        key={i}
+        tappable={false}
+        zIndex={2}
+        coordinate={marker.coordinates}
+        description={
+          marker.equip
+            ? `Le vilan est capturé par l'équipe ${marker.equip}`
+            : "Le vilain n'ai pas capturé"
+        }
+        title={marker.title}>
+        <Image source={require('./flag.png')} style={{width: 50, height: 70}} />
+      </Marker>
+    ));
+  }, [markers]);
+
+  const visibilityZone = useCallback(() => {
+    return (
+      <Circle
+        center={currentPosition}
+        radius={100}
+        strokeColor={'rgba(0, 255, 0,0.9)'}
+        fillColor={'rgba(102, 255, 102,.3)'}
+        zIndex={2}
+      />
+    );
+  }, [currentPosition]);
 
   useEffect(() => {
     getCurrentPosition(true);
   }, []);
 
-  return region.longitude && region.latitude ? (
+  return region.longitude && region.latitude && markers.length ? (
     <View>
       <MapView
         showsUserLocation={true}
@@ -58,6 +113,12 @@ export default function Home({navigation}) {
         maxZoomLevel={18}
         pitchEnabled={false}
         followsUserLocation={true}
+        onUserLocationChange={({nativeEvent: e}) =>
+          setCurrentPosition({
+            latitude: e.coordinate.latitude,
+            longitude: e.coordinate.longitude,
+          })
+        }
         initialRegion={region}
         showsCompass={true}>
         <UrlTile
@@ -66,7 +127,7 @@ export default function Home({navigation}) {
           shouldReplaceMapContent={true}
         />
         <Polygon
-          zIndex={100}
+          zIndex={1}
           strokeWidth={3}
           geodesic={true}
           strokeColor={'rgba(255, 0, 0,0.9)'}
@@ -94,31 +155,8 @@ export default function Home({navigation}) {
             },
           ]}
         />
-        <Marker
-          tappable={false}
-          coordinate={{
-            latitude: currentPosition.latitude + 0.001,
-            longitude: currentPosition.longitude + 0.001,
-          }}
-          description={"Le vilan est possédé par l'équipe MOUGOU"}
-          title={"Le grand méchant vilan"}
-        >
-          <Image source={require("./flag.png")} style={{width:100,height:140}} />
-        </Marker>
-        <Marker
-          tappable={false}
-          coordinate={{
-            latitude: currentPosition.latitude - 0.001,
-            longitude: currentPosition.longitude - 0.001,
-          }}
-        />
-        <Marker
-          tappable={false}
-          coordinate={{
-            latitude: currentPosition.latitude - 0.001,
-            longitude: currentPosition.longitude + 0.001,
-          }}
-        />
+        {visibilityZone()}
+        {renderMarkers()}
       </MapView>
     </View>
   ) : null;
