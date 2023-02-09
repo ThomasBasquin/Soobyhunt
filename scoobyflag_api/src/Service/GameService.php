@@ -48,5 +48,4 @@ class GameService
         $this->em->flush($user);
     }
 
-
 }

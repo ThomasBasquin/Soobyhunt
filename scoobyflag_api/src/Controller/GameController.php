@@ -26,4 +26,20 @@ class GameController extends AbstractController
         dump($data);
         return $this->json(json_encode($data));
     }
+
+    #[Route('/create', name: 'create', methods: 'POST')]
+    public function createGame(Request $request)
+    {
+        $options = json_decode($request->getContent(), true);
+        $process = new Process([ 'docker' , 'run' , 'totomadne/game-server' ]);
+        $process->run();
+
+        // executes after the command finishes
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+        
+        echo $process->getOutput();
+        return $this->json(json_encode($options));
+    }
 }
