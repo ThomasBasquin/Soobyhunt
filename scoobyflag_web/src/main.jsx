@@ -1,33 +1,55 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import Home from "../route/Home";
-import "./index.css";
+import Auth from "./route/Auth";
+import Home from "./route/Home";
+import Index from "./route/Index";
+import Map from "./route/Map";
+import Header from "./components/Header";
+import "./css/main.css";
 
 const router = createBrowserRouter([
   {
-    element: <Root />,
     path: "/",
+    element: <Index />
+  },
+  {
+    path: "/login",
+    element: <Auth />
+  },
+  {
+    path: "/dashboard",
+    element: <Root />,
     children: [
       {
-        element: <Home />,
-        path:""
+        path: "",
+        element: <Home />
       },
+      {
+        path: "/dashboard/map",
+        element: <Map />
+      }
     ],
-  },
+  }
 ]);
 
 //Provider
 function Root() {
-  return <Outlet />;
+  return (<>
+    <Header />
+    <main>
+      <Outlet />
+    </main>
+  </>
+  );
 }
 
 
 //Authentification
 function App() {
-    <>
-      <Outlet />
-    </>
+  <>
+    <Outlet />
+  </>
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
