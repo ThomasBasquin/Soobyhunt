@@ -6,6 +6,7 @@ import "../css/config.css";
 import flag from "../assets/react.svg";
 import point from "../assets/vite.svg";
 import pointInPolygon from "point-in-polygon";
+import Config from "./Config";
 
 export default function Map() {
     const [latitude, setLatitude] = useState(0.0);
@@ -209,6 +210,7 @@ export default function Map() {
             <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
         </div>
         <img onClick={() => clickBtnConfig()} className='btnConfig' src="vite.svg" alt="" />
-        <div className='menuConfig'></div>
+        <Config />
     </> : <h1>{status}</h1>)
 }
+
