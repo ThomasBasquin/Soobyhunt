@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polygon, LayerGroup, useMapEven
 import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import "../css/map.css";
+import "../css/config.css";
 import flag from "../assets/react.svg";
 import point from "../assets/vite.svg";
 import pointInPolygon from "point-in-polygon";
@@ -10,13 +11,19 @@ export default function Map() {
     const [latitude, setLatitude] = useState(0.0);
     const [longitude, setLongitude] = useState(0.0);
     const [status, setStatus] = useState("");
-    const [points, setPoints] = useState([]);
+    const [pointsZone, setPointsZone] = useState([]);
+    const [pointsInterdit, setPointsInterdits] = useState([]);
     const [flags, setFlags] = useState([]);
-    const [clickMode, setClickMode] = useState("flag");
+    const [clickMode, setClickMode] = useState("zone");
     const markerRef = useRef([]);
     const flagsRef = useRef([]);
+    const [menuConfig, setMenuConfig] = useState(false);
 
-    var polygon = points.map((point) => {
+    var zoneJeu = pointsZone.map((point) => {
+        return [point.lat, point.lng]
+    })
+
+    var zoneInterdite = pointsInterdit.map((point) => {
         return [point.lat, point.lng]
     })
 
@@ -56,28 +63,60 @@ export default function Map() {
     const changeMode = (mode) => {
         if (mode == "flag") {
             setClickMode("flag");
+            document.getElementById("btnFlag").classList.add("selected");
+            document.getElementById("btnZoneInterdite").classList.remove("selected");
+            document.getElementById("btnZone").classList.remove("selected");
+            document.getElementById("btnItems").classList.remove("selected");
+        }
+        else if (mode == "zoneInterdite") {
+            setClickMode("zoneInterdite");
+            document.getElementById("btnFlag").classList.remove("selected");
+            document.getElementById("btnZoneInterdite").classList.add("selected");
+            document.getElementById("btnZone").classList.remove("selected");
+            document.getElementById("btnItems").classList.remove("selected");
         }
         else if (mode == "zone") {
             setClickMode("zone");
+            document.getElementById("btnFlag").classList.remove("selected");
+            document.getElementById("btnZoneInterdite").classList.remove("selected");
+            document.getElementById("btnZone").classList.add("selected");
+            document.getElementById("btnItems").classList.remove("selected");
         }
         else if (mode == "items") {
             setClickMode("items");
+            document.getElementById("btnFlag").classList.remove("selected");
+            document.getElementById("btnZoneInterdite").classList.remove("selected");
+            document.getElementById("btnZone").classList.remove("selected");
+            document.getElementById("btnItems").classList.add("selected");
+        }
+    }
+
+    const clickBtnConfig = () => {
+        if (menuConfig) {
+            setMenuConfig(false);
+            document.querySelector(".menuConfig").classList.add("slideOut");
+            document.querySelector(".menuConfig").classList.remove("slideIn");
+        }
+        else {
+            setMenuConfig(true);
+            document.querySelector(".menuConfig").classList.add("slideIn");
+            document.querySelector(".menuConfig").classList.remove("slideOut");
         }
     }
 
     const dragMarker = (index) => {
         setTimeout(() => {
             const marker = markerRef.current[index]
-            var pointsTemp = [...points];
+            var pointsTemp = [...pointsZone];
             pointsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
-            setPoints(pointsTemp);
+            setPointsZone(pointsTemp);
         }, 1)
     }
 
     const removeMarker = (index) => {
-        var pointsTemp = [...points];
+        var pointsTemp = [...pointsZone];
         pointsTemp.splice(index, 1);
-        setPoints(pointsTemp);
+        setPointsZone(pointsTemp);
     }
 
     const dragFlag = (index) => {
@@ -87,7 +126,7 @@ export default function Map() {
             flagsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
             setFlags(flagsTemp);
 
-            console.log(pointInPolygon([marker.getLatLng().lat, marker.getLatLng().lng], polygon))
+            console.log(pointInPolygon([marker.getLatLng().lat, marker.getLatLng().lng], zoneJeu))
         }, 1)
     }
 
@@ -116,20 +155,20 @@ export default function Map() {
                     flagsTemp.push({ lat: e.latlng.lat, lng: e.latlng.lng });
                     setFlags(flagsTemp);
                 }
-                else {
-                    var pointsTemp = [...points];
+                else if (clickMode == "zone") {
+                    var pointsTemp = [...pointsZone];
                     pointsTemp.push({ lat: e.latlng.lat, lng: e.latlng.lng });
-                    setPoints(pointsTemp);
-                    //map.locate(); //Géolocalisation
+                    setPointsZone(pointsTemp);
                 }
-            },
-            locationfound: (location) => {
-                //console.log('location found:', location);
-                /*var pointsTemp = [...points];
-                pointsTemp.push({ lat: location.latitude, lng: location.longitude });
-                polygon.push({ lat: location.latitude, lng: location.longitude });
-                setPoints(pointsTemp);*/
-            },
+                else if (clickMode == "zoneInterdite") {
+                    var pointsTemp = [...pointsInterdit];
+                    pointsTemp.push({ lat: e.latlng.lat, lng: e.latlng.lng });
+                    setPointsInterdits(pointsTemp);
+                }
+                else if (clickMode == "items") {
+
+                }
+            }
         })
         return null
     }
@@ -142,10 +181,11 @@ export default function Map() {
             <LayersControl position="topright" >
                 <LayersControl.Overlay checked name='Zone de jeu'>
                     <LayerGroup eventHandlers={layerListener}>
-                        <Polygon pathOptions={{ color: 'purple' }} positions={polygon} />
-                        {points.map((point, index) => {
+                        <Polygon pathOptions={{ color: 'purple' }} positions={zoneJeu} />
+                        {pointsZone.map((point, index) => {
                             return <Marker position={[point.lat, point.lng]} draggable={true} eventHandlers={{ dragend: () => dragMarker(index), click: () => removeMarker(index) }} ref={el => markerRef.current[index] = el} key={index} icon={markerIcon} />
                         })}
+                        <Polygon pathOptions={{ color: 'red' }} positions={zoneInterdite} />
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay checked name='Drapeaux'>
@@ -163,9 +203,12 @@ export default function Map() {
             <ClickController />
         </MapContainer>
         <div className='sideBar'>
-            <div onClick={() => changeMode("zone")} className='btnSideBar'>Zone</div>
-            <div onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
-            <div onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
+            <div id='btnZone' onClick={() => changeMode("zone")} className='btnSideBar selected'>Zone</div>
+            <div id='btnZoneInterdite' onClick={() => changeMode("zoneInterdite")} className='btnSideBar'>Zone interdite</div>
+            <div id='btnFlag' onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
+            <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
         </div>
+        <img onClick={() => clickBtnConfig()} className='btnConfig' src="vite.svg" alt="" />
+        <div className='menuConfig'></div>
     </> : <h1>{status}</h1>)
 }
