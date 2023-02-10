@@ -29,10 +29,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     border-radius: 15px;
 }
 
 .choixMDJ {
     color: var(--gris);
     font-size: 22px;
+}
+
+.listMDJ {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
 }
