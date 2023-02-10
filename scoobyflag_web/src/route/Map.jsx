@@ -209,7 +209,7 @@ export default function Map() {
             <div id='btnFlag' onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
             <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
         </div>
-        <img onClick={() => clickBtnConfig()} className='btnConfig' src="vite.svg" alt="" />
+        <img onClick={() => clickBtnConfig()} className='btnConfig' src="settings.svg" alt="" />
         <Config />
     </> : <h1>{status}</h1>)
 }

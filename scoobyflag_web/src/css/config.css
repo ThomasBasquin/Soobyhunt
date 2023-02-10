@@ -1,11 +1,10 @@
 .titreConfig {
     color: var(--violet);
-    height: 10%;
+    padding-bottom: 5%;
 }
 
 .formConfig {
     width: 80%;
-    height: 100%;
     background-color: var(--orange);
     display: flex;
     flex-direction: column;
@@ -15,7 +14,7 @@
 .modeDeJeu {
     background-color: var(--violet);
     width: 70%;
-    margin: 10px;
+    margin: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -26,20 +25,30 @@
 .choixMDJ {
     color: var(--gris);
     font-size: 22px;
+    text-align: center;
+    background-color: var(--violet);
+    margin: 10px;
+    padding: 1px;
+    border-radius: 25px;
+    color: var(--gris);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 210px;
+    height: 50px;
 }
 
 .menuConfig {
     right: 20px;
     position: absolute;
-    border: black solid 2px;
-    height: 80%;
+    border: var(--orange) solid 2px;
+    height: 95%;
     width: 30%;
     z-index: 2;
     background-color: white;
     transform: translateX(120%);
     -webkit-transform: translateX(120%);
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
     border-radius: 15px;
@@ -99,6 +108,23 @@
 
 .listMDJ {
     display: flex;
+    flex-direction: column;
+    height: 500px;
+    justify-content: space-around;
+    margin-left: 30px;
+}
+
+.itemMDJ {
+    display: flex;
     flex-direction: row;
-    justify-content: space-around
+    margin-right: 20px;
+    background-color: var(--gris);
+    border-radius: 30px;
+}
+
+.listEcran {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    height: 69px;
 }
