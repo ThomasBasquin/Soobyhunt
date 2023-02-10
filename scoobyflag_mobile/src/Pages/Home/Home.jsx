@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
-import {Image, View, Text} from 'react-native';
+import {Image, View} from 'react-native';
 import MapView, {
   Circle,
   Marker,
@@ -8,9 +8,11 @@ import MapView, {
   PROVIDER_DEFAULT,
   UrlTile,
 } from 'react-native-maps';
-import COLORS from '../../Constantes/colors';
 import GAME_CONFIG from '../../Constantes/gameConfig';
-import {pointInCircle} from '../../Constantes/utils';
+import {NOTIF_IN_MAP} from '../../Constantes/notif';
+import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
+import ItemLayout from './ItemLayout';
+import NotifInApp from './NotifInApp';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -23,11 +25,39 @@ export default function Home({navigation}) {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [mapCoordinates, setMapCoordinates] = useState([]);
   const [markers, setMarkers] = useState([]);
-  const [isNearAObject, setIsNearAObject] = useState(false);
+  const [notifInApp, setNotifInApp] = useState(false);
+  const [isMountedMap, setIsMountedMap] = useState(null);
 
   useEffect(() => {
-    if (!markers.length) return;
+    setMapCoordinates([
+      {
+        latitude: currentPosition.latitude + 0.01,
+        longitude: currentPosition.longitude + 0.01,
+      },
+      {
+        latitude: currentPosition.latitude + 0.02,
+        longitude: currentPosition.longitude + 0.02,
+      },
+      {
+        latitude: currentPosition.latitude + 0.01,
+        longitude: currentPosition.longitude - 0.01,
+      },
+      {
+        latitude: currentPosition.latitude - 0.01,
+        longitude: currentPosition.longitude - 0.01,
+      },
+      {
+        latitude: currentPosition.latitude - 0.01,
+        longitude: currentPosition.longitude + 0.01,
+      },
+    ]);
+    getCurrentPosition(true);
+  }, []);
+
+  useEffect(() => {
+    if (!markers.length || !mapCoordinates.length) return;
     const nearMarker = markers.filter(marker =>
       pointInCircle(currentPosition.latitude, currentPosition.longitude, {
         circleLat: marker.coordinates.latitude,
@@ -35,11 +65,16 @@ export default function Home({navigation}) {
         circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
       }),
     );
+    const outOfMap=pointInPolygon(currentPosition,mapCoordinates);
 
-    if (nearMarker.length) {
-      setIsNearAObject(true);
-    } else {
-      setIsNearAObject(true);
+    if(!outOfMap){
+      setNotifInApp(null);
+    }else{
+      if (nearMarker.length) {
+        setNotifInApp(NOTIF_IN_MAP.nearAObject);
+      } else {
+        setNotifInApp(null);
+      }
     }
   }, [currentPosition]);
 
@@ -92,11 +127,15 @@ export default function Home({navigation}) {
   const renderMarkers = useCallback(() => {
     return markers
       .filter(marker =>
-        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.coordinates.latitude,
-          circleLng: marker.coordinates.longitude,
-          circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
-        }),
+        pointInCircle(
+          marker.coordinates.latitude,
+          marker.coordinates.longitude,
+          {
+            circleLat: currentPosition.latitude,
+            circleLng: currentPosition.longitude,
+            circleRadius: GAME_CONFIG.visibilityRange.user / 1000,
+          },
+        ),
       )
       .map((marker, i) => (
         <Marker
@@ -130,54 +169,33 @@ export default function Home({navigation}) {
     );
   }, [currentPosition]);
 
-  useEffect(() => {
-    getCurrentPosition(true);
-  }, []);
+  const gameZone = useCallback(() => {
+    return (
+      <Polygon
+      zIndex={1}
+      strokeWidth={3}
+      geodesic={true}
+      strokeColor={'rgba(255, 77, 77,.9)'}
+      fillColor={'rgba(154, 229, 154,0)'}
+      coordinates={mapCoordinates}
+    />
+    );
+  }, [mapCoordinates]);
 
-  return region.longitude && region.latitude && markers.length ? (
+  return region.longitude && region.latitude && markers.length && mapCoordinates.length ? (
     <View>
-      <View
-        style={{
-          width: '95%',
-          height: 100,
-          position: 'absolute',
-          backgroundColor: 'rgba(252, 252, 214,.9)',
-          zIndex: 1,
-          margin: '2.5%',
-          borderRadius: 15,
-          bottom: 0,
-          borderWidth: 2,
-          borderColor: COLORS.primary,
-        }}
-      />
-      {isNearAObject ? (
-        <View
-          style={{
-            width: '95%',
-            height: 75,
-            position: 'absolute',
-            backgroundColor: 'rgba(252, 252, 214,.9)',
-            zIndex: 1,
-            margin: '2.5%',
-            borderRadius: 15,
-            top: 0,
-            borderWidth: 2,
-            padding:"5%",
-            justifyContent:"center",
-            alignItems:"center",
-            borderColor: COLORS.primary,
-          }}
-        >
-          <Text style={{fontSize:20}}>Un object est près de vous !</Text>
-        </View>
-      ) : null}
+      <ItemLayout isMountedMap={isMountedMap} />
+      <NotifInApp isMountedMap={isMountedMap} notifInApp={notifInApp} />
       <MapView
+        onMapReady={() => setIsMountedMap(true)}
         showsUserLocation={true}
         provider={PROVIDER_DEFAULT}
         style={{width: '100%', height: '100%'}}
+        userLocationUpdateInterval={GAME_CONFIG.map.refreshUserLocation}
+        userLocationFastestInterval={GAME_CONFIG.map.refreshUserLocation}
         mapType={'none'}
-        minZoomLevel={11}
-        maxZoomLevel={18}
+        minZoomLevel={GAME_CONFIG.map.minZoom}
+        maxZoomLevel={GAME_CONFIG.map.maxZoom}
         pitchEnabled={false}
         followsUserLocation={true}
         onUserLocationChange={({nativeEvent: e}) =>
@@ -193,35 +211,7 @@ export default function Home({navigation}) {
           maximumZ={19}
           shouldReplaceMapContent={true}
         />
-        <Polygon
-          zIndex={1}
-          strokeWidth={3}
-          geodesic={true}
-          strokeColor={'rgba(255, 77, 77,.9)'}
-          fillColor={'rgba(154, 229, 154,0)'}
-          coordinates={[
-            {
-              latitude: currentPosition.latitude + 0.01,
-              longitude: currentPosition.longitude + 0.01,
-            },
-            {
-              latitude: currentPosition.latitude + 0.02,
-              longitude: currentPosition.longitude + 0.02,
-            },
-            {
-              latitude: currentPosition.latitude + 0.01,
-              longitude: currentPosition.longitude - 0.01,
-            },
-            {
-              latitude: currentPosition.latitude - 0.01,
-              longitude: currentPosition.longitude - 0.01,
-            },
-            {
-              latitude: currentPosition.latitude - 0.01,
-              longitude: currentPosition.longitude + 0.01,
-            },
-          ]}
-        />
+        {gameZone()}
         {visibilityZone()}
         {renderMarkers()}
       </MapView>

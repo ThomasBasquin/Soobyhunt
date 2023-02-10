@@ -26,3 +26,22 @@ export function pointInCircle(pointLat, pointLng, circle){
 
     return distanceOfPointFromCircleCenter<=circleRadius ? true:false;
 }
+
+export function pointInPolygon(point, polygon) {
+    // ray-casting algorithm based on
+    // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html/pnpoly.html
+    
+    var x = point.latitude, y = point.longitude;
+    
+    var inside = false;
+    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        var xi = polygon[i].latitude, yi = polygon[i].longitude;
+        var xj = polygon[j].latitude, yj = polygon[j].longitude;
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+};
