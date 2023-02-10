@@ -33,25 +33,21 @@ export default function Home({navigation}) {
   useEffect(() => {
     setMapCoordinates([
       {
-        latitude: currentPosition.latitude + 0.01,
-        longitude: currentPosition.longitude + 0.01,
+        latitude: 48.534234,
+        longitude: 7.755552,
       },
       {
-        latitude: currentPosition.latitude + 0.02,
-        longitude: currentPosition.longitude + 0.02,
+        latitude: 48.537757,
+        longitude: 7.721906,
       },
       {
-        latitude: currentPosition.latitude + 0.01,
-        longitude: currentPosition.longitude - 0.01,
+        latitude: 48.519682,
+        longitude: 7.717357,
       },
       {
-        latitude: currentPosition.latitude - 0.01,
-        longitude: currentPosition.longitude - 0.01,
-      },
-      {
-        latitude: currentPosition.latitude - 0.01,
-        longitude: currentPosition.longitude + 0.01,
-      },
+        latitude: 48.519057,
+        longitude: 7.754779,
+      }
     ]);
     getCurrentPosition(true);
   }, []);
@@ -68,7 +64,7 @@ export default function Home({navigation}) {
     const outOfMap=pointInPolygon(currentPosition,mapCoordinates);
 
     if(!outOfMap){
-      setNotifInApp(null);
+      setNotifInApp(NOTIF_IN_MAP.outOfMap);
     }else{
       if (nearMarker.length) {
         setNotifInApp(NOTIF_IN_MAP.nearAObject);
