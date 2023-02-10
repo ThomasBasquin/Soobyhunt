@@ -11,6 +11,7 @@ import MapView, {
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
 import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
+import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
 
@@ -29,6 +30,8 @@ export default function Home({navigation}) {
   const [markers, setMarkers] = useState([]);
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
+  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:70},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:70}]);
+  const [actualEffect, setActualEffect] = useState([{type:"LUNETTE_DE_VERRA",time:70}]);
 
   useEffect(() => {
     setMapCoordinates([
@@ -146,7 +149,7 @@ export default function Home({navigation}) {
           }
           title={marker.title}>
           <Image
-            source={require('./flag.png')}
+            source={require('./../../Assets/maps/VILAIN.png')}
             style={{width: 50, height: 70}}
           />
         </Marker>
@@ -178,10 +181,23 @@ export default function Home({navigation}) {
     );
   }, [mapCoordinates]);
 
+  const EffectComponent=useCallback(()=>(
+    <ActualEffect ActualEffect={actualEffect} setActualEffect={setActualEffect}/>
+  ),[actualEffect]);
+
+  const ItemComponent=useCallback(()=>(
+    <ItemLayout isMountedMap={isMountedMap} items={items} setItems={setItems} />
+  ),[isMountedMap,items]);
+
+  const notifComponent=useCallback(()=>(
+    <NotifInApp isMountedMap={isMountedMap} notifInApp={notifInApp} />
+  ),[isMountedMap,notifInApp]);
+
   return region.longitude && region.latitude && markers.length && mapCoordinates.length ? (
     <View>
-      <ItemLayout isMountedMap={isMountedMap} />
-      <NotifInApp isMountedMap={isMountedMap} notifInApp={notifInApp} />
+      {EffectComponent()}
+      {ItemComponent()}
+      {notifComponent()}
       <MapView
         onMapReady={() => setIsMountedMap(true)}
         showsUserLocation={true}
