@@ -29,7 +29,7 @@ const ModeDeJeu = () => {
 const ItemMDJ = () => {
   return (
     <div className="">
-      cc
+      <img src="chrono.jpeg" />
     </div>
   )
 }
