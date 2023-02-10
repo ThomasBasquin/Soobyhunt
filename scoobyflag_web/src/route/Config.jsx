@@ -8,6 +8,7 @@ export default function Config() {
       <div className="formConfig">
         <ModeDeJeu />
       </div>
+      <Link to="/map">Map</Link>
     </div>
   );
 }
@@ -26,9 +27,9 @@ const ModeDeJeu = () => {
 };
 
 const ItemMDJ = () => {
-    return (
-        <div className="">
-            cc
-        </div>
-    )
+  return (
+    <div className="">
+      cc
+    </div>
+  )
 }

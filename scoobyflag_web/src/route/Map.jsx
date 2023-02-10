@@ -53,14 +53,15 @@ export default function Map() {
         iconAnchor: [12.5, 12.5]
     })
 
-    const changeMode = () => {
-        if (clickMode == "flag") {
-            setClickMode("zone");
-            document.getElementById("btnChangeMode").innerText = "Zone de jeu";
-        }
-        else {
+    const changeMode = (mode) => {
+        if (mode == "flag") {
             setClickMode("flag");
-            document.getElementById("btnChangeMode").innerText = "Drapeau";
+        }
+        else if (mode == "zone") {
+            setClickMode("zone");
+        }
+        else if (mode == "items") {
+            setClickMode("items");
         }
     }
 
@@ -161,6 +162,10 @@ export default function Map() {
             </LayersControl>
             <ClickController />
         </MapContainer>
-        <button id='btnChangeMode' onClick={changeMode} style={{ position: 'absolute', zIndex: 2, marginTop: 10 }}>Drapeau</button>
+        <div className='sideBar'>
+            <div onClick={() => changeMode("zone")} className='btnSideBar'>Zone</div>
+            <div onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
+            <div onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
+        </div>
     </> : <h1>{status}</h1>)
 }
