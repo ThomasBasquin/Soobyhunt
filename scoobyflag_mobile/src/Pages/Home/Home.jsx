@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
-import {useState, useEffect, useRef, useMemo, useCallback} from 'react';
-import {Image, View} from 'react-native';
+import {useState, useEffect, useCallback} from 'react';
+import {Image, View, Text} from 'react-native';
 import MapView, {
   Circle,
   Marker,
@@ -8,6 +8,9 @@ import MapView, {
   PROVIDER_DEFAULT,
   UrlTile,
 } from 'react-native-maps';
+import COLORS from '../../Constantes/colors';
+import GAME_CONFIG from '../../Constantes/gameConfig';
+import {pointInCircle} from '../../Constantes/utils';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -21,6 +24,24 @@ export default function Home({navigation}) {
     longitudeDelta: 0.0421,
   });
   const [markers, setMarkers] = useState([]);
+  const [isNearAObject, setIsNearAObject] = useState(false);
+
+  useEffect(() => {
+    if (!markers.length) return;
+    const nearMarker = markers.filter(marker =>
+      pointInCircle(currentPosition.latitude, currentPosition.longitude, {
+        circleLat: marker.coordinates.latitude,
+        circleLng: marker.coordinates.longitude,
+        circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
+      }),
+    );
+
+    if (nearMarker.length) {
+      setIsNearAObject(true);
+    } else {
+      setIsNearAObject(true);
+    }
+  }, [currentPosition]);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
@@ -41,8 +62,8 @@ export default function Home({navigation}) {
             title: 'Willy',
             equip: 'MOUGOU',
             coordinates: {
-              latitude: pos.coords.latitude + 0.001,
-              longitude: pos.coords.longitude + 0.001,
+              latitude: pos.coords.latitude + 0.00001,
+              longitude: pos.coords.longitude + 0.00001,
             },
           },
           {
@@ -69,28 +90,39 @@ export default function Home({navigation}) {
   }
 
   const renderMarkers = useCallback(() => {
-    return markers.map((marker, i) => (
-      <Marker
-        key={i}
-        tappable={false}
-        zIndex={2}
-        coordinate={marker.coordinates}
-        description={
-          marker.equip
-            ? `Le vilan est capturé par l'équipe ${marker.equip}`
-            : "Le vilain n'ai pas capturé"
-        }
-        title={marker.title}>
-        <Image source={require('./flag.png')} style={{width: 50, height: 70}} />
-      </Marker>
-    ));
-  }, [markers]);
+    return markers
+      .filter(marker =>
+        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
+          circleLat: marker.coordinates.latitude,
+          circleLng: marker.coordinates.longitude,
+          circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
+        }),
+      )
+      .map((marker, i) => (
+        <Marker
+          key={i}
+          tappable={false}
+          zIndex={2}
+          coordinate={marker.coordinates}
+          description={
+            marker.equip
+              ? `Le vilan est capturé par l'équipe ${marker.equip}`
+              : "Le vilain n'ai pas capturé"
+          }
+          title={marker.title}>
+          <Image
+            source={require('./flag.png')}
+            style={{width: 50, height: 70}}
+          />
+        </Marker>
+      ));
+  }, [markers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
     return (
       <Circle
         center={currentPosition}
-        radius={100}
+        radius={GAME_CONFIG.visibilityRange.user}
         strokeColor={'rgba(0, 255, 0,0.9)'}
         fillColor={'rgba(102, 255, 102,.3)'}
         zIndex={2}
@@ -104,6 +136,41 @@ export default function Home({navigation}) {
 
   return region.longitude && region.latitude && markers.length ? (
     <View>
+      <View
+        style={{
+          width: '95%',
+          height: 100,
+          position: 'absolute',
+          backgroundColor: 'rgba(252, 252, 214,.9)',
+          zIndex: 1,
+          margin: '2.5%',
+          borderRadius: 15,
+          bottom: 0,
+          borderWidth: 2,
+          borderColor: COLORS.primary,
+        }}
+      />
+      {isNearAObject ? (
+        <View
+          style={{
+            width: '95%',
+            height: 75,
+            position: 'absolute',
+            backgroundColor: 'rgba(252, 252, 214,.9)',
+            zIndex: 1,
+            margin: '2.5%',
+            borderRadius: 15,
+            top: 0,
+            borderWidth: 2,
+            padding:"5%",
+            justifyContent:"center",
+            alignItems:"center",
+            borderColor: COLORS.primary,
+          }}
+        >
+          <Text style={{fontSize:20}}>Un object est près de vous !</Text>
+        </View>
+      ) : null}
       <MapView
         showsUserLocation={true}
         provider={PROVIDER_DEFAULT}
@@ -120,7 +187,7 @@ export default function Home({navigation}) {
           })
         }
         initialRegion={region}
-        showsCompass={true}>
+        showsCompass={false}>
         <UrlTile
           urlTemplate={'https://b.tile.openstreetmap.de/{z}/{x}/{y}.png'}
           maximumZ={19}
@@ -130,8 +197,8 @@ export default function Home({navigation}) {
           zIndex={1}
           strokeWidth={3}
           geodesic={true}
-          strokeColor={'rgba(255, 0, 0,0.9)'}
-          fillColor={'rgba(255, 102, 102,.3)'}
+          strokeColor={'rgba(255, 77, 77,.9)'}
+          fillColor={'rgba(154, 229, 154,0)'}
           coordinates={[
             {
               latitude: currentPosition.latitude + 0.01,
