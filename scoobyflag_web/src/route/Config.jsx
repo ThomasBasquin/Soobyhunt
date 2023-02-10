@@ -19,7 +19,7 @@ const ModeDeJeu = () => {
     <div className="">
       <div className="listEcran">
         <div className="choixMDJ">Mode de jeu</div>
-        <div className="choixMDJ">Equipe</div>
+        <div className="choixMDJ">Équipe</div>
         </div>
         <div className="listEcran">
         <div className="choixMDJ">Méchants</div>
