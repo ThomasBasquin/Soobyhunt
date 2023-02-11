@@ -8,15 +8,15 @@ export default function Config() {
       <h1 className="titreConfig">Configuration d'une partie</h1>
       <div className="scroll">
         <div className="formConfig">
-          <ModeDeJeu />
+          <Contenu />
         </div>
       </div>
     </div>
   );
 }
 
-const ModeDeJeu = () => {
-   const [toggleState, setToggleState] = useState(0);
+const Contenu = () => {
+   const [toggleState, setToggleState] = useState(1);
    const [choose, setChoose] = useState("");
   const toggleTab = (index) => {
     setToggleState(index);
@@ -36,7 +36,18 @@ const ModeDeJeu = () => {
         <div className={toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"} onClick={() => toggleTab(4)}>Items</div>
       </div>
 
-      <div className={toggleState === 1 ? "listMDJ content active-content" : "listMDJ content"}>
+      <ModeDeJeu choose={choose} chooseItem={chooseItem} toggleState={toggleState} />
+      <div className={toggleState === 2? "listMDJ content active-content" : "listMDJ content"}>
+        <Equipe />
+      </div>
+      <div className={toggleState === 3? "listMDJ content active-content" : "listMDJ content"}><Mechants /></div>
+      <div className={toggleState === 4? "listMDJ content active-content" : "listMDJ content"}><Items /></div>
+    </div>
+  );
+};
+const ModeDeJeu = ({choose, chooseItem, toggleState}) => {
+  return (
+<div className={toggleState === 1 ? "listMDJ content active-content" : "listMDJ content"}>
       <div onClick={() => chooseItem("time")} className={choose === "time"? "itemMDJ selected-item" : "itemMDJ"}>
           <img
             src="chrono.jpeg"
@@ -77,12 +88,29 @@ const ModeDeJeu = () => {
             </p>
           </div>
         </div>
+        
       </div>
-      <div className={toggleState === 2? "listMDJ content active-content" : "listMDJ content"}>2</div>
-      <div className={toggleState === 3? "listMDJ content active-content" : "listMDJ content"}>3</div>
-      <div className={toggleState === 4? "listMDJ content active-content" : "listMDJ content"}>4</div>
+  )
+}
+const Equipe = () => {
+  return (
+    <div>
+      cc
     </div>
-  );
-};
-
+  )
+}
+const Mechants = () => {
+  return (
+    <div>
+      cc
+    </div>
+  )
+}
+const Items = () => {
+  return (
+    <div>
+      cc
+    </div>
+  )
+}
 
