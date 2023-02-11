@@ -20,6 +20,7 @@ export default function Index() {
 
   return (
     <div className="fondSamy">
+      <div className="" style={{marginLeft : 80}}>
       <div className="titre">CTF Grandeur nature !</div>
       <div className="presentation">
         Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur
@@ -28,6 +29,7 @@ export default function Index() {
       <Link className="createGame" to="/map" onClick={() => createGame()}>
         Créer une partie
       </Link>
+      </div>
     </div>
   );
 }

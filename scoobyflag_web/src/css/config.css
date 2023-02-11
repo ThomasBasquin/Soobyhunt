@@ -36,6 +36,7 @@
     align-items: center;
     width: 210px;
     height: 50px;
+    cursor: pointer;
 }
 
 .menuConfig {
@@ -120,6 +121,7 @@
     margin-right: 20px;
     background-color: var(--gris);
     border-radius: 30px;
+    cursor: pointer;
 }
 
 .listEcran {
