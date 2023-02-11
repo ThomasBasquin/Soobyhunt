@@ -130,3 +130,15 @@
     justify-content: center;
     height: 69px;
 }
+
+.content {
+    display: none;
+}
+
+.active-content {
+    display: flex;
+}
+
+.active-tab {
+    background-color: blue
+}

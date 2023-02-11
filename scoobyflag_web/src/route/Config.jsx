@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import "../css/config.css";
+import React,{useState} from "react";
 
 export default function Config() {
   return (
@@ -15,22 +16,30 @@ export default function Config() {
 }
 
 const ModeDeJeu = () => {
+   const [toggleState, setToggleState] = useState(0);
+
+  const toggleTab = (index) => {
+    setToggleState(index);
+  };
   return (
     <div className="">
       <div className="listEcran">
-        <div className="choixMDJ">Mode de jeu</div>
-        <div className="choixMDJ">Équipe</div>
+        <div className={toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"} onClick={() => toggleTab(1)}>Mode de jeu</div>
+        <div className={toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"} onClick={() => toggleTab(2)}>Équipe</div>
         </div>
         <div className="listEcran">
-        <div className="choixMDJ">Méchants</div>
-        <div className="choixMDJ">Items</div>
+        <div className={toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"} onClick={() => toggleTab(3)}>Méchants</div>
+        <div className={toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"} onClick={() => toggleTab(4)}>Items</div>
       </div>
 
-      <div className="listMDJ">
+      <div className={toggleState === 1 ? "listMDJ content active-content" : "listMDJ content"}>
         <ItemMDJ mdj="time" />
         <ItemMDJ mdj="flag" />
         <ItemMDJ mdj="supremacy" />
       </div>
+      <div className={toggleState === 2? "listMDJ content active-content" : "listMDJ content"}>2</div>
+      <div className={toggleState === 3? "listMDJ content active-content" : "listMDJ content"}>3</div>
+      <div className={toggleState === 4? "listMDJ content active-content" : "listMDJ content"}>4</div>
     </div>
   );
 };
