@@ -17,10 +17,14 @@ export default function Config() {
 
 const ModeDeJeu = () => {
    const [toggleState, setToggleState] = useState(0);
-
+   const [choose, setChoose] = useState("");
   const toggleTab = (index) => {
     setToggleState(index);
   };
+
+  const chooseItem = (type) => {
+    setChoose(type)
+  }
   return (
     <div className="">
       <div className="listEcran">
@@ -33,22 +37,7 @@ const ModeDeJeu = () => {
       </div>
 
       <div className={toggleState === 1 ? "listMDJ content active-content" : "listMDJ content"}>
-        <ItemMDJ mdj="time" />
-        <ItemMDJ mdj="flag" />
-        <ItemMDJ mdj="supremacy" />
-      </div>
-      <div className={toggleState === 2? "listMDJ content active-content" : "listMDJ content"}>2</div>
-      <div className={toggleState === 3? "listMDJ content active-content" : "listMDJ content"}>3</div>
-      <div className={toggleState === 4? "listMDJ content active-content" : "listMDJ content"}>4</div>
-    </div>
-  );
-};
-
-const ItemMDJ = ({ mdj }) => {
-  switch (mdj) {
-    case "time":
-      return (
-        <div onClick={() => console.log("cc")} className="itemMDJ">
+      <div onClick={() => chooseItem("time")} className={choose === "time"? "itemMDJ selected-item" : "itemMDJ"}>
           <img
             src="chrono.jpeg"
             style={{ width: 140, height: 140, borderRadius: 30 }}
@@ -61,12 +50,7 @@ const ItemMDJ = ({ mdj }) => {
             </p>
           </div>
         </div>
-      );
-      break;
-
-    case "flag":
-      return (
-        <div className="itemMDJ">
+        <div onClick={() => chooseItem("flag")} className={choose === "flag"? "itemMDJ selected-item" : "itemMDJ"}>
           <img
             src="flag.jpeg"
             style={{ width: 140, height: 140, borderRadius: 30 }}
@@ -79,12 +63,7 @@ const ItemMDJ = ({ mdj }) => {
             </p>
           </div>
         </div>
-      );
-      break;
-
-    case "supremacy":
-      return (
-        <div className="itemMDJ">
+        <div onClick={() => chooseItem("supremacy")} className={choose === "supremacy"? "itemMDJ selected-item" : "itemMDJ"}>
           <img
             src="supremacy.jpeg"
             style={{ width: 140, height: 140, borderRadius: 30 }}
@@ -98,7 +77,12 @@ const ItemMDJ = ({ mdj }) => {
             </p>
           </div>
         </div>
-      );
-      break;
-  }
+      </div>
+      <div className={toggleState === 2? "listMDJ content active-content" : "listMDJ content"}>2</div>
+      <div className={toggleState === 3? "listMDJ content active-content" : "listMDJ content"}>3</div>
+      <div className={toggleState === 4? "listMDJ content active-content" : "listMDJ content"}>4</div>
+    </div>
+  );
 };
+
+
