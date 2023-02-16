@@ -35,6 +35,8 @@
     position: absolute;
     left: 20px;
     bottom: 20px;
+    width: 60px;
+    height: 60px;
 }
 
 .App-logo {
@@ -67,7 +69,6 @@
     from {
         transform: rotate(0deg);
     }
-
     to {
         transform: rotate(360deg);
     }
