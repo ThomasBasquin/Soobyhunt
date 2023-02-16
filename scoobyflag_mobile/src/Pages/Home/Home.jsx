@@ -8,6 +8,7 @@ import MapView, {
   PROVIDER_DEFAULT,
   UrlTile,
 } from 'react-native-maps';
+import { getEffects, setEffect } from '../../Constantes/effectUtils';
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
 import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
@@ -31,7 +32,14 @@ export default function Home({navigation}) {
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:70},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:70}]);
-  const [actualEffect, setActualEffect] = useState([{type:"LUNETTE_DE_VERRA",time:70}]);
+  const [actualEffect, setActualEffect] = useState(getEffects());
+
+  useEffect(() => {
+    const effect={id:0,type:"SAC_A_DOS",time:40}
+    setEffect(effect)
+
+    setActualEffect([...actualEffect,effect])
+  }, []);
 
   useEffect(() => {
     setMapCoordinates([
