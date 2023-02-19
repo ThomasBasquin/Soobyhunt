@@ -167,31 +167,48 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
   );
 };
 const Equipes = () => {
-  return <div>
-    <p style={{backgroundColor : "var(--violet)", width: 120, color :"var(--gris)", padding : 10, borderRadius :15}}>Nouvelle équipe</p>
-    <AddEquipe />
-    
-  </div>;
+  return (
+    <div>
+      <p
+        style={{
+          backgroundColor: "var(--violet)",
+          width: 120,
+          color: "var(--gris)",
+          padding: 10,
+          borderRadius: 15,
+        }}
+      >
+        Nouvelle équipe
+      </p>
+      <AddEquipe />
+    </div>
+  );
 };
 
 const AddEquipe = () => {
   return (
     <div className="addEquipe">
-
-      <input type="text" name='nomEquipe' className="nomEquipe" placeholder="Nom de l'équipe" />
-      <input type="number" name="nbJoueur" className="nbJoueur" min="0"/>
-      <p style={{backgroundColor : "var(--violet)", width: 50, color :"var(--gris)", padding : 10, borderRadius :15}}>Ajouter</p>
+      <input
+        type="text"
+        name="nomEquipe"
+        className="nomEquipe"
+        placeholder="Nom de l'équipe"
+      />
+      <input type="number" name="nbJoueur" className="nbJoueur" min="0" />
+      <p
+        style={{
+          backgroundColor: "var(--violet)",
+          width: 50,
+          color: "var(--gris)",
+          padding: 10,
+          borderRadius: 15,
+        }}
+      >
+        Ajouter
+      </p>
     </div>
-  )
-}
-
-
-
-
-
-
-
-
+  );
+};
 
 const Mechants = () => {
   return <div>cc</div>;
