@@ -1,5 +1,10 @@
 module.exports = {
   config: () => {
-    console.log("test");
+    console.log("config");
+
+    return {
+      status: 200,
+      message: "done",
+    };
   },
 };

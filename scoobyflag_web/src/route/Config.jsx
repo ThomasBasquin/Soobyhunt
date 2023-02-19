@@ -15,6 +15,22 @@ export default function Config() {
   );
 }
 
+async function createGame() {
+  const response = await fetch("http://localhost:8000/game/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: "test",
+      description: "test",
+      maxPlayer: 10,
+    }),
+  });
+  const data = await response.json();
+  console.log(data);
+}
+
 const Contenu = () => {
   const [toggleState, setToggleState] = useState(1);
   const [choose, setChoose] = useState("");
