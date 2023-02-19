@@ -1,5 +1,5 @@
 module.exports = {
-  test: () => {
+  config: () => {
     console.log("test");
   },
 };
