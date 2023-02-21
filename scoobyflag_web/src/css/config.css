@@ -151,3 +151,29 @@
     color: var(--orange);
     border: 3px var(--gris) solid
 }
+
+.addEquipe {
+    background-color: var(--gris);
+    border: 1px var(--violet) solid;
+    margin-right: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.nomEquipe {
+    padding: 10px;
+    border-radius: 15px;
+    border: none;
+    width: 150px;
+}
+
+.nbJoueur {
+    padding: 10px;
+    border-radius: 15px;
+    width: 40px;
+    margin-left: 5px
+}
