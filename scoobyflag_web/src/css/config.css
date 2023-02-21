@@ -177,3 +177,9 @@
     width: 40px;
     margin-left: 5px
 }
+
+.listeEquipe {
+    display: flex;
+    justify-content: center;
+    
+}

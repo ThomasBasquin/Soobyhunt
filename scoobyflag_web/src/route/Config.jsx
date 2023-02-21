@@ -151,14 +151,26 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
   );
 };
 const Equipes = () => {
+
+  const [listeEquipe, setListeEquipe] = useState([{
+    nom: "equipe1",
+    nbJoueur: 4,
+
+  },
+  {
+    nom: "equipe2",
+    nbJoueur: 8,
+  }
+]);
   return <div>
-    <p style={{backgroundColor : "var(--violet)", width: 120, color :"var(--gris)", padding : 10, borderRadius :15}}>Nouvelle équipe</p>
-    <AddEquipe />
+    
+    <AjoutEquipe />
+    <ListeEquipe listeEquipe={listeEquipe} setListeEquipe={setListeEquipe}/>
     
   </div>;
 };
 
-const AddEquipe = () => {
+const AjoutEquipe = () => {
   return (
     <div className="addEquipe">
 <div>
@@ -172,7 +184,20 @@ const AddEquipe = () => {
 
 
 
-
+const ListeEquipe = ({listeEquipe, setListeEquipe}) => {
+  return (
+    <div className="listeEquipe">
+      {listeEquipe==0 ? <p style={{fontSize : 30}}>Aucune équipe pour le moment</p> : listeEquipe.map((e)=> {
+        return (
+          <div>
+            <p>{e.nom}</p>
+            <p>{e.nbJoueur}</p>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 
 
