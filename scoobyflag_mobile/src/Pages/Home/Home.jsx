@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
-import {Image, View} from 'react-native';
+import {Image, View, Text} from 'react-native';
 import MapView, {
   Circle,
   Marker,
@@ -8,7 +8,7 @@ import MapView, {
   PROVIDER_DEFAULT,
   UrlTile,
 } from 'react-native-maps';
-import { getEffects, setEffect } from '../../Constantes/effectUtils';
+import { getEffects, removeEffect, reset, setEffect as setEffectStorage } from '../../Constantes/effectUtils';
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
 import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
@@ -31,17 +31,11 @@ export default function Home({navigation}) {
   const [markers, setMarkers] = useState([]);
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
-  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:70},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:70}]);
-  const [actualEffect, setActualEffect] = useState(getEffects());
+  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:15},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:10}]);
+  const [actualEffects, setActualEffects] = useState(null);
 
   useEffect(() => {
-    const effect={id:0,type:"SAC_A_DOS",time:40}
-    setEffect(effect)
-
-    setActualEffect([...actualEffect,effect])
-  }, []);
-
-  useEffect(() => {
+    refreshActualEffect();
     setMapCoordinates([
       {
         latitude: 48.534234,
@@ -62,6 +56,14 @@ export default function Home({navigation}) {
     ]);
     getCurrentPosition(true);
   }, []);
+
+  function setEffect(type,time){
+    setEffectStorage(type, time).then(e => setActualEffects(cur => [...cur,e]))
+  }
+
+  function refreshActualEffect(){
+    getEffects().then(effects => setActualEffects(effects))
+  }
 
   useEffect(() => {
     if (!markers.length || !mapCoordinates.length) return;
@@ -190,11 +192,11 @@ export default function Home({navigation}) {
   }, [mapCoordinates]);
 
   const EffectComponent=useCallback(()=>(
-    <ActualEffect ActualEffect={actualEffect} setActualEffect={setActualEffect}/>
-  ),[actualEffect]);
+    actualEffects?.length ? <ActualEffect refreshActualEffect={refreshActualEffect} actualEffects={actualEffects} setActualEffect={setActualEffects}/> : null
+  ),[actualEffects]);
 
   const ItemComponent=useCallback(()=>(
-    <ItemLayout isMountedMap={isMountedMap} items={items} setItems={setItems} />
+    <ItemLayout isMountedMap={isMountedMap} items={items} setEffect={setEffect} />
   ),[isMountedMap,items]);
 
   const notifComponent=useCallback(()=>(

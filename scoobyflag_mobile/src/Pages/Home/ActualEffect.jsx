@@ -1,17 +1,24 @@
-import { Text, View } from "react-native";
-import COLORS from "../../Constantes/colors";
+import { ScrollView, Text, View } from "react-native";
+import {useEffect} from "react";
+import ActualEffectItem from "./ActualEffectItem";
+import { decrement } from "../../Constantes/effectUtils";
 
 
-export default function ActualEffect({ActualEffect,setActualEffect}){
+export default function ActualEffect({actualEffects, refreshActualEffect}){
+
+    useEffect(()=>{
+        const removeInterval=setInterval(()=>{
+            decrement();
+        },1000);
+
+        return () => clearInterval(removeInterval);
+    },[]);
 
     return (
-        <View style={{position:"absolute",width:"90%",marginHorizontal:"5%", bottom:125,zIndex:2,flexDirection:"row"}}>
-            {ActualEffect.map((effect,i) => (
-                <View key={i} style={{backgroundColor:COLORS.primary,borderRadius:15,marginHorizontal:5,padding:5,flexDirection:"row",justifyContent:"center"}}>
-                    <Text style={{color: COLORS.white}}>{effect.type}</Text>
-                    <Text style={{color: COLORS.white}}>{effect.time}</Text>
-                </View>
+        <ScrollView horizontal={true} style={{position:"absolute",paddingHorizontal:"5%", bottom:125,zIndex:2,flexDirection:"row"}}>
+            {actualEffects.map((effect,index) => (
+                <ActualEffectItem effect={effect} index={index} refreshActualEffect={refreshActualEffect} />
             ))}
-        </View>
+        </ScrollView>
     )
 }

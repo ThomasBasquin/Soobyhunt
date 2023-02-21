@@ -3,7 +3,7 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
 import COLORS from '../../Constantes/colors';
 
-export default function ItemLayout({isMountedMap, items, setItems}) {
+export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
 
   return isMountedMap ? (
@@ -13,7 +13,7 @@ export default function ItemLayout({isMountedMap, items, setItems}) {
           visible={itemModal.open}
           title={'Utiliser un objet'}
           onRequestClose={() => setItemModal({...itemModal, open: false})}
-          onSubmit={() => setItems(items.filter(item => item.id!==itemModal.item.id))}>
+          onSubmit={() => setEffect(itemModal.item.type, itemModal.item.time)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
             Voulez-vous vraiment utiliser le {itemModal.item.type} ?
           </Text>
