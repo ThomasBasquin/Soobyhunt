@@ -159,10 +159,10 @@ export default function Map() {
 
     const layerListener = {
         add: (e) => {
-            console.log("Added Layer:", e.target);
+            //console.log("Added Layer:", e.target);
         },
         remove: (e) => {
-            console.log("Removed layer:", e.target);
+            //console.log("Removed layer:", e.target);
         }
     }
 
@@ -192,12 +192,16 @@ export default function Map() {
         return null
     }
 
+    const createZoneInterdite = (e) => {
+        console.log(e);
+    }
+
     return (status == null ? <>
         <MapContainer center={[latitude, longitude]} zoom={16}>
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LayersControl position="topright" >
+            <LayersControl position="topleft" >
                 <LayersControl.Overlay checked name='Zone de jeu'>
                     <LayerGroup eventHandlers={layerListener}>
                         <Polygon pathOptions={{ color: 'purple' }} positions={zoneJeu} />
@@ -223,7 +227,7 @@ export default function Map() {
                 </LayersControl.Overlay>
             </LayersControl>
             <FeatureGroup>
-                <EditControl position='topright'
+                <EditControl position='topleft'
                     draw={{
                         polyline: false,
                         rectangle: false,
@@ -234,8 +238,8 @@ export default function Map() {
                     edit={{
                         remove: false,
                         edit: false
-                    }} />
-                <EditControl position='topright'
+                    }}/>
+                <EditControl position='topleft'
                     draw={{
                         polyline: false,
                         rectangle: false,
@@ -249,7 +253,8 @@ export default function Map() {
                                 weight: 3
                             }
                         },
-                    }} />
+                    }}
+                    onCreated={ e => createZoneInterdite(e)} />
             </FeatureGroup>
             <ClickController />
         </MapContainer>
