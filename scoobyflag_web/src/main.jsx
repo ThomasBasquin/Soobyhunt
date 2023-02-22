@@ -22,10 +22,7 @@ const router = createBrowserRouter([
     path: "/map",
     element: <Map />
   },
-  {
-    path: "/config",
-    element: <Config />
-  }
+ 
 ]);
 
 //Provider
