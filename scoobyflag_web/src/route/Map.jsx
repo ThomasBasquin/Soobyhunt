@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, Polygon, LayerGroup, useMapEvents, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polygon, LayerGroup, useMapEvents, LayersControl, FeatureGroup } from 'react-leaflet';
 import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import "../css/map.css";
@@ -6,6 +6,7 @@ import "../css/config.css";
 import flag from "../assets/react.svg";
 import point from "../assets/vite.svg";
 import pointInPolygon from "point-in-polygon";
+import { EditControl } from 'react-leaflet-draw';
 
 export default function Map() {
     const [latitude, setLatitude] = useState(0.0);
@@ -17,6 +18,7 @@ export default function Map() {
     const [clickMode, setClickMode] = useState("zone");
     const markerRef = useRef([]);
     const flagsRef = useRef([]);
+    const pointsInterditRef = useRef([]);
     const [menuConfig, setMenuConfig] = useState(false);
 
     var zoneJeu = pointsZone.map((point) => {
@@ -104,7 +106,7 @@ export default function Map() {
         }
     }
 
-    const dragMarker = (index) => {
+    const dragPointZone = (index) => {
         setTimeout(() => {
             const marker = markerRef.current[index]
             var pointsTemp = [...pointsZone];
@@ -113,7 +115,7 @@ export default function Map() {
         }, 1)
     }
 
-    const removeMarker = (index) => {
+    const removePointZone = (index) => {
         var pointsTemp = [...pointsZone];
         pointsTemp.splice(index, 1);
         setPointsZone(pointsTemp);
@@ -127,6 +129,7 @@ export default function Map() {
             setFlags(flagsTemp);
 
             console.log(pointInPolygon([marker.getLatLng().lat, marker.getLatLng().lng], zoneJeu))
+            console.log(pointInPolygon([marker.getLatLng().lat, marker.getLatLng().lng], zoneInterdite))
         }, 1)
     }
 
@@ -136,6 +139,21 @@ export default function Map() {
             flagsTemp.splice(index, 1);
             setFlags(flagsTemp);
         }, 1)
+    }
+
+    const dragPointInterdit = (index) => {
+        setTimeout(() => {
+            const marker = pointsInterditRef.current[index]
+            var pointsTemp = [...pointsInterdit];
+            pointsTemp[index] = { lat: marker.getLatLng().lat, lng: marker.getLatLng().lng }
+            setPointsInterdits(pointsTemp);
+        }, 1)
+    }
+
+    const removePointInterdit = (index) => {
+        var pointsTemp = [...pointsInterdit];
+        pointsTemp.splice(index, 1);
+        setPointsInterdits(pointsTemp);
     }
 
     const layerListener = {
@@ -150,7 +168,7 @@ export default function Map() {
     function ClickController() {
         const map = useMapEvents({
             click: (e) => {
-                if (clickMode == "flag") {
+                /*if (clickMode == "flag") {
                     var flagsTemp = [...flags];
                     flagsTemp.push({ lat: e.latlng.lat, lng: e.latlng.lng });
                     setFlags(flagsTemp);
@@ -167,7 +185,7 @@ export default function Map() {
                 }
                 else if (clickMode == "items") {
 
-                }
+                }*/
             }
         })
         return null
@@ -183,9 +201,12 @@ export default function Map() {
                     <LayerGroup eventHandlers={layerListener}>
                         <Polygon pathOptions={{ color: 'purple' }} positions={zoneJeu} />
                         {pointsZone.map((point, index) => {
-                            return <Marker position={[point.lat, point.lng]} draggable={true} eventHandlers={{ dragend: () => dragMarker(index), click: () => removeMarker(index) }} ref={el => markerRef.current[index] = el} key={index} icon={markerIcon} />
+                            return <Marker position={[point.lat, point.lng]} draggable={true} eventHandlers={{ dragend: () => dragPointZone(index), click: () => removePointZone(index) }} ref={el => markerRef.current[index] = el} key={index} icon={markerIcon} />
                         })}
                         <Polygon pathOptions={{ color: 'red' }} positions={zoneInterdite} />
+                        {pointsInterdit.map((point, index) => {
+                            return <Marker position={[point.lat, point.lng]} draggable={true} eventHandlers={{ dragend: () => dragPointInterdit(index), click: () => removePointInterdit(index) }} ref={el => pointsInterditRef.current[index] = el} key={index} icon={markerIcon} />
+                        })}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay checked name='Drapeaux'>
@@ -200,14 +221,43 @@ export default function Map() {
                     </LayerGroup>
                 </LayersControl.Overlay>
             </LayersControl>
+            <FeatureGroup>
+                <EditControl position='topright'
+                    draw={{
+                        polyline: false,
+                        rectangle: false,
+                        circlemarker: false,
+                        circle: false,
+                        polygon: true,
+                    }}
+                    edit={{
+                        remove: false,
+                        edit: false
+                    }} />
+                <EditControl position='topright'
+                    draw={{
+                        polyline: false,
+                        rectangle: false,
+                        circlemarker: false,
+                        circle: false,
+                        marker: false,
+                        polygon: {
+                            shapeOptions: {
+                                guidelineDistance: 10,
+                                color: "red",
+                                weight: 3
+                            }
+                        },
+                    }} />
+            </FeatureGroup>
             <ClickController />
         </MapContainer>
-        <div className='sideBar'>
+        {/*<div className='sideBar'>
             <div id='btnZone' onClick={() => changeMode("zone")} className='btnSideBar selected'>Zone</div>
             <div id='btnZoneInterdite' onClick={() => changeMode("zoneInterdite")} className='btnSideBar'>Zone interdite</div>
             <div id='btnFlag' onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
             <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
-        </div>
+                </div>*/}
         <img onClick={() => clickBtnConfig()} className='btnConfig' src="vite.svg" alt="" />
         <div className='menuConfig'></div>
     </> : <h1>{status}</h1>)
