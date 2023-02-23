@@ -1,20 +1,22 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
-import {Image, View} from 'react-native';
+import {View} from 'react-native';
+import {DateTime} from "luxon";
 import MapView, {
-  Circle,
-  Marker,
-  Polygon,
   PROVIDER_DEFAULT,
   UrlTile,
 } from 'react-native-maps';
-import { getEffects, setEffect } from '../../Constantes/effectUtils';
+import { getEffects, reset, setEffect as setEffectStorage } from '../../Constantes/effectUtils';
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
 import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
+import { MAP_COORDINATE, MARKERS } from '../../Constantes/mocked';
+import Marker from './mapComponents/Marker';
+import Polygon from './mapComponents/Polygon';
+import Circle from './mapComponents/Circle';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -31,37 +33,24 @@ export default function Home({navigation}) {
   const [markers, setMarkers] = useState([]);
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
-  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:70},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:70}]);
-  const [actualEffect, setActualEffect] = useState(getEffects());
+  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:15},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:10}]);
+  const [actualEffects, setActualEffects] = useState(null);
 
   useEffect(() => {
-    const effect={id:0,type:"SAC_A_DOS",time:40}
-    setEffect(effect)
-
-    setActualEffect([...actualEffect,effect])
-  }, []);
-
-  useEffect(() => {
-    setMapCoordinates([
-      {
-        latitude: 48.534234,
-        longitude: 7.755552,
-      },
-      {
-        latitude: 48.537757,
-        longitude: 7.721906,
-      },
-      {
-        latitude: 48.519682,
-        longitude: 7.717357,
-      },
-      {
-        latitude: 48.519057,
-        longitude: 7.754779,
-      }
-    ]);
+    refreshActualEffect();
+    // reset();
+    setMapCoordinates(MAP_COORDINATE);
     getCurrentPosition(true);
   }, []);
+
+  function setEffect(type,time){
+    const now=DateTime.now();
+    setEffectStorage(type,now,now.plus({seconds:time})).then(e => setActualEffects(cur => [...cur,e]))
+  }
+
+  function refreshActualEffect(){
+    getEffects().then(effects => setActualEffects(effects))
+  }
 
   useEffect(() => {
     if (!markers.length || !mapCoordinates.length) return;
@@ -99,32 +88,7 @@ export default function Home({navigation}) {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
         });
-        setMarkers([
-          {
-            title: 'Willy',
-            equip: 'MOUGOU',
-            coordinates: {
-              latitude: pos.coords.latitude + 0.00001,
-              longitude: pos.coords.longitude + 0.00001,
-            },
-          },
-          {
-            title: 'Billy',
-            equip: null,
-            coordinates: {
-              latitude: pos.coords.latitude + 0.003,
-              longitude: pos.coords.longitude - 0.003,
-            },
-          },
-          {
-            title: 'Slimane',
-            equip: 'Lolo',
-            coordinates: {
-              latitude: pos.coords.latitude - 0.001,
-              longitude: pos.coords.longitude + 0.001,
-            },
-          },
-        ]);
+        setMarkers(MARKERS(pos));
       },
       error => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
       {enableHighAccuracy: true},
@@ -145,56 +109,28 @@ export default function Home({navigation}) {
         ),
       )
       .map((marker, i) => (
-        <Marker
-          key={i}
-          tappable={false}
-          zIndex={2}
-          coordinate={marker.coordinates}
-          description={
-            marker.equip
-              ? `Le vilan est capturé par l'équipe ${marker.equip}`
-              : "Le vilain n'ai pas capturé"
-          }
-          title={marker.title}>
-          <Image
-            source={require('./../../Assets/maps/VILAIN.png')}
-            style={{width: 50, height: 70}}
-          />
-        </Marker>
+        <Marker marker={marker} key={i} />
       ));
   }, [markers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
     return (
-      <Circle
-        center={currentPosition}
-        radius={GAME_CONFIG.visibilityRange.user}
-        strokeColor={'rgba(0, 255, 0,0.9)'}
-        fillColor={'rgba(102, 255, 102,.3)'}
-        zIndex={2}
-      />
+      <Circle currentPosition={currentPosition} />
     );
   }, [currentPosition]);
 
   const gameZone = useCallback(() => {
     return (
-      <Polygon
-      zIndex={1}
-      strokeWidth={3}
-      geodesic={true}
-      strokeColor={'rgba(255, 77, 77,.9)'}
-      fillColor={'rgba(154, 229, 154,0)'}
-      coordinates={mapCoordinates}
-    />
+      <Polygon mapCoordinates={mapCoordinates} />
     );
   }, [mapCoordinates]);
 
   const EffectComponent=useCallback(()=>(
-    <ActualEffect ActualEffect={actualEffect} setActualEffect={setActualEffect}/>
-  ),[actualEffect]);
+    actualEffects?.length ? <ActualEffect actualEffects={actualEffects} setActualEffects={setActualEffects}/> : null
+  ),[actualEffects]);
 
   const ItemComponent=useCallback(()=>(
-    <ItemLayout isMountedMap={isMountedMap} items={items} setItems={setItems} />
+    <ItemLayout isMountedMap={isMountedMap} items={items} setEffect={setEffect} />
   ),[isMountedMap,items]);
 
   const notifComponent=useCallback(()=>(
