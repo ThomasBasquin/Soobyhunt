@@ -19,15 +19,15 @@ export async function getEffect(id) {
   }
 }
 
-export async function setEffect(type, time) {
+export async function setEffect(type, startAt,endAt) {
   try {
     let jsonValue = await AsyncStorage.getItem('effects');
     jsonValue = jsonValue != null ? JSON.parse(jsonValue) : null;
     if(!jsonValue)return null;
     const id=jsonValue.length ?  jsonValue[jsonValue.length -1].id+1 : 0;
-    jsonValue = [...jsonValue,{id, type,time}];
+    jsonValue = [...jsonValue,{id, type,startAt,endAt}];
     AsyncStorage.setItem('effects', JSON.stringify(jsonValue));
-    return {id, type,time};
+    return {id, type,startAt, endAt};
   } catch (e) {
     console.error('error in asyncStorage');
   }
@@ -41,19 +41,6 @@ export async function removeEffect(id) {
         jsonValue = jsonValue.filter(e => e.id !== id);
         AsyncStorage.setItem('effects', JSON.stringify(jsonValue));
     }
-  } catch (e) {
-    console.error('error in asyncStorage');
-  }
-}
-
-
-export async function decrement(effect) {
-  try {
-    let jsonValue = await AsyncStorage.getItem('effects');
-    jsonValue = jsonValue != null ? JSON.parse(jsonValue) : null;
-    if(!jsonValue)return;
-    jsonValue=jsonValue.map(e => e.time>=0 ?{...e,time:e.time-1} : e);
-    AsyncStorage.setItem('effects', JSON.stringify(jsonValue));
   } catch (e) {
     console.error('error in asyncStorage');
   }
