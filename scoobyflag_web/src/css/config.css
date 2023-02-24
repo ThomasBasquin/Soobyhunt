@@ -195,3 +195,12 @@
     border: 1px solid var(--violet);
     border-radius: 15px;
 }
+
+.listeMechant {
+    display: flex;
+    flex-direction: column;
+}
+
+.itemMechant {
+    display: flex;
+}
