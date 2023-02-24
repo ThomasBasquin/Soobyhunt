@@ -1,19 +1,20 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
 import {View} from 'react-native';
-import {DateTime} from "luxon";
-import MapView, {
-  PROVIDER_DEFAULT,
-  UrlTile,
-} from 'react-native-maps';
-import { getEffects, reset, setEffect as setEffectStorage } from '../../Constantes/effectUtils';
+import {DateTime} from 'luxon';
+import MapView, {PROVIDER_DEFAULT, UrlTile} from 'react-native-maps';
+import {
+  getEffects,
+  reset,
+  setEffect as setEffectStorage,
+} from '../../Constantes/effectUtils';
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
 import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
-import { MAP_COORDINATE, MARKERS } from '../../Constantes/mocked';
+import {ITEMS, MAP_COORDINATE, MARKERS} from '../../Constantes/mocked';
 import Marker from './mapComponents/Marker';
 import Polygon from './mapComponents/Polygon';
 import Circle from './mapComponents/Circle';
@@ -33,7 +34,7 @@ export default function Home({navigation}) {
   const [markers, setMarkers] = useState([]);
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
-  const [items, setItems] = useState([{id:0,type:"SAC_A_DOS",qte:2,time:15},{id:1,type:"LUNETTE_DE_VERRA",qte:3,time:10}]);
+  const [items, setItems] = useState(ITEMS);
   const [actualEffects, setActualEffects] = useState(null);
 
   useEffect(() => {
@@ -43,36 +44,46 @@ export default function Home({navigation}) {
     getCurrentPosition(true);
   }, []);
 
-  function setEffect(type,time){
-    const now=DateTime.now();
-    setEffectStorage(type,now,now.plus({seconds:time})).then(e => setActualEffects(cur => [...cur,e]))
+  console.log('jaime les q');
+
+  function setEffect(type, time) {
+    const now = DateTime.now();
+    setEffectStorage(type, now, now.plus({seconds: time})).then(e =>
+      setActualEffects(cur => [...cur, e]),
+    );
   }
 
-  function refreshActualEffect(){
-    getEffects().then(effects => setActualEffects(effects))
+  function refreshActualEffect() {
+    getEffects().then(effects => setActualEffects(effects));
   }
 
-  useEffect(() => {
+  function updateUserLocation(e) {
+    setCurrentPosition({
+      latitude: e.coordinate.latitude,
+      longitude: e.coordinate.longitude,
+    });
     if (!markers.length || !mapCoordinates.length) return;
     const nearMarker = markers.filter(marker =>
-      pointInCircle(currentPosition.latitude, currentPosition.longitude, {
+      pointInCircle(e.latitude, e.longitude, {
         circleLat: marker.coordinates.latitude,
         circleLng: marker.coordinates.longitude,
         circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
       }),
     );
-    const outOfMap=pointInPolygon(currentPosition,mapCoordinates);
+    const outOfMap = pointInPolygon(e, mapCoordinates);
 
-    if(!outOfMap){
+    if (!outOfMap) {
       setNotifInApp(NOTIF_IN_MAP.outOfMap);
-    }else{
+    } else {
       if (nearMarker.length) {
         setNotifInApp(NOTIF_IN_MAP.nearAObject);
       } else {
         setNotifInApp(null);
       }
     }
-  }, [currentPosition]);
+  }
+
+  useEffect(() => {}, [currentPosition]);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
@@ -108,36 +119,48 @@ export default function Home({navigation}) {
           },
         ),
       )
-      .map((marker, i) => (
-        <Marker marker={marker} key={i} />
-      ));
+      .map((marker, i) => <Marker marker={marker} key={i} />);
   }, [markers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
-    return (
-      <Circle currentPosition={currentPosition} />
-    );
+    return <Circle currentPosition={currentPosition} />;
   }, [currentPosition]);
 
   const gameZone = useCallback(() => {
-    return (
-      <Polygon mapCoordinates={mapCoordinates} />
-    );
+    return <Polygon mapCoordinates={mapCoordinates} />;
   }, [mapCoordinates]);
 
-  const EffectComponent=useCallback(()=>(
-    actualEffects?.length ? <ActualEffect actualEffects={actualEffects} setActualEffects={setActualEffects}/> : null
-  ),[actualEffects]);
+  const EffectComponent = useCallback(
+    () =>
+      actualEffects?.length ? (
+        <ActualEffect
+          actualEffects={actualEffects}
+          setActualEffects={setActualEffects}
+        />
+      ) : null,
+    [actualEffects],
+  );
 
-  const ItemComponent=useCallback(()=>(
-    <ItemLayout isMountedMap={isMountedMap} items={items} setEffect={setEffect} />
-  ),[isMountedMap,items]);
+  const ItemComponent = useCallback(
+    () => (
+      <ItemLayout
+        isMountedMap={isMountedMap}
+        items={items}
+        setEffect={setEffect}
+      />
+    ),
+    [isMountedMap, items],
+  );
 
-  const notifComponent=useCallback(()=>(
-    <NotifInApp isMountedMap={isMountedMap} notifInApp={notifInApp} />
-  ),[isMountedMap,notifInApp]);
+  const notifComponent = useCallback(
+    () => <NotifInApp isMountedMap={isMountedMap} notifInApp={notifInApp} />,
+    [isMountedMap, notifInApp],
+  );
 
-  return region.longitude && region.latitude && markers.length && mapCoordinates.length ? (
+  return region.longitude &&
+    region.latitude &&
+    markers.length &&
+    mapCoordinates.length ? (
     <View>
       {EffectComponent()}
       {ItemComponent()}
@@ -154,12 +177,7 @@ export default function Home({navigation}) {
         maxZoomLevel={GAME_CONFIG.map.maxZoom}
         pitchEnabled={false}
         followsUserLocation={true}
-        onUserLocationChange={({nativeEvent: e}) =>
-          setCurrentPosition({
-            latitude: e.coordinate.latitude,
-            longitude: e.coordinate.longitude,
-          })
-        }
+        onUserLocationChange={({nativeEvent: e}) => updateUserLocation(e)}
         initialRegion={region}
         showsCompass={false}>
         <UrlTile

@@ -6,6 +6,18 @@ import COLORS from '../../Constantes/colors';
 export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
 
+  function findPiture(type){
+    if(type=="SAC_A_DOS"){
+      return require("./../../Assets/items/SAC_A_DOS.png");
+    }else if(type=="LUNETTE_DE_VERRA"){
+      return require("./../../Assets/items/LUNETTE_DE_VERRA.png");
+    }else if(type=="FANTOME"){
+      return require("./../../Assets/items/FANTOME.png");
+    }else{
+      return require("./../../Assets/items/EMPTY.png");
+    }
+  }
+
   return isMountedMap ? (
     <>
       {itemModal.open ? (
@@ -15,11 +27,11 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           onRequestClose={() => setItemModal({...itemModal, open: false})}
           onSubmit={() => setEffect(itemModal.item.type, itemModal.item.time)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
-            Voulez-vous vraiment utiliser le {itemModal.item.type} ?
+            Voulez-vous vraiment utiliser le {itemModal.item.slug} ?
           </Text>
         </BasicModal>
-      ):null}
-      
+      ) : null}
+
       <View
         style={{
           width: '95%',
@@ -27,7 +39,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           position: 'absolute',
           backgroundColor: 'rgba(252, 252, 214,.9)',
           zIndex: 1,
-          margin: "2.5%",
+          margin: '2.5%',
           marginVertical: 20,
           borderRadius: 15,
           bottom: 0,
@@ -43,14 +55,14 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           }}>{`Mon sac à dos (${items.length}/2) :`}</Text>
         <View style={{flexDirection: 'row'}}>
           {items.map((item, i) => {
-            //TODO : changer l'image en fonction du type
+            var picture=findPiture(item.type);
             return (
               <TouchableOpacity
                 key={i}
                 style={{flexDirection: 'row'}}
                 onPress={() => setItemModal({open: true, item})}>
                 <Image
-                  source={require('./../../Assets/items/SAC_A_DOS.png')}
+                  source={picture}
                   style={{width: 50, height: 50}}
                 />
                 <Text

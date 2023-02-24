@@ -44,4 +44,28 @@ export function MARKERS(pos){
       longitude: pos.coords.longitude + 0.001,
     },
   },
-]}
+]};
+
+export const ITEMS=[
+  {
+    id: 0,
+    type: 'LUNETTE_DE_VERRA',
+    slug:"Lunette de Verra",
+    qte: 1,
+    time: 15,
+  },
+  {
+    id: 1,
+    type: 'SAC_A_DOS',
+    slug:"Sac à dos",
+    qte: 3,
+    time: 10,
+  },
+  {
+    id: 0,
+    type: 'FANTOME',
+    slug:"Fantome",
+    qte: 2,
+    time: 15,
+  },
+];
