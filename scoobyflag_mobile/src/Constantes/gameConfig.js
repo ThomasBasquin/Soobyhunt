@@ -9,6 +9,10 @@ const GAME_CONFIG={
         refreshUserLocation:10000,
         minZoom:11,
         maxZoom:18,
+      },
+      item:{
+        max:2,
+        maxWithSac:4
       }
 };
 

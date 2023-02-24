@@ -2,21 +2,11 @@ import {useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
 import COLORS from '../../Constantes/colors';
+import GAME_CONFIG from '../../Constantes/gameConfig';
+import { findPiture } from '../../Constantes/utils';
 
 export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
-
-  function findPiture(type){
-    if(type=="SAC_A_DOS"){
-      return require("./../../Assets/items/SAC_A_DOS.png");
-    }else if(type=="LUNETTE_DE_VERRA"){
-      return require("./../../Assets/items/LUNETTE_DE_VERRA.png");
-    }else if(type=="FANTOME"){
-      return require("./../../Assets/items/FANTOME.png");
-    }else{
-      return require("./../../Assets/items/EMPTY.png");
-    }
-  }
 
   return isMountedMap ? (
     <>
@@ -27,7 +17,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           onRequestClose={() => setItemModal({...itemModal, open: false})}
           onSubmit={() => setEffect(itemModal.item.type, itemModal.item.time)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
-            Voulez-vous vraiment utiliser le {itemModal.item.slug} ?
+            Voulez-vous vraiment utiliser {itemModal.item.slug} ?
           </Text>
         </BasicModal>
       ) : null}
@@ -52,10 +42,10 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
             fontSize: 20,
             fontWeight: '600',
             color: COLORS.primary,
-          }}>{`Mon sac à dos (${items.length}/2) :`}</Text>
+          }}>{`Mon sac à dos (${items.reduce((acc,i)=>acc+i.qte,0)}/${GAME_CONFIG.item.max}) :`}</Text>
         <View style={{flexDirection: 'row'}}>
           {items.map((item, i) => {
-            var picture=findPiture(item.type);
+            const picture=findPiture(item.type);
             return (
               <TouchableOpacity
                 key={i}
