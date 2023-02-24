@@ -181,5 +181,17 @@
 .listeEquipe {
     display: flex;
     justify-content: center;
-    
+    align-items: center;
+    flex-direction: column;
+}
+
+.equipe {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: var(--gris);
+    width: 300px;
+    margin: 20px;
+    border: 1px solid var(--violet);
+    border-radius: 15px;
 }

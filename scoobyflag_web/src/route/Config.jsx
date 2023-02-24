@@ -169,31 +169,41 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
 const Equipes = () => {
 
   const [listeEquipe, setListeEquipe] = useState([{
+    id :1,
     nom: "equipe1",
     nbJoueur: 4,
 
   },
   {
+    id :2,
     nom: "equipe2",
     nbJoueur: 8,
   }
 ]);
   return <div>
     
-    <AjoutEquipe />
+    <AjoutEquipe listeEquipe={listeEquipe}/>
     <ListeEquipe listeEquipe={listeEquipe} setListeEquipe={setListeEquipe}/>
     
   </div>;
 };
 
-const AjoutEquipe = () => {
+const AjoutEquipe = ({listeEquipe}) => {
+  const [nomEquipe, setNomEquipe]= useState("");
+  const [nbJoueur, setNbJoueur]= useState(1);
+  const [id, setId]= useState(3);
+
+  const ajout = () => {
+    setId(id+1);
+    listeEquipe.push({id: '1', nom : 'cc', nbJoueur : '7'});
+  }
   return (
     <div className="addEquipe">
 <div>
-      <input type="text" name='nomEquipe' className="nomEquipe" placeholder="Nom de l'équipe" />
-      <input type="number" name="nbJoueur" className="nbJoueur" min="0"/>Joueurs
+      <input type="text" name='nomEquipe' className="nomEquipe" placeholder="Nom de l'équipe" value={nomEquipe} onChange={e => setNomEquipe(e.target.value)}/>
+      <input type="number" name="nbJoueur" className="nbJoueur" min="1" value={nbJoueur} onChange={e => setNbJoueur(e.target.value)}/>Joueurs
       </div>
-      <p style={{backgroundColor : "var(--violet)", width: 50, color :"var(--gris)", padding : 10, borderRadius :15}}>Ajouter</p>
+      <p onClick = {()=> ajout()} style={{backgroundColor : "var(--violet)", width: 50, color :"var(--gris)", padding : 10, borderRadius :15, cursor : "pointer"}}>Ajouter</p>
     </div>
   )
 }
@@ -205,7 +215,7 @@ const ListeEquipe = ({listeEquipe, setListeEquipe}) => {
     <div className="listeEquipe">
       {listeEquipe==0 ? <p style={{fontSize : 30}}>Aucune équipe pour le moment</p> : listeEquipe.map((e)=> {
         return (
-          <div>
+          <div key={e.id} className="equipe">
             <p>{e.nom}</p>
             <p>{e.nbJoueur}</p>
           </div>
