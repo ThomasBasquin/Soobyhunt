@@ -167,48 +167,57 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
   );
 };
 const Equipes = () => {
-  return (
-    <div>
-      <p
-        style={{
-          backgroundColor: "var(--violet)",
-          width: 120,
-          color: "var(--gris)",
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        Nouvelle équipe
-      </p>
-      <AddEquipe />
-    </div>
-  );
+
+  const [listeEquipe, setListeEquipe] = useState([{
+    nom: "equipe1",
+    nbJoueur: 4,
+
+  },
+  {
+    nom: "equipe2",
+    nbJoueur: 8,
+  }
+]);
+  return <div>
+    
+    <AjoutEquipe />
+    <ListeEquipe listeEquipe={listeEquipe} setListeEquipe={setListeEquipe}/>
+    
+  </div>;
 };
 
-const AddEquipe = () => {
+const AjoutEquipe = () => {
   return (
     <div className="addEquipe">
-      <input
-        type="text"
-        name="nomEquipe"
-        className="nomEquipe"
-        placeholder="Nom de l'équipe"
-      />
-      <input type="number" name="nbJoueur" className="nbJoueur" min="0" />
-      <p
-        style={{
-          backgroundColor: "var(--violet)",
-          width: 50,
-          color: "var(--gris)",
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        Ajouter
-      </p>
+<div>
+      <input type="text" name='nomEquipe' className="nomEquipe" placeholder="Nom de l'équipe" />
+      <input type="number" name="nbJoueur" className="nbJoueur" min="0"/>Joueurs
+      </div>
+      <p style={{backgroundColor : "var(--violet)", width: 50, color :"var(--gris)", padding : 10, borderRadius :15}}>Ajouter</p>
     </div>
-  );
-};
+  )
+}
+
+
+
+const ListeEquipe = ({listeEquipe, setListeEquipe}) => {
+  return (
+    <div className="listeEquipe">
+      {listeEquipe==0 ? <p style={{fontSize : 30}}>Aucune équipe pour le moment</p> : listeEquipe.map((e)=> {
+        return (
+          <div>
+            <p>{e.nom}</p>
+            <p>{e.nbJoueur}</p>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+
+
+
 
 const Mechants = () => {
   return <div>cc</div>;

@@ -158,6 +158,10 @@
     margin-right: 30px;
     padding: 20px;
     border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .nomEquipe {
@@ -172,4 +176,10 @@
     border-radius: 15px;
     width: 40px;
     margin-left: 5px
+}
+
+.listeEquipe {
+    display: flex;
+    justify-content: center;
+    
 }
