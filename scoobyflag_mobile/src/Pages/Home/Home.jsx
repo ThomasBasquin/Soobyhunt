@@ -18,6 +18,7 @@ import {ITEMS, MAP_COORDINATE, MARKERS} from '../../Constantes/mocked';
 import Marker from './mapComponents/Marker';
 import Polygon from './mapComponents/Polygon';
 import Circle from './mapComponents/Circle';
+import VilainModal from './VilainModal';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -36,6 +37,10 @@ export default function Home({navigation}) {
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [items, setItems] = useState(ITEMS);
   const [actualEffects, setActualEffects] = useState(null);
+  const [stateVilainModal, setStateVilainModal] = useState({
+    isOpen: false,
+    vilain: null,
+  });
 
   useEffect(() => {
     refreshActualEffect();
@@ -43,8 +48,6 @@ export default function Home({navigation}) {
     setMapCoordinates(MAP_COORDINATE);
     getCurrentPosition(true);
   }, []);
-
-  console.log('jaime les q');
 
   function setEffect(type, time) {
     const now = DateTime.now();
@@ -119,7 +122,13 @@ export default function Home({navigation}) {
           },
         ),
       )
-      .map((marker, i) => <Marker marker={marker} key={i} />);
+      .map((marker, i) => (
+        <Marker
+          marker={marker}
+          openModal={vilain => setStateVilainModal({isOpen: true, vilain})}
+          key={i}
+        />
+      ));
   }, [markers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
@@ -162,6 +171,14 @@ export default function Home({navigation}) {
     markers.length &&
     mapCoordinates.length ? (
     <View>
+      {stateVilainModal.isOpen ? (
+        <VilainModal
+          state={stateVilainModal}
+          onRequestClose={() =>
+            setStateVilainModal({...stateVilainModal, isOpen: false})
+          }
+        />
+      ) : null}
       {EffectComponent()}
       {ItemComponent()}
       {notifComponent()}
