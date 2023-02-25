@@ -144,7 +144,7 @@ export default function Home({navigation}) {
       actualEffects?.length ? (
         <ActualEffect
           actualEffects={actualEffects}
-          setActualEffects={setActualEffects}
+          setActualEffects={(effect) => setActualEffects(cur => cur.filter(e => e.id !== effect.id))}
         />
       ) : null,
     [actualEffects],

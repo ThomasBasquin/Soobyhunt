@@ -25,7 +25,7 @@ export default function ActualEffect({actualEffects, setActualEffects}) {
       {actualEffects.map((effect, index) => {
         const endAt = DateTime.fromISO(effect.endAt);
         if (endAt.valueOf() <= now.valueOf()) {
-          setActualEffects(cur => cur.filter(e => e.id !== effect.id));
+          setActualEffects(effect);
         }
         const timeLeft = endAt.diff(now, ['seconds']).toObject();
         const picture=findPiture(effect.type);
