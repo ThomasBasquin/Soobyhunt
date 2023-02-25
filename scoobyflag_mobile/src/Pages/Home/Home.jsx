@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
-import {View} from 'react-native';
+import {View, Alert} from 'react-native';
 import {DateTime} from 'luxon';
 import MapView, {PROVIDER_DEFAULT, UrlTile} from 'react-native-maps';
 import {
@@ -14,11 +14,12 @@ import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
-import {ITEMS, MAP_COORDINATE, MARKERS} from '../../Constantes/mocked';
-import Marker from './mapComponents/Marker';
+import {ITEMS, MAP_COORDINATE, USER_MARKERS, VILAIN_MARKERS} from '../../Constantes/mocked';
 import Polygon from './mapComponents/Polygon';
 import Circle from './mapComponents/Circle';
 import VilainModal from './VilainModal';
+import VilainMarker from './mapComponents/VilainMarker';
+import UserMarker from './mapComponents/UserMarkers';
 
 export default function Home({navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -32,7 +33,8 @@ export default function Home({navigation}) {
     longitudeDelta: 0.0421,
   });
   const [mapCoordinates, setMapCoordinates] = useState([]);
-  const [markers, setMarkers] = useState([]);
+  const [vilainMarkers, setVilainMarkers] = useState([]);
+  const [userMarkers, setUserMarkers] = useState(USER_MARKERS);
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [items, setItems] = useState(ITEMS);
@@ -65,8 +67,8 @@ export default function Home({navigation}) {
       latitude: e.coordinate.latitude,
       longitude: e.coordinate.longitude,
     });
-    if (!markers.length || !mapCoordinates.length) return;
-    const nearMarker = markers.filter(marker =>
+    if (!vilainMarkers.length || !mapCoordinates.length) return;
+    const nearMarker = vilainMarkers.filter(marker =>
       pointInCircle(e.latitude, e.longitude, {
         circleLat: marker.coordinates.latitude,
         circleLng: marker.coordinates.longitude,
@@ -102,15 +104,19 @@ export default function Home({navigation}) {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
         });
-        setMarkers(MARKERS(pos));
+        setVilainMarkers(VILAIN_MARKERS(pos));
       },
-      error => Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+      () => Alert.alert('Pour que l\'application fonctionne correctement, veuillez activer la localisation'),
       {enableHighAccuracy: true},
     );
   }
 
-  const renderMarkers = useCallback(() => {
-    return markers
+  const renderUserMarkers = useCallback(()=>{
+    return userMarkers.map((user,i) => <UserMarker key={i} user={user} /> );
+  })
+
+  const renderVilainMarkers = useCallback(() => {
+    return vilainMarkers
       .filter(marker =>
         pointInCircle(
           marker.coordinates.latitude,
@@ -122,14 +128,15 @@ export default function Home({navigation}) {
           },
         ),
       )
-      .map((marker, i) => (
-        <Marker
-          marker={marker}
+      .map((vilain, i) => (
+        <VilainMarker
+          vilain={vilain}
           openModal={vilain => setStateVilainModal({isOpen: true, vilain})}
           key={i}
         />
       ));
-  }, [markers, currentPosition]);
+  }, [vilainMarkers, currentPosition]);
+  
 
   const visibilityZone = useCallback(() => {
     return <Circle currentPosition={currentPosition} />;
@@ -168,7 +175,7 @@ export default function Home({navigation}) {
 
   return region.longitude &&
     region.latitude &&
-    markers.length &&
+    vilainMarkers.length &&
     mapCoordinates.length ? (
     <View>
       {stateVilainModal.isOpen ? (
@@ -204,7 +211,8 @@ export default function Home({navigation}) {
         />
         {gameZone()}
         {visibilityZone()}
-        {renderMarkers()}
+        {renderVilainMarkers()}
+        {renderUserMarkers()}
       </MapView>
     </View>
   ) : null;

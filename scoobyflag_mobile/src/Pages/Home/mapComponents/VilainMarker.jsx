@@ -2,14 +2,14 @@ import React from "react";
 import {Marker as MarkerComponent} from 'react-native-maps';
 import {Image} from 'react-native';
 
-function Marker({marker, openModal}){
+function VilainMarker({vilain, openModal}){
 
     return (
         <MarkerComponent
-        onPress={() => openModal(marker)}
+        onPress={() => openModal(vilain)}
           tappable={false}
           zIndex={2}
-          coordinate={marker.coordinates}>
+          coordinate={vilain.coordinates}>
           <Image
             source={require('./../../../Assets/maps/VILAIN.png')}
             style={{width: 50, height: 70}}
@@ -19,4 +19,4 @@ function Marker({marker, openModal}){
     )
 }
 
-export default Marker;
+export default VilainMarker;

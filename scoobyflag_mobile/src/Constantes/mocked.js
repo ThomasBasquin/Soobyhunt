@@ -17,7 +17,34 @@ export const MAP_COORDINATE = [
   },
 ];
 
-export function MARKERS(pos){
+export const USER_MARKERS =[
+  {
+    name: 'Roméo',
+    equip: 'MOUGOU',
+    coordinates: {
+      latitude: 48.4525,
+      longitude: 7.6822099,
+    },
+  },
+  {
+    name: 'Lucas',
+    equip: 'MOUGOU',
+    coordinates: {
+      latitude: 48.4925361,
+      longitude: 7.6826054,
+    },
+  },
+  {
+    name: 'Gaetan',
+    equip: 'MOUGOU',
+    coordinates: {
+      latitude: 48.4925661,
+      longitude: 7.6842100,
+    },
+  },
+];
+
+export function VILAIN_MARKERS(pos){
   
   return [
   {
