@@ -7,7 +7,7 @@ export default function VilainModal({state, onRequestClose}) {
       <BasicModal
         visible={state.isOpen}
         onRequestClose={onRequestClose}
-        title={state.vilain.title}
+        title={"Capturer un vilain"}
         onSubmit={() => console.log('submit')}>
         <Text style={{marginVertical: 10, fontSize: 20}}>
           Voulez-vous capturé Willy ?

@@ -9,7 +9,7 @@ function VilainMarker({vilain, openModal}){
         onPress={() => openModal(vilain)}
           tappable={false}
           zIndex={2}
-          coordinate={vilain.coordinates}>
+          coordinate={{latitude:vilain.latitude,longitude:vilain.longitude}}>
           <Image
             source={require('./../../../Assets/maps/VILAIN.png')}
             style={{width: 50, height: 70}}

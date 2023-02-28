@@ -14,14 +14,14 @@ import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
-import {ITEMS, MAP_COORDINATE, USER_MARKERS, VILAIN_MARKERS} from '../../Constantes/mocked';
 import Polygon from './mapComponents/Polygon';
 import Circle from './mapComponents/Circle';
 import VilainModal from './VilainModal';
 import VilainMarker from './mapComponents/VilainMarker';
 import UserMarker from './mapComponents/UserMarkers';
+import ItemMarker from './mapComponents/ItemMarker';
 
-export default function Home({navigation}) {
+export default function Home({route}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
@@ -32,22 +32,33 @@ export default function Home({navigation}) {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-  const [mapCoordinates, setMapCoordinates] = useState([]);
+  const [mapCoordinates, setMapCoordinates] = useState();
   const [vilainMarkers, setVilainMarkers] = useState([]);
-  const [userMarkers, setUserMarkers] = useState(USER_MARKERS);
+  const [itemMarkers, setItemMarkers] = useState([]);
+  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
-  const [items, setItems] = useState(ITEMS);
+  const [itemsUser, setItemsUser] = useState([]);
   const [actualEffects, setActualEffects] = useState(null);
   const [stateVilainModal, setStateVilainModal] = useState({
     isOpen: false,
     vilain: null,
   });
+  const [stateItemModal, setStateItemModal] = useState({
+    isOpen: false,
+    item: null,
+  });
 
   useEffect(() => {
+    if (!route.params.gameConfiguration)
+      Alert.alert('Une configuration est requise');
     refreshActualEffect();
     // reset();
-    setMapCoordinates(MAP_COORDINATE);
+    const config = route.params.gameConfiguration;
+    setMapCoordinates(config.authorizedZone);
+    setVilainMarkers(config.mechants.map(m => ({...m, equip: null})));
+    setVilainMarkers(config.mechants.map(m => ({...m, equip: null})));
+    setItemMarkers(config.items);
     getCurrentPosition(true);
   }, []);
 
@@ -67,20 +78,28 @@ export default function Home({navigation}) {
       latitude: e.coordinate.latitude,
       longitude: e.coordinate.longitude,
     });
-    if (!vilainMarkers.length || !mapCoordinates.length) return;
-    const nearMarker = vilainMarkers.filter(marker =>
-      pointInCircle(e.latitude, e.longitude, {
-        circleLat: marker.coordinates.latitude,
-        circleLng: marker.coordinates.longitude,
-        circleRadius: GAME_CONFIG.visibilityRange.flag / 1000,
+    if (!vilainMarkers.length && !itemMarkers.length && !mapCoordinates.length)
+      return;
+    const nearVilain = vilainMarkers.filter(marker =>
+      pointInCircle(marker.latitude, marker.longitude, {
+        circleLat: e.coordinate.latitude,
+        circleLng: e.coordinate.longitude,
+        circleRadius: GAME_CONFIG.visibilityRange.nearRangeFlag / 1000,
       }),
     );
-    const outOfMap = pointInPolygon(e, mapCoordinates);
+    const nearItem = itemMarkers.filter(marker =>
+      pointInCircle(marker.latitude, marker.longitude, {
+        circleLat: e.coordinate.latitude,
+        circleLng: e.coordinate.longitude,
+        circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
+      }),
+    );
+    const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
 
     if (!outOfMap) {
       setNotifInApp(NOTIF_IN_MAP.outOfMap);
     } else {
-      if (nearMarker.length) {
+      if ([...nearVilain,...nearItem].length) {
         setNotifInApp(NOTIF_IN_MAP.nearAObject);
       } else {
         setNotifInApp(null);
@@ -104,29 +123,27 @@ export default function Home({navigation}) {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
         });
-        setVilainMarkers(VILAIN_MARKERS(pos));
       },
-      () => Alert.alert('Pour que l\'application fonctionne correctement, veuillez activer la localisation'),
+      () =>
+        Alert.alert(
+          "Pour que l'application fonctionne correctement, veuillez activer la localisation",
+        ),
       {enableHighAccuracy: true},
     );
   }
 
-  const renderUserMarkers = useCallback(()=>{
-    return userMarkers.map((user,i) => <UserMarker key={i} user={user} /> );
-  })
+  const renderUserMarkers = useCallback(() => {
+    return userMarkers.map((user, i) => <UserMarker key={i} user={user} />);
+  });
 
   const renderVilainMarkers = useCallback(() => {
     return vilainMarkers
       .filter(marker =>
-        pointInCircle(
-          marker.coordinates.latitude,
-          marker.coordinates.longitude,
-          {
-            circleLat: currentPosition.latitude,
-            circleLng: currentPosition.longitude,
-            circleRadius: GAME_CONFIG.visibilityRange.user / 1000,
-          },
-        ),
+        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
+          circleLat: marker.latitude,
+          circleLng: marker.longitude,
+          circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeFlag / 1000,
+        }),
       )
       .map((vilain, i) => (
         <VilainMarker
@@ -136,7 +153,24 @@ export default function Home({navigation}) {
         />
       ));
   }, [vilainMarkers, currentPosition]);
-  
+
+  const renderItemMarkers = useCallback(() => {
+    return itemMarkers
+      .filter(marker =>
+        pointInCircle(currentPosition.latitude,currentPosition.longitude, {
+          circleLat: marker.latitude,
+          circleLng:  marker.longitude,
+          circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
+        }),
+      )
+      .map((item, i) => (
+        <ItemMarker
+          item={item}
+          openModal={item => setStateItemModal({isOpen: true, item})}
+          key={i}
+        />
+      ));
+  }, [itemMarkers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
     return <Circle currentPosition={currentPosition} />;
@@ -151,7 +185,9 @@ export default function Home({navigation}) {
       actualEffects?.length ? (
         <ActualEffect
           actualEffects={actualEffects}
-          setActualEffects={(effect) => setActualEffects(cur => cur.filter(e => e.id !== effect.id))}
+          setActualEffects={effect =>
+            setActualEffects(cur => cur.filter(e => e.id !== effect.id))
+          }
         />
       ) : null,
     [actualEffects],
@@ -161,11 +197,11 @@ export default function Home({navigation}) {
     () => (
       <ItemLayout
         isMountedMap={isMountedMap}
-        items={items}
+        items={itemsUser}
         setEffect={setEffect}
       />
     ),
-    [isMountedMap, items],
+    [isMountedMap, itemsUser],
   );
 
   const notifComponent = useCallback(
@@ -210,7 +246,8 @@ export default function Home({navigation}) {
           shouldReplaceMapContent={true}
         />
         {gameZone()}
-        {visibilityZone()}
+        {/* {visibilityZone()} */}
+        {renderItemMarkers()}
         {renderVilainMarkers()}
         {renderUserMarkers()}
       </MapView>
