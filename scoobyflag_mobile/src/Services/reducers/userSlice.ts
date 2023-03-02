@@ -13,10 +13,7 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         setUser: (state, action: PayloadAction<IUser>) => {
-            state.username = action.payload.username;
-            state.team = action.payload.team;
-            state.latitude = action.payload.latitude;
-            state.longitude = action.payload.longitude;
+            return action.payload;
         },
     },
 });

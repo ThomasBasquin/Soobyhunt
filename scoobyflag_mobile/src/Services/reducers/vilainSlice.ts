@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import IVilain from "../../Constantes/interfaces/vilain";
 
-const initialState: IVilain[] = [];
+const initialState:IVilain[] = [];
 
 export const vilainSlice = createSlice({
-    name: "user",
+    name: "vilain",
     initialState,
     reducers: {
-        setVilain: (state, action: PayloadAction<IVilain[]>) => {
-            state = [{idMechant: 1, longitude: 7.735623243322919, latitude: 48.53043403291962}];
+        setVilains: (state, action: PayloadAction<IVilain[]>) => {
+            return action.payload;
         },
     },
 });
 
-export const { setVilain } = vilainSlice.actions;
+export const { setVilains } = vilainSlice.actions;
 
 export default vilainSlice.reducer;

@@ -26,6 +26,8 @@ import UserMarker from './mapComponents/UserMarkers';
 import ItemMarker from './mapComponents/ItemMarker';
 import ItemModal from './ItemModal';
 import useVilain from '../../Constantes/Hooks/useVilain';
+import useItem from '../../Constantes/Hooks/useItem';
+import usePlayer from '../../Constantes/Hooks/usePlayer';
 
 export default function Home({route}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -39,10 +41,9 @@ export default function Home({route}) {
     longitudeDelta: 0.0421,
   });
   const [mapCoordinates, setMapCoordinates] = useState();
-  // const [vilainMarkers, setVilainMarkers] = useVilain();
-  const [vilainMarkers, setVilainMarkers] = useState([]); //MERCURE SEND AND RETRIEVE
-  const [itemMarkers, setItemMarkers] = useState([]); //MERCURE SEND AND RETRIEVE
-  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS //MERCURE RETRIEVE
+  const [vilainMarkers, setVilainMarkers] = useVilain();//MERCURE SEND AND RETRIEVE
+  const [itemMarkers, setItemMarkers] = useItem([]); //MERCURE SEND AND RETRIEVE
+  const [userMarkers, setUserMarkers] = usePlayer([]); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [itemsUser, setItemsUser] = useState([]);
@@ -63,7 +64,6 @@ export default function Home({route}) {
     // reset();
     const config = route.params.gameConfiguration;
     setMapCoordinates(config.authorizedZone);
-    setVilainMarkers(config.mechants.map(m => ({...m, team: null})));
     setVilainMarkers(config.mechants.map(m => ({...m, team: null})));
     setItemMarkers(config.items);
     getCurrentPosition(true);

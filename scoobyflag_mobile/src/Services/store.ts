@@ -4,10 +4,14 @@ import { combineReducers } from "redux";
 import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, REHYDRATE } from "redux-persist";
 import userSlice from "./reducers/userSlice";
 import vilainSlice from "./reducers/vilainSlice";
+import itemSlice from "./reducers/itemSlice";
+import playerSlice from "./reducers/playerSlice";
 
 const reducers = combineReducers({
   userSlice,
   vilainSlice,
+  itemSlice,
+  playerSlice,
 });
 
 const persistConfig = {

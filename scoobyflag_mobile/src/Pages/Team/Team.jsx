@@ -1,29 +1,9 @@
 import {useMemo, useEffect} from 'react';
 import {TouchableOpacity, Text, View} from 'react-native';
 import COLORS from '../../Constantes/colors';
-import useUser from '../../Constantes/Hooks/useUser';
-import useVilain from '../../Constantes/Hooks/useVilain';
+import usePlayer from '../../Constantes/Hooks/usePlayer';
 
 function Team({navigation}) {
-
-  const [user,setUser] = useUser();
-  const [vilain,setVilain] = useVilain();
-
-  
-  function changeUser(){
-    setUser({latitude:0,longitude:0,username:"tg",team:"gros3"});
-  }
-
-  function changeVilain(){
-    setVilain([{idMechant: 1, longitude: 7.735623243322919, latitude: 48.53043403291962}]);
-  }
-
-  console.log(vilain);
-
-  useEffect(() => {
-    changeVilain();
-  }, []);
-
   const gameConfiguration = useMemo(
     () => ({
       name: 'Sprint 1',
@@ -109,7 +89,6 @@ function Team({navigation}) {
           Charger la configuration
         </Text>
       </TouchableOpacity>
-      <Text>{user.team}</Text>
     </View>
   );
 }
