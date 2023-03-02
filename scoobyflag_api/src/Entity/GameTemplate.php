@@ -21,9 +21,11 @@ class GameTemplate
     private ?string $name = null;
     
     #[ORM\ManyToOne(inversedBy: 'gameTemplates')]
+    #[Groups(['GameTemplate:read'])]
     private ?User $gameMaster = null;
     
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameLocation::class)]
+    #[Groups(['GameTemplate:read'])]
     private Collection $gameLocations;
     
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameZone::class)]
@@ -40,15 +42,22 @@ class GameTemplate
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Item::class)]
     #[Groups(['GameTemplate:read'])]
     private Collection $items;
-
+    
     #[ORM\Column]
+    #[Groups(['GameTemplate:read'])]
     private ?int $limitTime = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(['GameTemplate:read'])]
     private ?string $mode = null;
-
+    
     #[ORM\Column]
+    #[Groups(['GameTemplate:read'])]
     private ?bool $private = null;
+    
+    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Team::class)]
+    #[Groups(['GameTemplate:read'])]
+    private Collection $teams;
 
     public function __construct()
     {
@@ -58,6 +67,7 @@ class GameTemplate
         $this->objectives = new ArrayCollection();
         $this->games = new ArrayCollection();
         $this->items = new ArrayCollection();
+        $this->teams = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -271,6 +281,36 @@ class GameTemplate
     public function setPrivate(bool $private): self
     {
         $this->private = $private;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Team>
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): self
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams->add($team);
+            $team->setGameTemplate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): self
+    {
+        if ($this->teams->removeElement($team)) {
+            // set the owning side to null (unless already changed)
+            if ($team->getGameTemplate() === $this) {
+                $team->setGameTemplate(null);
+            }
+        }
 
         return $this;
     }

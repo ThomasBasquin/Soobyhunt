@@ -11,6 +11,7 @@ use App\Entity\GameZone;
 use App\Entity\Item;
 use App\Entity\Location;
 use App\Entity\Objective;
+use App\Entity\Team;
 use App\Repository\ItemTypeRepository;
 use Symfony\Component\PasswordHasher\Hasher\GamePasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -78,13 +79,21 @@ class GameService
         // création des items
         foreach ($data['items'] as $item) {
             $newItem = new Item();
-            $this->itemTypeRepository->findOneBy(['id' => $item['idItemType']]);
             $newItem->setName($item['name']);
-            $newItem->setQuantity($item['quantity']);
+            $newItem->setQuantity($item['quantite']);
             $newItem->setLatitude($item['latitude']);
             $newItem->setLongitude($item['longitude']);
             $newItem->setGameTemplate($gameTemplate);
             $this->em->persist($newItem);
+        }
+        
+        // Création des teams
+        foreach ($data['teams'] as $team) {
+            $newTeam = new Team();
+            $newTeam->setName($team['name']);
+            $newTeam->setPlayerMax($team['nbJoueur']);
+            $newTeam->setGameTemplate($gameTemplate);
+            $this->em->persist($newTeam);
         }
 
         // création des objectifs
