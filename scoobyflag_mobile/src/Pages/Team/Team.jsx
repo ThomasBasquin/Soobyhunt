@@ -1,5 +1,5 @@
 import {useMemo, useEffect} from 'react';
-import {TouchableOpacity, Text, View} from 'react-native';
+import {TouchableOpacity, Text, View, Image} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 
@@ -67,6 +67,7 @@ function Team({navigation}) {
         width: '100%',
         flex: 1,
       }}>
+        <Image source={require("../../Assets/LOGO.png")} style={{width:150,height:150,marginVertical:50}} />
       <TouchableOpacity
         style={{
           marginVertical: '1%',

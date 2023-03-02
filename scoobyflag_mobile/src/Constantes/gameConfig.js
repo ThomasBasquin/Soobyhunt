@@ -3,9 +3,9 @@ const GAME_CONFIG={
         //Visibilité en mètre
         nearRangeFlag: 50,
         test:25,
-        visibilityRangeFlag: 25,
+        visibilityRangeFlag: 30,
         nearRangeItem: 50,
-        visibilityRangeItem: 25,
+        visibilityRangeItem: 30,
       },
       map:{
         refreshUserLocation:10000,
