@@ -217,7 +217,10 @@ export default function Map() {
             }
             else{
                 var tabTemp = items;
-                tabTemp.push(e.layer.getLatLng());
+                tabTemp.push({
+                    "name":"loupe",
+                    "coordonnees":e.layer.getLatLng()
+                });
                 setItems(tabTemp);
             }
         }

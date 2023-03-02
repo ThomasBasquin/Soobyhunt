@@ -40,7 +40,7 @@ class GameService
     {
         $gameTemplate = new GameTemplate();
         $gameTemplate->setName($data['name']);
-        $gameTemplate->setMode($data['modeDejeu']);
+        $gameTemplate->setMode($data['modeDeJeu']);
         $gameTemplate->setLimitTime($data['limitTime']);
         $gameTemplate->setPrivate($data['private']);
 
@@ -75,14 +75,12 @@ class GameService
                 $this->em->persist($unauthorizedZone);
             }
         }
-        
         // création des items
         foreach ($data['items'] as $item) {
             $newItem = new Item();
             $newItem->setName($item['name']);
-            $newItem->setQuantity($item['quantite']);
-            $newItem->setLatitude($item['lat']);
-            $newItem->setLongitude($item['lng']);
+            $newItem->setLatitude($item['coordonnees']['lat']);
+            $newItem->setLongitude($item['coordonnees']['lng']);
             $newItem->setGameTemplate($gameTemplate);
             $this->em->persist($newItem);
         }
@@ -90,7 +88,7 @@ class GameService
         // Création des teams
         foreach ($data['teams'] as $team) {
             $newTeam = new Team();
-            $newTeam->setName($team['name']);
+            $newTeam->setName($team['nom']);
             $newTeam->setPlayerMax($team['nbJoueur']);
             $newTeam->setGameTemplate($gameTemplate);
             $this->em->persist($newTeam);

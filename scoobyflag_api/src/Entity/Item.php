@@ -32,12 +32,11 @@ class Item
     #[ORM\Column(length: 255)]
     #[Groups(["Item:read"])]
     private ?string $latitude = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(["Item:read"])]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?int $quantity = null;
     
     public function __construct()
     {
@@ -122,19 +121,6 @@ class Item
 
         return $this;
     }
-
-    public function getQuantity(): ?int
-    {
-        return $this->quantity;
-    }
-
-    public function setQuantity(int $quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
 
  
 }
