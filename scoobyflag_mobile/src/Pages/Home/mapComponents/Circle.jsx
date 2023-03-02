@@ -6,7 +6,7 @@ function Circle({currentPosition}){
     return (
         <CircleComponent
         center={currentPosition}
-        radius={GAME_CONFIG.visibilityRange.user}
+        radius={GAME_CONFIG.visibilityRange.test}
         strokeColor={'rgba(0, 255, 0,0.9)'}
         fillColor={'rgba(102, 255, 102,.3)'}
         zIndex={2}

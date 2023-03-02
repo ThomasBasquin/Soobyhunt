@@ -1,15 +1,14 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../Pages/Home/Home';
-import Signin from '../Pages/Signin/Signin';
-import Signup from '../Pages/Signup/Signup';
+import Team from '../Pages/Team/Team';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppRoutes() {
   return (
-    <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown:false}}>
+    <Stack.Navigator initialRouteName="Team" screenOptions={{headerShown:false}}>
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="Signin" component={Signin} />
+      <Stack.Screen name="Team" component={Team} />
     </Stack.Navigator>
   );
 }
