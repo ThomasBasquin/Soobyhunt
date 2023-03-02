@@ -27,7 +27,7 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
   ]);
 
   async function createGame() {
-  const response = await fetch("http://localhost:8000/game/create/template", {
+  const response = await fetch("https://127.0.0.1:8000/game/create/template", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,18 +42,30 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
       mechants: mechants,
       items: items,
       private: true, //A CHANGER
-      idCreator: 3 //??????????????????????????????????????????????????????????????????????
+      idCreator: 3 //
     }),
+  }).then((res)=> {
+    if(res.ok){
+      return res.json();
+    }
+  }).then((json)=> {
+
+    console.log(json['gameTemplate']['id']);
   });
   const data = await response.json();
-  console.log(data);
-
-  const response1 = await fetch("http://localhost:8000/game/create", {
+  
+  const response1 = await fetch("https://127.0.0.1:8000/game/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: data.gameTemplate.id,
+  }).then((res)=> {
+    if(res.ok){
+      return res.json();
+    }
+  }).then((json)=> {
+    console.log(json);
   });
 }
 
