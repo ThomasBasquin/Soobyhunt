@@ -362,5 +362,51 @@ const Mechants = ({
   );
 };
 const Items = () => {
-  return <div>cc</div>;
+  const [nbLoupe, setNbLoupe] = useState(1);
+  return <div>
+    <div
+        className="itemMDJ"
+        style={{ margin: 20, padding: 10, marginLeft: 0, cursor: "auto" }}
+      >
+        <img
+          src="loupe.png"
+          style={{ width: 140, height: 140, borderRadius: 30 }}
+        />
+        <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
+          <h2>Loupe</h2>
+          <p>
+             Augmente le rayon de détection
+          </p>
+          <p style={{ display: "flex", justifyContent: "space-around" }}>
+            <span
+              style={{
+                backgroundColor: "var(--violet)",
+                color: "var(--gris)",
+                padding: 5,
+                fontSize: 18,
+                borderRadius: 100,
+                cursor: "pointer",
+              }}
+              onClick={() => setNbLoupe(nbLoupe-1)}
+            >
+              -
+            </span>{" "}
+            <span style={{ padding: 10 }}>{nbLoupe} </span>
+            <span
+              style={{
+                backgroundColor: "var(--violet)",
+                color: "var(--gris)",
+                padding: 5,
+                fontSize: 18,
+                borderRadius: 100,
+                cursor: "pointer",
+              }}
+              onClick={() => setNbLoupe(nbLoupe+1)}
+            >
+              +
+            </span>
+          </p>
+        </div>
+      </div>
+  </div>;
 };
