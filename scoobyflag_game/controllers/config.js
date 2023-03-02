@@ -1,12 +1,12 @@
 const axios = require("axios");
-const jsonData = require("../assets/gameConfig.json");
 
 const get = async (req, res) => {
   try {
-    const response = await axios.get(
-      "http://127.0.0.1:8000/game/" + req.query.gameId
-    );
-    res.json(response.data);
+    const id = process.env.id;
+    const url = `http://host.docker.internal:8000/game/${id}`;
+    const response = await axios.get(url);
+    const config = response.data;
+    res.json(config);
   } catch (error) {
     console.error(error);
   }
