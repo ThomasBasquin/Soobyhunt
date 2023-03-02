@@ -6,6 +6,7 @@ use App\Repository\GameZoneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameZoneRepository::class)]
 class GameZone
@@ -13,15 +14,18 @@ class GameZone
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['GameZone:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'gameZones')]
     private ?GameTemplate $gameTemplate = null;
 
     #[ORM\OneToMany(mappedBy: 'gameZone', targetEntity: Location::class)]
+    #[Groups(['GameZone:read'])]
     private Collection $locations;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['GameZone:read'])]
     private ?string $type = null;
 
     public function __construct()

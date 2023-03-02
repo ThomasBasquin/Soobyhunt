@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import L from 'leaflet';
 import "../css/map.css";
 import "../css/config.css";
-import flag from "../assets/react.svg";
-import point from "../assets/vite.svg";
+import mechant1 from "../assets/mechant1.png";
+import loupe from "../assets/loupe.png";
 import pointInPolygon from "point-in-polygon";
 import Config from "./Config";
 import { EditControl } from 'react-leaflet-draw';
@@ -21,10 +21,15 @@ export default function Map() {
     const flagsRef = useRef([]);
     const pointsInterditRef = useRef([]);
     const [menuConfig, setMenuConfig] = useState(false);
+    
+    const [zoneJeu, setZoneJeu] = useState([]);
+    const [zonesInterdites, setZonesInterdites] = useState([]);
+    const [mechants, setMechants] = useState([]);
+    const [items, setItems] = useState([]);
 
-    var zoneJeu = pointsZone.map((point) => {
+    /*var zoneJeu = pointsZone.map((point) => {
         return [point.lat, point.lng]
-    })
+    })*/
 
     var zoneInterdite = pointsInterdit.map((point) => {
         return [point.lat, point.lng]
@@ -51,16 +56,16 @@ export default function Map() {
         }
     }
 
-    const flagIcon = new L.icon({
-        iconUrl: flag,
-        iconSize: [25, 25],
-        iconAnchor: [12.5, 12.5]
+    const mechant1Icon = new L.icon({
+        iconUrl: mechant1,
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
     })
 
-    const markerIcon = new L.icon({
-        iconUrl: point,
-        iconSize: [25, 25],
-        iconAnchor: [12.5, 12.5]
+    const loupeIcon = new L.icon({
+        iconUrl: loupe,
+        iconSize: [50, 50],
+        iconAnchor: [25, 25]
     })
 
     const changeMode = (mode) => {
@@ -192,8 +197,30 @@ export default function Map() {
         return null
     }
 
-    const createZoneInterdite = (e) => {
-        console.log(e);
+    const onCreated = (e) => {
+        if (e.layerType === 'polygon'){
+            if(e.layer.options.color=='red'){
+                var tabTemp = zonesInterdites;
+                tabTemp.push(e.layer.getLatLngs()[0]);
+                setZonesInterdites(tabTemp);
+            }
+            else{
+                setZoneJeu(e.layer.getLatLngs()[0]);
+            }
+        }
+        else{
+            console.log(e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png");
+            if(e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"){
+                var tabTemp = mechants;
+                tabTemp.push(e.layer.getLatLng());
+                setMechants(tabTemp);
+            }
+            else{
+                var tabTemp = items;
+                tabTemp.push(e.layer.getLatLng());
+                setItems(tabTemp);
+            }
+        }
     }
 
     return (status == null ? <>
@@ -201,7 +228,7 @@ export default function Map() {
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LayersControl position="topleft" >
+            {/*<LayersControl position="topleft" >
                 <LayersControl.Overlay checked name='Zone de jeu'>
                     <LayerGroup eventHandlers={layerListener}>
                         <Polygon pathOptions={{ color: 'purple' }} positions={zoneJeu} />
@@ -225,7 +252,7 @@ export default function Map() {
                         })}
                     </LayerGroup>
                 </LayersControl.Overlay>
-            </LayersControl>
+            </LayersControl>*/}
             <FeatureGroup>
                 <EditControl position='topleft'
                     draw={{
@@ -233,19 +260,25 @@ export default function Map() {
                         rectangle: false,
                         circlemarker: false,
                         circle: false,
+                        marker: {
+                            icon: mechant1Icon
+                        },
                         polygon: true,
                     }}
                     edit={{
                         remove: false,
                         edit: false
-                    }}/>
+                    }}
+                    onCreated={ e => onCreated(e)}/>
                 <EditControl position='topleft'
                     draw={{
                         polyline: false,
                         rectangle: false,
                         circlemarker: false,
                         circle: false,
-                        marker: false,
+                        marker: {
+                            icon: loupeIcon
+                        },
                         polygon: {
                             shapeOptions: {
                                 guidelineDistance: 10,
@@ -253,8 +286,7 @@ export default function Map() {
                                 weight: 3
                             }
                         },
-                    }}
-                    onCreated={ e => createZoneInterdite(e)} />
+                    }}/>
             </FeatureGroup>
             <ClickController />
         </MapContainer>
@@ -265,7 +297,7 @@ export default function Map() {
             <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
                 </div>*/}
         <img onClick={() => clickBtnConfig()} className='btnConfig' src="settings.svg" alt="" />
-        <Config />
+        <Config zoneJeu={zoneJeu} zonesInterdites={zonesInterdites} mechants={mechants} items={items}/>
     </> : <h1>{status}</h1>)
 }
 

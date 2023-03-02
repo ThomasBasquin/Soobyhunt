@@ -32,6 +32,7 @@ class UserService
     {
         $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
         $user->setPassword($hashedPassword);
+        $this->save($user);
     }
 
     public function save(User $user){

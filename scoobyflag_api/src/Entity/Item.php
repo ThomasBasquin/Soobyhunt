@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
@@ -17,16 +18,33 @@ class Item
     private ?GameTemplate $gameTemplate = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["Item:read"])]
     private ?int $visionRange ;
+    
+    #[ORM\Column]
+    #[Groups(["Item:read"])]
+    private ?int $activeRange = null;
+    
+    #[ORM\Column(length: 255)]
+    #[Groups(["Item:read"])]
+    private ?string $longitude = null;
+    
+    #[ORM\Column(length: 255)]
+    #[Groups(["Item:read"])]
+    private ?string $latitude = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
     #[ORM\Column]
-    private ?int $activeRange = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $longitude = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $latitude = null;
+    private ?int $quantity = null;
+    
+    public function __construct()
+    {
+        
+        $this->visionRange = 10;
+        $this->activeRange = 10;
+    }
 
     public function getId(): ?int
     {
@@ -92,6 +110,31 @@ class Item
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): self
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
 
  
 }

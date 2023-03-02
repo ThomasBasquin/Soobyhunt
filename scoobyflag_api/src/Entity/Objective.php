@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ObjectiveRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ObjectiveRepository::class)]
 class Objective
@@ -11,21 +12,26 @@ class Objective
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["Objective:read"])]
     private ?int $id = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'objectives')]
     private ?GameTemplate $gameTemplate = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(["Objective:read"])]
     private ?string $latitude = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(["Objective:read"])]
     private ?string $longitude = null;
-
+    
     #[ORM\Column]
+    #[Groups(["Objective:read"])]
     private ?int $visionRange = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(["Objective:read"])]
     private ?int $activeRange = null;
 
     public function __construct()
