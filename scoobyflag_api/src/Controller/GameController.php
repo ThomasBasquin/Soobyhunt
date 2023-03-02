@@ -21,23 +21,30 @@ class GameController extends AbstractController
         $this->gameService = $gameService;
     }
 
-    #[Route('/create/template', name: 'create_template', methods: 'POST')]
-    public function create(Request $request)
-    {
-        $data = json_decode($request->getContent(), true);
-        $this->gameService->createTemplate($data);
-        dump($data);
-        return $this->json(json_encode($data));
-    }
-
     #[Route('/create', name: 'create', methods: 'POST')]
-    public function createGame(Request $request)
-    {
-        $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $process = new Process([ 'docker' , 'run' , 'totomadne/game-server' ]);
-        $process->run();
-        
-        return $response;
-    }
+        public function createGame(Request $request)
+            {
+                $response = new JsonResponse();
+                $response->headers->set('Access-Control-Allow-Origin', '*');
+
+                // Générer un port aléatoire
+                $port = rand(1024, 65535);
+
+                // Exécuter la commande Docker avec le port aléatoire
+                $process = new Process(['docker', 'run', '-p', "$port:$port", 'totomadne/game-server']);
+                $process->run();
+
+                // Récupérer l'adresse IP du serveur
+                $containerId = trim($process->getOutput());
+                $ipAddress = exec("docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerId");
+
+                // Retourner l'adresse IP et le port attribué
+                $responseData = [
+                    'ip' => $ipAddress,
+                    'port' => $port
+                ];
+                $response->setData($responseData);
+
+                return $response;
+            }
 }
