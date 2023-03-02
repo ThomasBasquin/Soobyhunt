@@ -6,6 +6,7 @@ use App\Repository\GameTemplateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameTemplateRepository::class)]
 class GameTemplate
@@ -16,28 +17,42 @@ class GameTemplate
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['GameTemplate:read'])]
     private ?string $name = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'gameTemplates')]
     private ?User $gameMaster = null;
-
+    
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameLocation::class)]
     private Collection $gameLocations;
-
+    
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameZone::class)]
+    #[Groups(['GameTemplate:read'])]
     private Collection $gameZones;
-
+    
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Objective::class)]
+    #[Groups(['GameTemplate:read'])]
     private Collection $objectives;
-
+    
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Game::class)]
     private Collection $games;
-
+    
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Item::class)]
+    #[Groups(['GameTemplate:read'])]
     private Collection $items;
+
+    #[ORM\Column]
+    private ?int $limitTime = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $mode = null;
+
+    #[ORM\Column]
+    private ?bool $private = null;
 
     public function __construct()
     {
+    
         $this->gameLocations = new ArrayCollection();
         $this->gameZones = new ArrayCollection();
         $this->objectives = new ArrayCollection();
@@ -220,6 +235,42 @@ class GameTemplate
                 $item->setGameTemplate(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLimitTime(): ?int
+    {
+        return $this->limitTime;
+    }
+
+    public function setLimitTime(int $limitTime): self
+    {
+        $this->limitTime = $limitTime;
+
+        return $this;
+    }
+
+    public function getMode(): ?string
+    {
+        return $this->mode;
+    }
+
+    public function setMode(string $mode): self
+    {
+        $this->mode = $mode;
+
+        return $this;
+    }
+
+    public function isPrivate(): ?bool
+    {
+        return $this->private;
+    }
+
+    public function setPrivate(bool $private): self
+    {
+        $this->private = $private;
 
         return $this;
     }

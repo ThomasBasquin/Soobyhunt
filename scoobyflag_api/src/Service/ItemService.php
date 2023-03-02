@@ -44,6 +44,6 @@ class ItemService
     public function save(Item $item)
     {
         $this->em->persist($item);
-        $this->em->flush($item);
+        $this->em->flush();
     }
 }

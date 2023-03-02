@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\GameTemplate;
 use App\Service\GameService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -44,4 +45,22 @@ class GameController extends AbstractController
         echo $process->getOutput();
         return $this->json(json_encode($options));
     }
+
+    #[Route('/{gameTemplate}', name: 'get_template', methods: 'GET')]
+    public function get(GameTemplate $gameTemplate)
+    {
+        return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read"]]);
+    }
+
+    #[Route('/create/template', name: 'create_template', methods: 'POST')]
+    public function create(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+        dump($data);
+        $gameTemplate = $this->gameService->createTemplate($data);
+        // return $this->json($data);
+        dump($gameTemplate);
+        return $this->json(['gameTemplate' => $gameTemplate, 'items' => $gameTemplate->getItems(), 'objectives' => $gameTemplate->getObjectives(), 'gameZone' => $gameTemplate->getGameZones()], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read"]]);
+    }
+
 }
