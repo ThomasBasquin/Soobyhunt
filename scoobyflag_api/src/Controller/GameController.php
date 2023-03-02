@@ -21,7 +21,6 @@ class GameController extends AbstractController
     {
         $this->gameService = $gameService;
     }
-
     #[Route('/create', name: 'create', methods: 'POST')]
     public function createGame(Request $request)
     {
@@ -30,9 +29,10 @@ class GameController extends AbstractController
 
         // Générer un port aléatoire
         $port = rand(1024, 65535);
+        $gameServerPort = 1650;
 
         // Exécuter la commande Docker avec le port aléatoire
-        $process = new Process(['docker', 'run', '-p', "$port:$port", 'totomadne/game-server']);
+        $process = new Process(['docker', 'run', '-p', "$port:$gameServerPort", 'totomadne/game-server']);
         $process->run();
 
         // Récupérer l'adresse IP du serveur
@@ -40,13 +40,10 @@ class GameController extends AbstractController
         $ipAddress = exec("docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerId");
 
         // Retourner l'adresse IP et le port attribué
-        $responseData = [
+        return $this->json([
             'ip' => $ipAddress,
             'port' => $port
-        ];
-        $response->setData($responseData);
-
-        return $response;
+        ]);
     }
 
 

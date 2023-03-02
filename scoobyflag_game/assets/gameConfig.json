@@ -1,0 +1,23 @@
+{
+  "name": "Sprint 1",
+  "modeDejeu": "TIME",
+  "limitTime": 600,
+  "teams": [
+    { "name": "Team 1", "nbJoueur": 4 },
+    { "name": "Team 2", "nbJoueur": 4 }
+  ],
+  "authorizedZone": [
+    { "lng": 7.7342370696461815, "lat": 48.53039720700373 },
+    { "lng": 7.739077538193167, "lat": 48.53086599339388 },
+    { "lng": 7.735364007999698, "lat": 48.528436780531386 },
+    { "lng": 7.739345856848781, "lat": 48.52830892399476 }
+  ],
+  "unauthorizedZone": [],
+  "mechants": [
+    { "idMechant": 1, "lng": 48.5298, "lat": 7.736889 },
+    { "idMechant": 2, "lng": 48.529857, "lat": 7.737983 }
+  ],
+  "items": [{ "idItem": 1, "quantite": 3, "lng": 48.529949, "lat": 7.735344 }],
+  "private": true,
+  "idCreator": 3
+}
