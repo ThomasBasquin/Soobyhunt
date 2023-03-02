@@ -40,7 +40,7 @@ class GameService
     {
         $gameTemplate = new GameTemplate();
         $gameTemplate->setName($data['name']);
-        $gameTemplate->setMode($data['modeDejeu']);
+        $gameTemplate->setMode($data['modeDeJeu']);
         $gameTemplate->setLimitTime($data['limitTime']);
         $gameTemplate->setPrivate($data['private']);
 
@@ -54,8 +54,8 @@ class GameService
         // création de la zone de jeu
         foreach ($data['authorizedZone'] as $location) {
             $newGameLocation = new Location();
-            $newGameLocation->setLatitude($location['latitude']);
-            $newGameLocation->setLongitude($location['longitude']);
+            $newGameLocation->setLatitude($location['lat']);
+            $newGameLocation->setLongitude($location['lng']);
             $newGameLocation->setGameZone($gameZone);
             $this->em->persist($newGameLocation);
         }
@@ -69,20 +69,18 @@ class GameService
             foreach ($unauthorizedZones as $unauthorizedZone) {
                 
                 $unauthorizedZone = new Location();
-                $unauthorizedZone->setLatitude($location['latitude']);
-                $unauthorizedZone->setLongitude($location['longitude']);
+                $unauthorizedZone->setLatitude($location['lat']);
+                $unauthorizedZone->setLongitude($location['lng']);
                 $unauthorizedZone->setGameZone($gameUnauthorizedZone);
                 $this->em->persist($unauthorizedZone);
             }
         }
-        
         // création des items
         foreach ($data['items'] as $item) {
             $newItem = new Item();
             $newItem->setName($item['name']);
-            $newItem->setQuantity($item['quantite']);
-            $newItem->setLatitude($item['latitude']);
-            $newItem->setLongitude($item['longitude']);
+            $newItem->setLatitude($item['coordonnees']['lat']);
+            $newItem->setLongitude($item['coordonnees']['lng']);
             $newItem->setGameTemplate($gameTemplate);
             $this->em->persist($newItem);
         }
@@ -90,7 +88,7 @@ class GameService
         // Création des teams
         foreach ($data['teams'] as $team) {
             $newTeam = new Team();
-            $newTeam->setName($team['name']);
+            $newTeam->setName($team['nom']);
             $newTeam->setPlayerMax($team['nbJoueur']);
             $newTeam->setGameTemplate($gameTemplate);
             $this->em->persist($newTeam);
@@ -99,8 +97,8 @@ class GameService
         // création des objectifs
         foreach ($data['mechants'] as $objective) {
             $newObjective = new Objective();
-            $newObjective->setLatitude($objective['latitude']);
-            $newObjective->setLongitude($objective['longitude']);
+            $newObjective->setLatitude($objective['lat']);
+            $newObjective->setLongitude($objective['lng']);
             $newObjective->setGameTemplate($gameTemplate);
             $this->em->persist($newObjective);
         }
