@@ -38,29 +38,12 @@ class ItemTypeRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findName()
+    {
+        $qb = $this->createQueryBuilder('i');
 
-//    /**
-//     * @return ItemType[] Returns an array of ItemType objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?ItemType
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $qb->select('i.name as name')
+            ->getQuery()
+            ->getResult();;
+    }
 }

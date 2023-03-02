@@ -1,10 +1,7 @@
-module.exports = {
-  config: () => {
-    console.log("config");
+const jsonData = require("../assets/gameConfig.json");
 
-    return {
-      status: 200,
-      message: "done",
-    };
+module.exports = {
+  get: (req, res) => {
+    res.json(jsonData);
   },
 };

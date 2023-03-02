@@ -1,9 +1,5 @@
 const config = require("../controllers/config");
 
-module.exports = [
-  {
-    method: "get",
-    url: "/config",
-    func: config.config,
-  },
-];
+module.exports = (app) => {
+  app.get("/config", config.get);
+};
