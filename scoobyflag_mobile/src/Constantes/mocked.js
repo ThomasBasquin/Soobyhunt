@@ -20,7 +20,7 @@ export const MAP_COORDINATE = [
 export const USER_MARKERS =[
   {
     name: 'Roméo',
-    equip: 'MOUGOU',
+    team: 'MOUGOU',
     coordinates: {
       latitude: 48.4525,
       longitude: 7.6822099,
@@ -28,7 +28,7 @@ export const USER_MARKERS =[
   },
   {
     name: 'Lucas',
-    equip: 'MOUGOU',
+    team: 'MOUGOU',
     coordinates: {
       latitude: 48.4925361,
       longitude: 7.6826054,
@@ -36,7 +36,7 @@ export const USER_MARKERS =[
   },
   {
     name: 'Gaetan',
-    equip: 'MOUGOU',
+    team: 'MOUGOU',
     coordinates: {
       latitude: 48.4925661,
       longitude: 7.6842100,
@@ -49,7 +49,7 @@ export function VILAIN_MARKERS(pos){
   return [
   {
     title: 'Willy',
-    equip: 'MOUGOU',
+    team: 'MOUGOU',
     coordinates: {
       latitude: pos.coords.latitude + 0.00001,
       longitude: pos.coords.longitude + 0.00001,
@@ -57,7 +57,7 @@ export function VILAIN_MARKERS(pos){
   },
   {
     title: 'Billy',
-    equip: null,
+    team: null,
     coordinates: {
       latitude: pos.coords.latitude + 0.003,
       longitude: pos.coords.longitude - 0.003,
@@ -65,7 +65,7 @@ export function VILAIN_MARKERS(pos){
   },
   {
     title: 'Slimane',
-    equip: 'Lolo',
+    team: 'Lolo',
     coordinates: {
       latitude: pos.coords.latitude - 0.001,
       longitude: pos.coords.longitude + 0.001,

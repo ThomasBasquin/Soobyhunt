@@ -3,7 +3,7 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
 import COLORS from '../../Constantes/colors';
 import GAME_CONFIG from '../../Constantes/gameConfig';
-import { findPiture } from '../../Constantes/utils';
+import { findInfoItem, findPiture } from '../../Constantes/utils';
 
 export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
@@ -15,9 +15,9 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           visible={itemModal.open}
           title={'Utiliser un objet'}
           onRequestClose={() => setItemModal({...itemModal, open: false})}
-          onSubmit={() => setEffect(itemModal.item.type, itemModal.item.time)}>
+          onSubmit={() => setEffect(itemModal.item)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
-            Voulez-vous vraiment utiliser {itemModal.item.slug} ?
+            Voulez-vous vraiment utiliser {findInfoItem(itemModal.item.name).slug} ?
           </Text>
         </BasicModal>
       ) : null}
@@ -42,10 +42,10 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
             fontSize: 20,
             fontWeight: '600',
             color: COLORS.primary,
-          }}>{`Mon sac à dos (${items.reduce((acc,i)=>acc+i.qte,0)}/${GAME_CONFIG.item.max}) :`}</Text>
+          }}>{`Mon sac à dos (${items.reduce((acc,i)=>acc+i.quantite,0)}/${GAME_CONFIG.item.max}) :`}</Text>
         <View style={{flexDirection: 'row'}}>
           {items.map((item, i) => {
-            const picture=findPiture(item.type);
+            const picture=findPiture(item.name);
             return (
               <TouchableOpacity
                 key={i}
@@ -60,7 +60,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
                     fontWeight: '900',
                     position: 'relative',
                     right: 10,
-                  }}>{`x${item.qte}`}</Text>
+                  }}>{`x${item.quantite}`}</Text>
               </TouchableOpacity>
             );
           })}

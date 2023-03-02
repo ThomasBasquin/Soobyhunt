@@ -10,7 +10,11 @@ import {
 } from '../../Constantes/effectUtils';
 import GAME_CONFIG from '../../Constantes/gameConfig';
 import {NOTIF_IN_MAP} from '../../Constantes/notif';
-import {pointInCircle, pointInPolygon} from '../../Constantes/utils';
+import {
+  findInfoItem,
+  pointInCircle,
+  pointInPolygon,
+} from '../../Constantes/utils';
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
@@ -20,12 +24,14 @@ import VilainModal from './VilainModal';
 import VilainMarker from './mapComponents/VilainMarker';
 import UserMarker from './mapComponents/UserMarkers';
 import ItemMarker from './mapComponents/ItemMarker';
+import ItemModal from './ItemModal';
+import useVilain from '../../Constantes/Hooks/useVilain';
 
 export default function Home({route}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
-  });
+  });//MERCURE SEND
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -33,9 +39,10 @@ export default function Home({route}) {
     longitudeDelta: 0.0421,
   });
   const [mapCoordinates, setMapCoordinates] = useState();
-  const [vilainMarkers, setVilainMarkers] = useState([]);
-  const [itemMarkers, setItemMarkers] = useState([]);
-  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS
+  // const [vilainMarkers, setVilainMarkers] = useVilain();
+  const [vilainMarkers, setVilainMarkers] = useState([]); //MERCURE SEND AND RETRIEVE
+  const [itemMarkers, setItemMarkers] = useState([]); //MERCURE SEND AND RETRIEVE
+  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [itemsUser, setItemsUser] = useState([]);
@@ -56,15 +63,25 @@ export default function Home({route}) {
     // reset();
     const config = route.params.gameConfiguration;
     setMapCoordinates(config.authorizedZone);
-    setVilainMarkers(config.mechants.map(m => ({...m, equip: null})));
-    setVilainMarkers(config.mechants.map(m => ({...m, equip: null})));
+    setVilainMarkers(config.mechants.map(m => ({...m, team: null})));
+    setVilainMarkers(config.mechants.map(m => ({...m, team: null})));
     setItemMarkers(config.items);
     getCurrentPosition(true);
   }, []);
 
-  function setEffect(type, time) {
+  function setEffect(item) {
+    if (item.quantite > 1) {
+      setItemsUser(
+        itemsUser.map(i =>
+          i.name == item.name ? {...i, quantite: i.quantite - 1} : i,
+        ),
+      );
+    } else {
+      setItemsUser(itemsUser.filter(i => i.name !== item.name));
+    }
+    const time = findInfoItem(item.name).time;
     const now = DateTime.now();
-    setEffectStorage(type, now, now.plus({seconds: time})).then(e =>
+    setEffectStorage(item.name, now, now.plus({seconds: time})).then(e =>
       setActualEffects(cur => [...cur, e]),
     );
   }
@@ -93,21 +110,19 @@ export default function Home({route}) {
         circleLng: e.coordinate.longitude,
         circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
       }),
-    );
+    ).filter(marker => marker.quantite);
     const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
 
     if (!outOfMap) {
       setNotifInApp(NOTIF_IN_MAP.outOfMap);
     } else {
-      if ([...nearVilain,...nearItem].length) {
+      if ([...nearVilain, ...nearItem].length) {
         setNotifInApp(NOTIF_IN_MAP.nearAObject);
       } else {
         setNotifInApp(null);
       }
     }
   }
-
-  useEffect(() => {}, [currentPosition]);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
@@ -157,12 +172,13 @@ export default function Home({route}) {
   const renderItemMarkers = useCallback(() => {
     return itemMarkers
       .filter(marker =>
-        pointInCircle(currentPosition.latitude,currentPosition.longitude, {
+        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
           circleLat: marker.latitude,
-          circleLng:  marker.longitude,
+          circleLng: marker.longitude,
           circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
         }),
       )
+      .filter(marker => marker.quantite > 0)
       .map((item, i) => (
         <ItemMarker
           item={item}
@@ -217,8 +233,41 @@ export default function Home({route}) {
       {stateVilainModal.isOpen ? (
         <VilainModal
           state={stateVilainModal}
+          onSubmit={(vilain) => setVilainMarkers(vilainMarkers.map(v => v.id==vilain.id ? {...v,team:"MOUGOU"} : v))}//TODO : Récupérer l'équipe du joueur
           onRequestClose={() =>
             setStateVilainModal({...stateVilainModal, isOpen: false})
+          }
+        />
+      ) : null}
+      {stateItemModal.isOpen ? (
+        <ItemModal
+          onSubmit={() => {
+            setItemMarkers(
+              itemMarkers.map(i =>
+                i.id == stateItemModal.item.id
+                  ? {...i, quantite: i.quantite - 1}
+                  : i,
+              ),
+            );
+            const indexItemUser = itemsUser.findIndex(
+              i => i.name == stateItemModal.item.name,
+            );
+            if (indexItemUser !== -1) {
+              setItemsUser(
+                itemsUser.map((i, index) =>
+                  index == indexItemUser ? {...i, quantite: i.quantite + 1} : i,
+                ),
+              );
+            } else {
+              setItemsUser([
+                ...itemsUser,
+                {...stateItemModal.item, quantite: 1},
+              ]);
+            }
+          }}
+          state={stateItemModal}
+          onRequestClose={() =>
+            setStateItemModal({...stateItemModal, isOpen: false})
           }
         />
       ) : null}

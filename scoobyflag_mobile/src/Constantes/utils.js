@@ -72,3 +72,19 @@ export function findPiture(type) {
     return require('./../Assets/items/EMPTY.png');
   }
 }
+
+export function findInfoItem(type) {
+  if (type == 'SAC_A_DOS') {
+    return {slug : "le sac à dos", time: undefined};
+  } else if (type == 'LUNETTE_DE_VERRA') {
+    return {slug : "les lunettes de Verra", time:45 };
+  } else if (type == 'FANTOME') {
+    return {slug : "le fantôme", time:30 };
+  } else if (type == 'LOUPE') {
+    return {slug : "la loupe", time:10 };
+  } else if (type == 'PIEGE') {
+    return {slug : "le piège", time:15 };
+  } else {
+    return {slug : null, time: null};
+  }
+}
