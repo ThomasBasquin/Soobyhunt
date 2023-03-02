@@ -14,6 +14,7 @@ class GameTemplate
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['GameTemplate:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -24,9 +25,6 @@ class GameTemplate
     #[Groups(['GameTemplate:read'])]
     private ?User $gameMaster = null;
     
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameLocation::class)]
-    #[Groups(['GameTemplate:read'])]
-    private Collection $gameLocations;
     
     #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameZone::class)]
     #[Groups(['GameTemplate:read'])]
@@ -62,7 +60,6 @@ class GameTemplate
     public function __construct()
     {
     
-        $this->gameLocations = new ArrayCollection();
         $this->gameZones = new ArrayCollection();
         $this->objectives = new ArrayCollection();
         $this->games = new ArrayCollection();
@@ -99,35 +96,6 @@ class GameTemplate
         return $this;
     }
 
-    /**
-     * @return Collection<int, GameLocation>
-     */
-    public function getGameLocations(): Collection
-    {
-        return $this->gameLocations;
-    }
-
-    public function addGameLocation(GameLocation $gameLocation): self
-    {
-        if (!$this->gameLocations->contains($gameLocation)) {
-            $this->gameLocations->add($gameLocation);
-            $gameLocation->setGameTemplate($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGameLocation(GameLocation $gameLocation): self
-    {
-        if ($this->gameLocations->removeElement($gameLocation)) {
-            // set the owning side to null (unless already changed)
-            if ($gameLocation->getGameTemplate() === $this) {
-                $gameLocation->setGameTemplate(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, GameZone>
