@@ -22,14 +22,14 @@ export default function Map() {
     const pointsInterditRef = useRef([]);
     const [menuConfig, setMenuConfig] = useState(false);
     
-    var zoneInterdites = [];
-    var zoneJeu = [];
-    var mechants = [];
-    var items = [];
+    const [zoneJeu, setZoneJeu] = useState([]);
+    const [zonesInterdites, setZonesInterdites] = useState([]);
+    const [mechants, setMechants] = useState([]);
+    const [items, setItesms] = useState([]);
 
-    var zoneJeu = pointsZone.map((point) => {
+    /*var zoneJeu = pointsZone.map((point) => {
         return [point.lat, point.lng]
-    })
+    })*/
 
     var zoneInterdite = pointsInterdit.map((point) => {
         return [point.lat, point.lng]
@@ -200,22 +200,24 @@ export default function Map() {
     const onCreated = (e) => {
         if (e.layerType === 'polygon'){
             if(e.layer.options.color=='red'){
-                zoneInterdites.push(e.layer.getLatLngs()[0]);
-                console.log(zoneInterdites);
+                var tabTemp = zonesInterdites;
+                tabTemp.push(e.layer.getLatLngs()[0]);
+                setZonesInterdites(tabTemp);
             }
             else{
-                zoneJeu = e.layer.getLatLngs()[0];
-                console.log(zoneJeu);
+                setZoneJeu(e.layer.getLatLngs()[0]);
             }
         }
         else{
             if(e.layer._icon.attributes.src.nodeValue == "src/assets/mechant1.png"){
-                mechants.push(e.layer.getLatLng());
-                console.log(mechants);
+                var tabTemp = mechants;
+                tabTemp.push(e.layer.getLatLngs()[0]);
+                setMechants(tabTemp);
             }
             else{
-                items.push(e.layer.getLatLng());
-                console.log(items);
+                var tabTemp = items;
+                tabTemp.push(e.layer.getLatLng());
+                setItesms(tabTemp);
             }
         }
     }
@@ -225,7 +227,7 @@ export default function Map() {
             <TileLayer
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LayersControl position="topleft" >
+            {/*<LayersControl position="topleft" >
                 <LayersControl.Overlay checked name='Zone de jeu'>
                     <LayerGroup eventHandlers={layerListener}>
                         <Polygon pathOptions={{ color: 'purple' }} positions={zoneJeu} />
@@ -249,7 +251,7 @@ export default function Map() {
                         })}
                     </LayerGroup>
                 </LayersControl.Overlay>
-            </LayersControl>
+            </LayersControl>*/}
             <FeatureGroup>
                 <EditControl position='topleft'
                     draw={{
@@ -294,7 +296,7 @@ export default function Map() {
             <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
                 </div>*/}
         <img onClick={() => clickBtnConfig()} className='btnConfig' src="settings.svg" alt="" />
-        <Config />
+        <Config zoneJeu={zoneJeu} zonesInterdites={zonesInterdites} mechants={mechants} items={items}/>
     </> : <h1>{status}</h1>)
 }
 

@@ -2,21 +2,22 @@ import { Link } from "react-router-dom";
 import "../css/config.css";
 import React, { useState } from "react";
 
-export default function Config() {
-  return (
-    <div className="menuConfig">
-      <h1 className="titreConfig">Configuration d'une partie</h1>
-      <div className="scroll">
-        <div className="formConfig">
-          <Contenu />
-        </div>
-      </div>
-    </div>
-  );
-}
+export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
+  const [toggleState, setToggleState] = useState(1);
+  
+  const [choose, setChoose] = useState("");
+  const [nbGrandMechant, setnbGrandMechant] = useState(1);
+  const [nbPetitMechant, setnbPetitMechant] = useState(1);
+  const toggleTab = (index) => {
+    setToggleState(index);
+  };
 
-async function createGame() {
-  const response = await fetch("http://localhost:8000/game/create", {
+  const chooseItem = (type) => {
+    setChoose(type);
+  };
+
+  async function createGame() {
+  /*const response = await fetch("http://localhost:8000/game/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -28,93 +29,93 @@ async function createGame() {
     }),
   });
   const data = await response.json();
-  console.log(data);
+  console.log(data);*/
+  console.log(zoneJeu);
+  console.log(zonesInterdites);
+  console.log(mechants);
+  console.log(items);
 }
 
-const Contenu = () => {
-  const [toggleState, setToggleState] = useState(1);
-  const [choose, setChoose] = useState("");
-
-  const [nbGrandMechant, setnbGrandMechant] = useState(1);
-  const [nbPetitMechant, setnbPetitMechant] = useState(1);
-  const toggleTab = (index) => {
-    setToggleState(index);
-  };
-
-  const chooseItem = (type) => {
-    setChoose(type);
-  };
   return (
-    <div className="">
-      <div className="listEcran">
-        <div
-          className={toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"}
-          onClick={() => toggleTab(1)}
-        >
-          Mode de jeu
-        </div>
-        <div
-          className={toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"}
-          onClick={() => toggleTab(2)}
-        >
-          Équipes
-        </div>
-      </div>
-      <div className="listEcran">
-        <div
-          className={toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"}
-          onClick={() => toggleTab(3)}
-        >
-          Méchants
-        </div>
-        <div
-          className={toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"}
-          onClick={() => toggleTab(4)}
-        >
-          Items
-        </div>
-      </div>
+    <div className="menuConfig">
+      <h1 className="titreConfig">Configuration d'une partie</h1>
+      <div className="scroll">
+        <div className="formConfig">
+          <div className="">
+            <div className="listEcran">
+              <div
+                className={toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"}
+                onClick={() => toggleTab(1)}
+              >
+                Mode de jeu
+              </div>
+              <div
+                className={toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"}
+                onClick={() => toggleTab(2)}
+              >
+                Équipes
+              </div>
+            </div>
+            <div className="listEcran">
+              <div
+                className={toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"}
+                onClick={() => toggleTab(3)}
+              >
+                Méchants
+              </div>
+              <div
+                className={toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"}
+                onClick={() => toggleTab(4)}
+              >
+                Items
+              </div>
+            </div>
 
-      <ModeDeJeu
-        choose={choose}
-        chooseItem={chooseItem}
-        toggleState={toggleState}
-      />
-      <div
-        className={
-          toggleState === 2
-            ? "listMDJ content active-content"
-            : "listMDJ content"
-        }
-      >
-        <Equipes />
-      </div>
-      <div
-        className={
-          toggleState === 3
-            ? "listMDJ content active-content"
-            : "listMDJ content"
-        }
-      >
-        <Mechants
-          nbGrandMechant={nbGrandMechant}
-          nbPetitMechant={nbPetitMechant}
-          setnbGrandMechant={setnbGrandMechant}
-          setnbPetitMechant={setnbPetitMechant}
-        />
-      </div>
-      <div
-        className={
-          toggleState === 4
-            ? "listMDJ content active-content"
-            : "listMDJ content"
-        }
-      >
-        <Items />
+            <ModeDeJeu
+              choose={choose}
+              chooseItem={chooseItem}
+              toggleState={toggleState}
+            />
+            <div
+              className={
+                toggleState === 2
+                  ? "listMDJ content active-content"
+                  : "listMDJ content"
+              }
+            >
+              <Equipes />
+            </div>
+            <div
+              className={
+                toggleState === 3
+                  ? "listMDJ content active-content"
+                  : "listMDJ content"
+              }
+            >
+              <Mechants
+                nbGrandMechant={nbGrandMechant}
+                nbPetitMechant={nbPetitMechant}
+                setnbGrandMechant={setnbGrandMechant}
+                setnbPetitMechant={setnbPetitMechant}
+              />
+            </div>
+            <div
+              className={
+                toggleState === 4
+                  ? "listMDJ content active-content"
+                  : "listMDJ content"
+              }
+            >
+              <Items />
+            </div>
+          </div>
+        </div>
+        <div onClick={()=>createGame()}>Salut</div>
       </div>
     </div>
   );
-};
+}
+
 const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
   return (
     <div
