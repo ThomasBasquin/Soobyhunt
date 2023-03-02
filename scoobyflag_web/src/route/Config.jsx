@@ -4,36 +4,57 @@ import React, { useState } from "react";
 
 export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
   const [toggleState, setToggleState] = useState(1);
-  
   const [choose, setChoose] = useState("");
   const [nbGrandMechant, setnbGrandMechant] = useState(1);
   const [nbPetitMechant, setnbPetitMechant] = useState(1);
   const toggleTab = (index) => {
     setToggleState(index);
   };
-
   const chooseItem = (type) => {
     setChoose(type);
   };
+  const [listeEquipe, setListeEquipe] = useState([
+    {
+      id: 1,
+      nom: "equipe1",
+      nbJoueur: 4,
+    },
+    {
+      id: 2,
+      nom: "equipe2",
+      nbJoueur: 8,
+    },
+  ]);
 
   async function createGame() {
-  /*const response = await fetch("http://localhost:8000/game/create", {
+  const response = await fetch("http://localhost:8000/game/create/template", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: "test",
-      description: "test",
-      maxPlayer: 10,
+      name: "Sprint 1", //A CHANGER
+      modeDeJeu: choose,
+      limitTime: 600, //A CHANGER
+      teams: listeEquipe,
+      authorizedZone: zoneJeu,
+      unauthorizedZone: zonesInterdites,
+      mechants: mechants,
+      items: items,
+      private: true, //A CHANGER
+      idCreator: 3 //??????????????????????????????????????????????????????????????????????
     }),
   });
   const data = await response.json();
-  console.log(data);*/
-  console.log(zoneJeu);
-  console.log(zonesInterdites);
-  console.log(mechants);
-  console.log(items);
+  console.log(data);
+
+  const response1 = await fetch("http://localhost:8000/game/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: data.gameTemplate.id,
+  });
 }
 
   return (
@@ -83,7 +104,7 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
                   : "listMDJ content"
               }
             >
-              <Equipes />
+              <Equipes listeEquipe={listeEquipe} setListeEquipe={setListeEquipe}/>
             </div>
             <div
               className={
@@ -110,7 +131,7 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
             </div>
           </div>
         </div>
-        <div onClick={()=>createGame()}>Salut</div>
+        <div onClick={()=>createGame()} className="choixMDJ">Créer la partie</div>
       </div>
     </div>
   );
@@ -175,19 +196,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
     </div>
   );
 };
-const Equipes = () => {
-  const [listeEquipe, setListeEquipe] = useState([
-    {
-      id: 1,
-      nom: "equipe1",
-      nbJoueur: 4,
-    },
-    {
-      id: 2,
-      nom: "equipe2",
-      nbJoueur: 8,
-    },
-  ]);
+const Equipes = ({listeEquipe, setListeEquipe}) => {
   return (
     <div>
       <AjoutEquipe listeEquipe={listeEquipe} />

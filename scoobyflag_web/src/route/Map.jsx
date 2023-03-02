@@ -25,7 +25,7 @@ export default function Map() {
     const [zoneJeu, setZoneJeu] = useState([]);
     const [zonesInterdites, setZonesInterdites] = useState([]);
     const [mechants, setMechants] = useState([]);
-    const [items, setItesms] = useState([]);
+    const [items, setItems] = useState([]);
 
     /*var zoneJeu = pointsZone.map((point) => {
         return [point.lat, point.lng]
@@ -209,15 +209,16 @@ export default function Map() {
             }
         }
         else{
-            if(e.layer._icon.attributes.src.nodeValue == "src/assets/mechant1.png"){
+            console.log(e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png");
+            if(e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"){
                 var tabTemp = mechants;
-                tabTemp.push(e.layer.getLatLngs()[0]);
+                tabTemp.push(e.layer.getLatLng());
                 setMechants(tabTemp);
             }
             else{
                 var tabTemp = items;
                 tabTemp.push(e.layer.getLatLng());
-                setItesms(tabTemp);
+                setItems(tabTemp);
             }
         }
     }
