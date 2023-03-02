@@ -1,19 +1,19 @@
-const { Sequelize, DataTypes } = require('sequelize');
+import { Sequelize, DataTypes } from "sequelize";
 
-module.exports = sequelize => {
+export default (sequelize) => {
+  class Group extends Sequelize.Model {}
 
-	class Group extends Sequelize.Model {
+  Group.init(
+    {
+      title: {
+        type: DataTypes.STRING,
+      },
+    },
+    {
+      sequelize,
+      modelName: "config",
+    }
+  );
 
-	}
-
-	Group.init({
-		title: {
-			type: DataTypes.STRING,
-		}
-	}, {
-		sequelize,
-		modelName: 'Group'
-	});
-
-	return Group;
+  return Group;
 };

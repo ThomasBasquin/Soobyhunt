@@ -1,18 +1,18 @@
-const express=require('express');
-const bodyParser = require ('body-parser');
-const app=express();
-const port=1650;
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+const port = 1650;
 
-//Middleware LOG
-app.use((req,res,next)=>{
-    console.log(`Request ${req.method} from ${req.ip}`);
-    next();
-})
+require("./routes")(app);
 
-app.get('/hello',(req,res)=>{
-    res.send(`Bonjour ${req.name}`);
-})
+app.use((err, req, res, next) => {
+  if (err.status === undefined) {
+    return res.status(500).send(err.message);
+  } else {
+    return res.status(err.status).send(err.message);
+  }
+});
 
-app.listen(port,() =>{
-    console.log(`Exemple app lisening on port ${port}`)
-})
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
