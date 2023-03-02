@@ -50,7 +50,7 @@ class GameController extends AbstractController
     #[Route('/{gameTemplate}', name: 'get_template', methods: 'GET')]
     public function get(GameTemplate $gameTemplate)
     {
-        return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read"]]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read", "GameLocation:read"]]);
     }
 
     #[Route('/create/template', name: 'create_template', methods: 'POST')]
@@ -58,6 +58,6 @@ class GameController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $gameTemplate = $this->gameService->createTemplate($data);
-        return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read"]]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read", "GameLocation:read"]]);
     }
 }
