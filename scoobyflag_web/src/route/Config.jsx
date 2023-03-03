@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "../css/config.css";
 import React, { useState } from "react";
 
-export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
+export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
   const [toggleState, setToggleState] = useState(1);
   const [choose, setChoose] = useState("");
   const [nbGrandMechant, setnbGrandMechant] = useState(1);
@@ -27,47 +27,55 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
   ]);
 
   async function createGame() {
-  const response = await fetch("https://127.0.0.1:8000/game/create/template", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: "Sprint 1", //A CHANGER
-      modeDeJeu: choose,
-      limitTime: 600, //A CHANGER
-      teams: listeEquipe,
-      authorizedZone: zoneJeu,
-      unauthorizedZone: zonesInterdites,
-      mechants: mechants,
-      items: items,
-      private: true, //A CHANGER
-      idCreator: 3 //
-    }),
-  }).then((res)=> {
-    if(res.ok){
-      return res.json();
-    }
-  }).then((json)=> {
+    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Sprint 1", //A CHANGER
+        modeDeJeu: choose,
+        limitTime: 600, //A CHANGER
+        teams: listeEquipe,
+        authorizedZone: zoneJeu,
+        unauthorizedZone: zonesInterdites,
+        mechants: mechants,
+        items: items,
+        private: true, //A CHANGER
+        idCreator: 3, //
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        const id = json.gameTemplate.id;
+        launchGame(id);
+      });
+  }
 
-    console.log(json['gameTemplate']['id']);
-  });
-  const data = await response.json();
-  
-  const response1 = await fetch("https://127.0.0.1:8000/game/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: data.gameTemplate.id,
-  }).then((res)=> {
-    if(res.ok){
-      return res.json();
-    }
-  }).then((json)=> {
-    console.log(json);
-  });
-}
+  async function launchGame(id) {
+    console.log(id);
+    fetch("http://127.0.0.1:8000/game/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+      });
+  }
 
   return (
     <div className="menuConfig">
@@ -77,13 +85,17 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
           <div className="">
             <div className="listEcran">
               <div
-                className={toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"}
+                className={
+                  toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"
+                }
                 onClick={() => toggleTab(1)}
               >
                 Mode de jeu
               </div>
               <div
-                className={toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"}
+                className={
+                  toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"
+                }
                 onClick={() => toggleTab(2)}
               >
                 Équipes
@@ -91,13 +103,17 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
             </div>
             <div className="listEcran">
               <div
-                className={toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"}
+                className={
+                  toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"
+                }
                 onClick={() => toggleTab(3)}
               >
                 Méchants
               </div>
               <div
-                className={toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"}
+                className={
+                  toggleState === 4 ? "choixMDJ active-tab" : "choixMDJ"
+                }
                 onClick={() => toggleTab(4)}
               >
                 Items
@@ -116,7 +132,10 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
                   : "listMDJ content"
               }
             >
-              <Equipes listeEquipe={listeEquipe} setListeEquipe={setListeEquipe}/>
+              <Equipes
+                listeEquipe={listeEquipe}
+                setListeEquipe={setListeEquipe}
+              />
             </div>
             <div
               className={
@@ -143,7 +162,9 @@ export default function Config({zoneJeu, zonesInterdites, mechants, items}) {
             </div>
           </div>
         </div>
-        <div onClick={()=>createGame()} className="choixMDJ">Créer la partie</div>
+        <div onClick={() => createGame()} className="choixMDJ">
+          Créer la partie
+        </div>
       </div>
     </div>
   );
@@ -208,7 +229,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
     </div>
   );
 };
-const Equipes = ({listeEquipe, setListeEquipe}) => {
+const Equipes = ({ listeEquipe, setListeEquipe }) => {
   return (
     <div>
       <AjoutEquipe listeEquipe={listeEquipe} />
@@ -385,8 +406,9 @@ const Mechants = ({
 };
 const Items = () => {
   const [nbLoupe, setNbLoupe] = useState(1);
-  return <div>
-    <div
+  return (
+    <div>
+      <div
         className="itemMDJ"
         style={{ margin: 20, padding: 10, marginLeft: 0, cursor: "auto" }}
       >
@@ -396,9 +418,7 @@ const Items = () => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2>Loupe</h2>
-          <p>
-             Augmente le rayon de détection
-          </p>
+          <p>Augmente le rayon de détection</p>
           <p style={{ display: "flex", justifyContent: "space-around" }}>
             <span
               style={{
@@ -409,7 +429,7 @@ const Items = () => {
                 borderRadius: 100,
                 cursor: "pointer",
               }}
-              onClick={() => setNbLoupe(nbLoupe-1)}
+              onClick={() => setNbLoupe(nbLoupe - 1)}
             >
               -
             </span>{" "}
@@ -423,12 +443,13 @@ const Items = () => {
                 borderRadius: 100,
                 cursor: "pointer",
               }}
-              onClick={() => setNbLoupe(nbLoupe+1)}
+              onClick={() => setNbLoupe(nbLoupe + 1)}
             >
               +
             </span>
           </p>
         </div>
       </div>
-  </div>;
+    </div>
+  );
 };

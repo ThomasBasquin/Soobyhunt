@@ -27,23 +27,34 @@ class GameController extends AbstractController
         $response = new JsonResponse();
         $response->headers->set('Access-Control-Allow-Origin', '*');
 
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+        $id = $data['id'];
+        $containerName = "game-server-$id";
+
         // Générer un port aléatoire
-        $port = rand(1024, 65535);
+        $port = rand(1024, 9999);
         $gameServerPort = 1650;
 
         // Exécuter la commande Docker avec le port aléatoire
-        $process = new Process(['docker', 'run', '-p', "$port:$gameServerPort", 'totomadne/game-server']);
+        $process = new Process(['docker', 'run', '-d', '-p', "$port:$gameServerPort", '-e', "id=$id", '--name', $containerName, 'totomadne/game-server']);
         $process->run();
 
         // Récupérer l'adresse IP du serveur
         $containerId = trim($process->getOutput());
-        $ipAddress = exec("docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $containerId");
+        $inspectProcess = new Process(['docker', 'inspect', '-f', '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', $containerId]);
+        $inspectProcess->run();
+
+        // Récupérer l'adresse IP du serveur
+        $ipAddress = trim($inspectProcess->getOutput());
 
         // Retourner l'adresse IP et le port attribué
         return $this->json([
             'ip' => $ipAddress,
             'port' => $port
-        ]);
+        ],
+            200
+        );
     }
 
 
@@ -61,3 +72,4 @@ class GameController extends AbstractController
         return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read", "GameLocation:read"]]);
     }
 }
+
