@@ -21,14 +21,12 @@ class GameService
     public EntityManagerInterface $em;
     private GameRepository $userRepository;
     private SerializerInterface $serializer;
-    private ItemTypeRepository $itemTypeRepository;
 
-    public function __construct(ItemTypeRepository $itemTypeRepository,EntityManagerInterface $em, GameRepository $userRepository, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $em, GameRepository $userRepository, SerializerInterface $serializer)
     {
         $this->em = $em;
         $this->userRepository = $userRepository;
         $this->serializer = $serializer;
-        $this->itemTypeRepository = $itemTypeRepository;
     }
 
     public function getAll()
@@ -39,79 +37,19 @@ class GameService
     public function createTemplate($data)
     {
         $gameTemplate = new GameTemplate();
-        $gameTemplate->setName($data['name']);
-        $gameTemplate->setMode($data['modeDeJeu']);
-        $gameTemplate->setLimitTime($data['limitTime']);
-        $gameTemplate->setPrivate($data['private']);
+        $gameTemplate->setJson($data);
 
         // à terme mettre $data['idCreator'] dans le set gameTemplate
         $gameTemplate->setGameMaster($this->userRepository->findOneBy(['id' => 1]));
 
-        $gameZone = new GameZone();
-        $gameZone->setGameTemplate($gameTemplate);
-        $gameZone->setType('authorized');
-
-        // création de la zone de jeu
-        foreach ($data['authorizedZone'] as $location) {
-            $newGameLocation = new Location();
-            $newGameLocation->setLatitude($location['lat']);
-            $newGameLocation->setLongitude($location['lng']);
-            $newGameLocation->setGameZone($gameZone);
-            $this->em->persist($newGameLocation);
-        }
-        
-        // création des zones interdites
-        foreach ($data['unauthorizedZone'] as $unauthorizedZones) {
-            $gameUnauthorizedZone = new GameZone();
-            $gameUnauthorizedZone->setGameTemplate($gameTemplate);
-            $gameUnauthorizedZone->setType('unauthorized');
-            $this->em->persist($gameUnauthorizedZone);
-            foreach ($unauthorizedZones as $unauthorizedZone) {
-                
-                $unauthorizedZone = new Location();
-                $unauthorizedZone->setLatitude($location['lat']);
-                $unauthorizedZone->setLongitude($location['lng']);
-                $unauthorizedZone->setGameZone($gameUnauthorizedZone);
-                $this->em->persist($unauthorizedZone);
-            }
-        }
-        // création des items
-        foreach ($data['items'] as $item) {
-            $newItem = new Item();
-            $newItem->setName($item['name']);
-            $newItem->setLatitude($item['coordonnees']['lat']);
-            $newItem->setLongitude($item['coordonnees']['lng']);
-            $newItem->setGameTemplate($gameTemplate);
-            $this->em->persist($newItem);
-        }
-        
-        // Création des teams
-        foreach ($data['teams'] as $team) {
-            $newTeam = new Team();
-            $newTeam->setName($team['nom']);
-            $newTeam->setPlayerMax($team['nbJoueur']);
-            $newTeam->setGameTemplate($gameTemplate);
-            $this->em->persist($newTeam);
-        }
-
-        // création des objectifs
-        foreach ($data['mechants'] as $objective) {
-            $newObjective = new Objective();
-            $newObjective->setLatitude($objective['lat']);
-            $newObjective->setLongitude($objective['lng']);
-            $newObjective->setGameTemplate($gameTemplate);
-            $this->em->persist($newObjective);
-        }
-
-        $this->em->persist($gameZone);
         $this->em->persist($gameTemplate);
         $this->em->flush();
         return $gameTemplate;
     }
 
-    public function save(Game $user)
+    public function save($entity)
     {
-        $this->em->persist($user);
-        $this->em->flush($user);
+        $this->em->persist($entity);
+        $this->em->flush($entity);
     }
 }
