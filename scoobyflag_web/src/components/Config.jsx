@@ -57,7 +57,6 @@ export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
   }
 
   async function launchGame(id) {
-    console.log(id);
     fetch("http://127.0.0.1:8000/game/create", {
       method: "POST",
       headers: {
@@ -310,7 +309,6 @@ const Mechants = ({
   setnbGrandMechant,
   setnbPetitMechant,
 }) => {
-  console.log(nbGrandMechant);
   return (
     <div className="listeMechant">
       <div

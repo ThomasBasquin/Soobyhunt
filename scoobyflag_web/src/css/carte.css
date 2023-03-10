@@ -8,26 +8,42 @@
     z-index: 1;
 }
 
+.leaflet-control-container{
+    display: none;
+}
+
 .sideBar {
     position: absolute;
     z-index: 2;
-    background-color: white;
-    width: 5%;
-    height: 50%;
+    background-color: var(--orange);
+    width: 7%;
     left: 20px;
-    top: 25%;
+    top: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     border: black 2px solid;
+    font-weight: bold;
 }
 
 .btnSideBar {
-    height: 5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100px;
+    padding: 5px;
+    cursor: pointer;
 }
 
-.selected {
-    background-color: gainsboro;
+.btnSideBar:hover{
+    background-color: var(--violet);
+}
+
+.iconBar{
+    height: 70%;
+    width: 70%;
 }
 
 .btnConfig {

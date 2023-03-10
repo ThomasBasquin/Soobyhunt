@@ -14,7 +14,8 @@ export default function Carte() {
     const [longitude, setLongitude] = useState(0.0);
     const [status, setStatus] = useState("");
     const [menuConfig, setMenuConfig] = useState(false);
-    
+    const [clickedSupprimer, setClickedSupprimer] = useState(false);
+
     const [zoneJeu, setZoneJeu] = useState([]);
     const [zonesInterdites, setZonesInterdites] = useState([]);
     const [mechants, setMechants] = useState([]);
@@ -22,6 +23,18 @@ export default function Carte() {
 
     useEffect(() => {
         getLocation();
+
+        // The subscriber subscribes to updates for the https://example.com/users/dunglas topic
+        // and to any topic matching https://example.com/books/{id}
+        /*const url = new URL("http://82.165.109.36/.well-known/mercure");
+        url.searchParams.append("topic", "https://example.com/books/{id}");
+        url.searchParams.append("topic", "https://example.com/users/dunglas");
+        // The URL class is a convenient way to generate URLs such as https://localhost/.well-known/mercure?topic=https://example.com/books/{id}&topic=https://example.com/users/dunglas
+
+        const eventSource = new EventSource(url);
+
+        // The callback will be called every time an update is published
+        eventSource.onmessage = (e) => console.log(e); // do something with the payload*/
     }, [])
 
     const getLocation = () => {
@@ -66,38 +79,88 @@ export default function Carte() {
     }
 
     const onCreated = (e) => {
-        if (e.layerType === 'polygon'){
-            if(e.layer.options.color=='red'){
+        if (e.layerType === 'polygon') {
+            if (e.layer.options.color == 'red') {
                 var tabTemp = zonesInterdites;
                 tabTemp.push(e.layer.getLatLngs()[0]);
                 setZonesInterdites(tabTemp);
             }
-            else{
+            else {
                 setZoneJeu(e.layer.getLatLngs()[0]);
             }
         }
-        else{
-            if(e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"){
+        else {
+            if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
                 var tabTemp = mechants;
                 tabTemp.push(e.layer.getLatLng());
                 setMechants(tabTemp);
             }
-            else{
+            else {
                 var tabTemp = items;
                 tabTemp.push({
-                    "name":"loupe",
-                    "coordonnees":e.layer.getLatLng()
+                    "name": "loupe",
+                    "coordonnees": e.layer.getLatLng()
                 });
                 setItems(tabTemp);
             }
         }
     }
 
-    const clickItem = (e) => {
+    const clickZoneJeu = (e) => {
+        if (zoneJeu.length > 0) {
+            alert("La zone de jeu est déjà présente, modifiez la ou supprimez la pour en créer une nouvelle.");
+        }
+        else {
+            var e = document.createEvent('Event');
+            e.initEvent('click', true, true);
+            var cb = document.getElementsByClassName('leaflet-draw-draw-polygon');
+            return !cb[0].dispatchEvent(e);
+        }
+    }
+
+    const clickZoneInterdite = (e) => {
         var e = document.createEvent('Event');
         e.initEvent('click', true, true);
         var cb = document.getElementsByClassName('leaflet-draw-draw-polygon');
+        return !cb[1].dispatchEvent(e);
+    }
+
+    const clickMechant = (e) => {
+        var e = document.createEvent('Event');
+        e.initEvent('click', true, true);
+        var cb = document.getElementsByClassName('leaflet-draw-draw-marker');
         return !cb[0].dispatchEvent(e);
+    }
+
+    const clickObjet = (e) => {
+        var e = document.createEvent('Event');
+        e.initEvent('click', true, true);
+        var cb = document.getElementsByClassName('leaflet-draw-draw-marker');
+        return !cb[1].dispatchEvent(e);
+    }
+
+    const clickEdit = (e) => {
+        var e = document.createEvent('Event');
+        e.initEvent('click', true, true);
+        var cb = document.getElementsByClassName('leaflet-draw-edit-edit');
+        return !cb[0].dispatchEvent(e);
+    }
+
+    const clickSupprimer = (e) => {
+        if (clickedSupprimer) {
+            //setClickedSupprimer(false);
+            var e = document.createEvent('Event');
+            e.initEvent('click', true, true);
+            var cb = document.getElementsByClassName('leaflet-draw-actions')[2].children[1];
+            return !cb.dispatchEvent(e);
+        }
+        else {
+            //setClickedSupprimer(true);
+            var e = document.createEvent('Event');
+            e.initEvent('click', true, true);
+            var cb = document.getElementsByClassName('leaflet-draw-edit-remove');
+            return !cb[0].dispatchEvent(e);
+        }
     }
 
     return (status == null ? <>
@@ -106,7 +169,7 @@ export default function Carte() {
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <FeatureGroup>
-                <EditControl position='topleft'
+                <EditControl position='topright'
                     draw={{
                         polyline: false,
                         rectangle: false,
@@ -121,8 +184,8 @@ export default function Carte() {
                         remove: false,
                         edit: false
                     }}
-                    onCreated={ e => onCreated(e)} />
-                <EditControl position='topleft'
+                    onCreated={e => onCreated(e)} />
+                <EditControl position='topright'
                     draw={{
                         polyline: false,
                         rectangle: false,
@@ -138,17 +201,37 @@ export default function Carte() {
                                 weight: 3
                             }
                         },
-                    }}/>
-                </FeatureGroup>
+                    }} />
+            </FeatureGroup>
         </MapContainer>
-        {/*<div className='sideBar'>
-            <div id='btnZone' onClick={(e) => clickItem(e)} className='btnSideBar selected'>Zone</div>
-            <div id='btnZoneInterdite' onClick={() => changeMode("zoneInterdite")} className='btnSideBar'>Zone interdite</div>
-            <div id='btnFlag' onClick={() => changeMode("flag")} className='btnSideBar'>Drapeaux</div>
-            <div id='btnItems' onClick={() => changeMode("items")} className='btnSideBar'>Items</div>
-        </div>*/}
+        <div className='sideBar'>
+            <div id='btnZone' onClick={(e) => clickZoneJeu(e)} className='btnSideBar'>
+                <img src="gaming-zone.png" alt="" className='iconBar' />
+                Zone de jeu
+            </div>
+            <div id='btnZoneInterdite' onClick={(e) => clickZoneInterdite(e)} className='btnSideBar'>
+                <img src="forbidden.png" alt="" className='iconBar' />
+                Zone interdite
+            </div>
+            <div id='btnFlag' onClick={(e) => clickMechant(e)} className='btnSideBar'>
+                <img src="mechant1.png" alt="" className='iconBar' />
+                Méchants
+            </div>
+            <div id='btnItems' onClick={(e) => clickObjet(e)} className='btnSideBar'>
+                <img src="loupe.png" alt="" className='iconBar' />
+                Objets
+            </div>
+            <div id='btnZone' onClick={(e) => clickEdit(e)} className='btnSideBar'>
+                <img src="edit.png" alt="" className='iconBar' />
+                Editer
+            </div>
+            <div id='btnZone' onClick={(e) => clickSupprimer(e)} className='btnSideBar'>
+                <img src="bin.png" alt="" className='iconBar' />
+                Supprimer
+            </div>
+        </div>
         <img onClick={() => clickBtnConfig()} className='btnConfig' src="settings.svg" alt="" />
-        <Config zoneJeu={zoneJeu} zonesInterdites={zonesInterdites} mechants={mechants} items={items}/>
+        <Config zoneJeu={zoneJeu} zonesInterdites={zonesInterdites} mechants={mechants} items={items} />
     </> : <h1>{status}</h1>)
 }
 
