@@ -26,7 +26,7 @@ export default function Index() {
         Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur
         le thème Scooby-Doo
       </div>
-      <Link className="createGame" to="/map" onClick={() => createGame()}>
+      <Link className="createGame" to="/carte" onClick={() => createGame()}>
         Créer une partie
       </Link>
       </div>
