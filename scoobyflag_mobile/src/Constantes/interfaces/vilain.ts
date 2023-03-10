@@ -1,5 +1,5 @@
 export default interface IVilain {
-  idMechant: number;
+  id: number;
   team?: string;
   latitude: number;
   longitude: number;

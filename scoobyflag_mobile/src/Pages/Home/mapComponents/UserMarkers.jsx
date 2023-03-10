@@ -8,7 +8,7 @@ function UserMarker({user}){
           tappable={false}
           zIndex={2}
           pinColor={'navy'}
-          title={user.name}
+          title={user.username}
           coordinate={{latitude:user.latitude,longitude:user.longitude}} >
             <View style={{width:15,height:15,borderRadius:50, backgroundColor:"#181fde", borderColor:"#FFFFFF",borderWidth:1}} />
           </MarkerComponent>

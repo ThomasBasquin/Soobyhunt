@@ -1,62 +1,79 @@
-import {useMemo, useEffect} from 'react';
+import {useMemo, useEffect, useState} from 'react';
 import {TouchableOpacity, Text, View, Image} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
+import URLS from '../../Constantes/URLS';
 
 function Team({navigation}) {
-  const gameConfiguration = useMemo(
-    () => ({
-      name: 'Sprint 1',
-      modeDejeu: 'TIME',
-      limitTime: 600,
-      teams: [
-        {name: 'Team 1', nbJoueur: 4},
-        {name: 'Team 2', nbJoueur: 4},
-      ],
-      authorizedZone: [
-        {longitude: 7.739077538193167, latitude: 48.53086599339388},
-        {longitude: 7.7342370696461815, latitude: 48.53039720700373},
-        {longitude: 7.735364007999698, latitude: 48.528436780531386},
-        {longitude: 7.739345856848781, latitude: 48.52830892399476},
-      ],
-      unauthorizedZone: [],
-      mechants: [
-        {idMechant: 1, longitude: 7.735623243322919, latitude: 48.53043403291962},
-        {idMechant: 2, longitude: 7.738052333136166, latitude: 48.5288050647901},
-      ],
-      items: [{id:0, name: "LUNETTE_DE_VERRA", quantite: 3, longitude: 7.735910207837184, latitude: 48.53031912238115}], 
-      private: true,
-      idCreator: 3,
-    }),
-    [],
-  );
+  const [config, setConfig] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // const gameConfiguration = useMemo(
-  //   () => ({
-  //     name: 'Sprint 1',
-  //     modeDejeu: 'TIME',
-  //     limitTime: 600,
-  //     teams: [
-  //       {name: 'Team 1', nbJoueur: 4},
-  //       {name: 'Team 2', nbJoueur: 4},
-  //     ],
-  //     authorizedZone: [
-  //       {longitude: 7.682864480865984, latitude: 48.493037111158976},
-  //       {longitude: 7.6810674009482796, latitude: 48.492982007713096},
-  //       {longitude: 7.681142502795587, latitude: 48.49206834830178},
-  //       {longitude: 7.682751828095023, latitude: 48.49226565746728},
-  //     ],
-  //     unauthorizedZone: [],
-  //     mechants: [
-  //       {idMechant: 1, longitude: 7.6822341617903716, latitude: 48.49264605315083},
-  //       {idMechant: 2, longitude: 7.681874745806831, latitude: 48.529492747373015156857},
-  //     ],
-  //     items: [{name: "SAC_A_DOS", quantite: 3, longitude: 7.682032996127943, latitude: 48.49256961873324}], 
-  //     private: true,
-  //     idCreator: 3,
-  //   }),
-  //   [],
-  // );
+  const stest = {
+    gameTemplate: {
+      id: 6,
+      name: 'Sprint 1',
+      gameMaster: null,
+      gameZones: [
+        {
+          id: 7,
+          locations: [
+            {id: 32, latitude: '48.528499756822', longitude: '7.7330231666565'},
+            {id: 33, latitude: '48.528499756822', longitude: '7.7330231666565'},
+            {id: 34, latitude: '48.528499756822', longitude: '7.7330231666565'},
+            {id: 35, latitude: '48.528499756822', longitude: '7.7330231666565'},
+          ],
+          type: 'unauthorized',
+        },
+        {
+          id: 8,
+          locations: [
+            {id: 28, latitude: '48.530887028951', longitude: '7.7333235740662'},
+            {id: 29, latitude: '48.530823085629', longitude: '7.7383178472519'},
+            {id: 30, latitude: '48.52835410116', longitude: '7.7384197711945'},
+            {id: 31, latitude: '48.528499756822', longitude: '7.7330231666565'},
+          ],
+          type: 'authorized',
+        },
+      ],
+      objectives: [
+        {
+          id: 6,
+          latitude: '48.530379032552',
+          longitude: '7.7366656064987',
+          visionRange: 10,
+          activeRange: 10,
+        },
+      ],
+      items: [
+        {
+          visionRange: 10,
+          activeRange: 10,
+          longitude: '7.736890912056',
+          latitude: '48.530244039645',
+          name: 'loupe',
+        },
+      ],
+      limitTime: 600,
+      mode: 'time',
+      private: true,
+      teams: [
+        {id: 11, name: 'equipe1', playerMax: 4},
+        {id: 12, name: 'equipe2', playerMax: 8},
+      ],
+    },
+  };
+
+  useEffect(() => {
+    
+    fetch(URLS.getTemplate.replace('{game}', 18))
+      .then(res => res.json())
+      .then(res => {
+        console.log(res.gameTemplate.gameZones);
+        return res;
+      })
+      .then((e)=>setConfig(e.gameTemplate))
+      .finally(()=>setIsLoading(false))
+  }, []);
 
   return (
     <View
@@ -67,7 +84,10 @@ function Team({navigation}) {
         width: '100%',
         flex: 1,
       }}>
-        <Image source={require("../../Assets/LOGO.png")} style={{width:150,height:150,marginVertical:50}} />
+      <Image
+        source={require('../../Assets/LOGO.png')}
+        style={{width: 150, height: 150, marginVertical: 50}}
+      />
       <TouchableOpacity
         style={{
           marginVertical: '1%',
@@ -78,8 +98,9 @@ function Team({navigation}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}
+        disabled={isLoading}
         onPress={() => {
-          navigation.navigate('Home', {gameConfiguration});
+          navigation.navigate('Home', {gameConfiguration: config});
         }}>
         <Text
           style={{
@@ -90,6 +111,7 @@ function Team({navigation}) {
           Charger la configuration
         </Text>
       </TouchableOpacity>
+      {isLoading ? <Text>Chargement...</Text> : null}
     </View>
   );
 }

@@ -18,7 +18,7 @@ import {
 import ActualEffect from './ActualEffect';
 import ItemLayout from './ItemLayout';
 import NotifInApp from './NotifInApp';
-import Polygon from './mapComponents/Polygon';
+import GameMapPolygon from './mapComponents/GameMapPolygon';
 import Circle from './mapComponents/Circle';
 import VilainModal from './VilainModal';
 import VilainMarker from './mapComponents/VilainMarker';
@@ -28,8 +28,10 @@ import ItemModal from './ItemModal';
 import useVilain from '../../Constantes/Hooks/useVilain';
 import useItem from '../../Constantes/Hooks/useItem';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
+import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
+import { MAP_COORDINATE, USER_MARKERS } from '../../Constantes/mocked';
 
-export default function Home({route}) {
+export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
@@ -41,9 +43,10 @@ export default function Home({route}) {
     longitudeDelta: 0.0421,
   });
   const [mapCoordinates, setMapCoordinates] = useState();
+  const [unauthorizedZone, setUnauthorizedZone] = useState([]);
   const [vilainMarkers, setVilainMarkers] = useVilain();//MERCURE SEND AND RETRIEVE
   const [itemMarkers, setItemMarkers] = useItem([]); //MERCURE SEND AND RETRIEVE
-  const [userMarkers, setUserMarkers] = usePlayer([]); //USER_MARKERS //MERCURE RETRIEVE
+  const [userMarkers, setUserMarkers] = useState(USER_MARKERS); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [itemsUser, setItemsUser] = useState([]);
@@ -58,14 +61,19 @@ export default function Home({route}) {
   });
 
   useEffect(() => {
-    if (!route.params.gameConfiguration)
+    if (!route.params.gameConfiguration){
       Alert.alert('Une configuration est requise');
+      navigation.navigate("Team");
+      return
+    }
     refreshActualEffect();
     // reset();
     const config = route.params.gameConfiguration;
-    setMapCoordinates(config.authorizedZone);
-    setVilainMarkers(config.mechants.map(m => ({...m, team: null})));
-    setItemMarkers(config.items);
+    setMapCoordinates(config.gameZones.find(g => g.type=="authorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
+    setUnauthorizedZone(config.gameZones.find(g => g.type=="unauthorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
+    // setUnauthorizedZone([MAP_COORDINATE]);
+    setVilainMarkers(config.objectives.map(m => ({...m, team: null, latitude:parseFloat(m.latitude),longitude: parseFloat(m.longitude)})));
+    setItemMarkers(config.items.map(i => ({...i,quantite:3,latitude:parseFloat(i.latitude),longitude:parseFloat(i.longitude)})));
     getCurrentPosition(true);
   }, []);
 
@@ -149,7 +157,7 @@ export default function Home({route}) {
 
   const renderUserMarkers = useCallback(() => {
     return userMarkers.map((user, i) => <UserMarker key={i} user={user} />);
-  });
+  },[userMarkers]);
 
   const renderVilainMarkers = useCallback(() => {
     return vilainMarkers
@@ -193,8 +201,12 @@ export default function Home({route}) {
   }, [currentPosition]);
 
   const gameZone = useCallback(() => {
-    return <Polygon mapCoordinates={mapCoordinates} />;
+    return <GameMapPolygon mapCoordinates={mapCoordinates} />;
   }, [mapCoordinates]);
+
+  const renderUnauthorizedZone = useCallback(() => {
+    return <UnauthorizedMapPolygon mapCoordinates={unauthorizedZone} />;
+  }, [unauthorizedZone]);
 
   const EffectComponent = useCallback(
     () =>
@@ -294,6 +306,7 @@ export default function Home({route}) {
           maximumZ={19}
           shouldReplaceMapContent={true}
         />
+        {renderUnauthorizedZone()}
         {gameZone()}
         {/* {visibilityZone()} */}
         {renderItemMarkers()}

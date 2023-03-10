@@ -1,5 +1,6 @@
 import {Text, View} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
+import { findInfoItem } from '../../Constantes/utils';
 
 export default function ItemModal({onSubmit,state, onRequestClose}) {
   return (
@@ -7,10 +8,10 @@ export default function ItemModal({onSubmit,state, onRequestClose}) {
       <BasicModal
         visible={state.isOpen}
         onRequestClose={onRequestClose}
-        title={state.item.name}
+        title={findInfoItem(state.item.name).slug}
         onSubmit={onSubmit}>
         <Text style={{marginVertical: 10, fontSize: 20}}>
-          Voulez-vous prendre un {state.item.name} ?
+          Voulez-vous prendre un {findInfoItem(state.item.name).slug} ?
         </Text>
         <View style={{flexDirection: 'row'}}>
           <Text style={{fontSize: 16}}>{`Objet restant : `}</Text>
