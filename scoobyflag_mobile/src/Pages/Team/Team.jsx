@@ -3,10 +3,12 @@ import {TouchableOpacity, Text, View, Image} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 import URLS from '../../Constantes/URLS';
+import EventSource, { EventSourceListener } from "react-native-sse";
 
 function Team({navigation}) {
   const [config, setConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [test, setTest] = useState(true);
 
   const stest = {
     gameTemplate: {
@@ -64,15 +66,41 @@ function Team({navigation}) {
   };
 
   useEffect(() => {
-    
-    fetch(URLS.getTemplate.replace('{game}', 18))
-      .then(res => res.json())
-      .then(res => {
-        console.log(res.gameTemplate.gameZones);
-        return res;
-      })
-      .then((e)=>setConfig(e.gameTemplate))
-      .finally(()=>setIsLoading(false))
+    const url = new URL("https://82.165.109.36/.well-known/mercure");
+
+    url.searchParams.append("topic", "https://example.com/users/dunglas");
+    const es = new EventSource(url, {
+      headers: {
+        Authorization: {
+          toString: function () {
+            return "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.a8cjcSRUAcHdnGNMKifA4BK5epRXxQI0UBp2XpNrBdw";
+          },
+        },
+      },
+    });
+
+    const listener = (event) => {
+      if (event.type === "open") {
+        console.log("open");
+      } else if (event.type === "message") {
+        const book = JSON.parse(event.data);
+        console.log(book);
+
+      } else if (event.type === "error") {
+        console.log(event.message);
+      } else if (event.type === "exception") {
+        console.log("Error:", event.message, event.error);
+      }
+    };
+
+    es.addEventListener("open", listener);
+    es.addEventListener("message", listener);
+    es.addEventListener("error", listener);
+
+    return () => {
+      es.removeAllEventListeners();
+      es.close();
+    };
   }, []);
 
   return (
@@ -111,6 +139,7 @@ function Team({navigation}) {
           Charger la configuration
         </Text>
       </TouchableOpacity>
+        <Text>{test}</Text>
       {isLoading ? <Text>Chargement...</Text> : null}
     </View>
   );
