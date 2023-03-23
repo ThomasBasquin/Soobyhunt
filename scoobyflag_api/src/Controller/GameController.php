@@ -71,5 +71,6 @@ class GameController extends AbstractController
         $gameTemplate = $this->gameService->createTemplate($data);
         return $this->json(['gameTemplate' => $gameTemplate], 200, [], ["groups" => ["GameTemplate:read", "Item:read", "Objective:read", "GameZone:read", "Team:read", "GameLocation:read"]]);
     }
+    
 }
 
