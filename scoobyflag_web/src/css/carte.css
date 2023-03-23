@@ -1,0 +1,91 @@
+.App {
+    text-align: center;
+}
+
+.leaflet-container {
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+}
+
+.leaflet-control-container{
+    display: none;
+}
+
+.sideBar {
+    position: absolute;
+    z-index: 2;
+    background-color: var(--orange);
+    width: 7%;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: black 2px solid;
+    font-weight: bold;
+}
+
+.btnSideBar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.btnSideBar:hover{
+    background-color: var(--violet);
+}
+
+.iconBar{
+    height: 70%;
+    width: 70%;
+}
+
+.btnConfig {
+    z-index: 2;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 60px;
+    height: 60px;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

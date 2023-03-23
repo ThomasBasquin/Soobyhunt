@@ -88,5 +88,6 @@ class GameController extends AbstractController
         $this->gameService->save($gameTemplate);
         return $this->json(['gameTemplate' => $gameTemplate]);
     }
+    
 }
 
