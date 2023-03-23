@@ -1,5 +1,6 @@
 export default interface IUser{
-    email:string;
-    firstname:string;
-    lastname:string;
+  username:string;
+  team?:string;
+  latitude:number;
+  longitude:number;
 }

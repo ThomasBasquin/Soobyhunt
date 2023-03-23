@@ -2,6 +2,8 @@ import {useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
 import COLORS from '../../Constantes/colors';
+import GAME_CONFIG from '../../Constantes/gameConfig';
+import { findInfoItem, findPiture } from '../../Constantes/utils';
 
 export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
@@ -13,13 +15,13 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           visible={itemModal.open}
           title={'Utiliser un objet'}
           onRequestClose={() => setItemModal({...itemModal, open: false})}
-          onSubmit={() => setEffect(itemModal.item.type, itemModal.item.time)}>
+          onSubmit={() => setEffect(itemModal.item)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
-            Voulez-vous vraiment utiliser le {itemModal.item.type} ?
+            Voulez-vous vraiment utiliser {findInfoItem(itemModal.item.name).slug} ?
           </Text>
         </BasicModal>
-      ):null}
-      
+      ) : null}
+
       <View
         style={{
           width: '95%',
@@ -27,7 +29,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           position: 'absolute',
           backgroundColor: 'rgba(252, 252, 214,.9)',
           zIndex: 1,
-          margin: "2.5%",
+          margin: '2.5%',
           marginVertical: 20,
           borderRadius: 15,
           bottom: 0,
@@ -40,17 +42,17 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
             fontSize: 20,
             fontWeight: '600',
             color: COLORS.primary,
-          }}>{`Mon sac à dos (${items.length}/2) :`}</Text>
+          }}>{`Mon sac à dos (${items.reduce((acc,i)=>acc+i.quantite,0)}/${GAME_CONFIG.item.max}) :`}</Text>
         <View style={{flexDirection: 'row'}}>
           {items.map((item, i) => {
-            //TODO : changer l'image en fonction du type
+            const picture=findPiture(item.name);
             return (
               <TouchableOpacity
                 key={i}
                 style={{flexDirection: 'row'}}
                 onPress={() => setItemModal({open: true, item})}>
                 <Image
-                  source={require('./../../Assets/items/SAC_A_DOS.png')}
+                  source={picture}
                   style={{width: 50, height: 50}}
                 />
                 <Text
@@ -58,7 +60,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
                     fontWeight: '900',
                     position: 'relative',
                     right: 10,
-                  }}>{`x${item.qte}`}</Text>
+                  }}>{`x${item.quantite}`}</Text>
               </TouchableOpacity>
             );
           })}

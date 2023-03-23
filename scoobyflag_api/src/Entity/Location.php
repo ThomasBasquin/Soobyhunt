@@ -12,7 +12,6 @@ class Location
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['GameZone:read'])]
     private ?int $id = null;
     
     #[ORM\ManyToOne(inversedBy: 'locations')]

@@ -1,13 +1,13 @@
 const DEFAULT_DOMAINS={
-    LOCAL:"https://127.0.0.1:8000/api",
+    LOCAL:"http://172.20.10.11:8000",
+    HUGO:"http://192.168.1.27:8000",
     PROD:""
 }
 
-const DOMAIN=DEFAULT_DOMAINS.LOCAL;
+const DOMAIN=DEFAULT_DOMAINS.HUGO;
 
 const URLS={
-    login:DOMAIN+"/login_check",
-    register: DOMAIN+"/register",
+    getTemplate: DOMAIN+"/game/{game}",
 }
 
 export default URLS;
