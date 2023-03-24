@@ -8,15 +8,15 @@
     z-index: 1;
 }
 
-.leaflet-control-container{
-    display: none;
+.leaflet-control-container {
+    /*display: none;*/
 }
 
 .sideBar {
     position: absolute;
     z-index: 2;
     background-color: var(--orange);
-    width: 7%;
+    width: 120px;
     left: 20px;
     top: 20px;
     display: flex;
@@ -24,6 +24,7 @@
     justify-content: space-between;
     border: black 2px solid;
     font-weight: bold;
+    border-radius: 10px;
 }
 
 .btnSideBar {
@@ -37,11 +38,11 @@
     cursor: pointer;
 }
 
-.btnSideBar:hover{
+.btnSideBar:hover {
     background-color: var(--violet);
 }
 
-.iconBar{
+.iconBar {
     height: 70%;
     width: 70%;
 }
@@ -53,6 +54,19 @@
     bottom: 20px;
     width: 60px;
     height: 60px;
+}
+
+.btnTest {
+    position: absolute;
+    z-index: 10000;
+    background-color: var(--orange);
+    width: 120px;
+    height: 100px;
+    left: 20px;
+    top: 20px;
+    border: black 2px solid;
+    font-weight: bold;
+    border-radius: 10px;
 }
 
 .App-logo {
@@ -85,6 +99,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }

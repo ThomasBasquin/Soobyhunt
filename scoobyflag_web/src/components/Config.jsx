@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "../css/config.css";
 import React, { useState } from "react";
 
-export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
+export default function Config({ createGame }) {
   const [toggleState, setToggleState] = useState(1);
   const [choose, setChoose] = useState("");
   const [nbGrandMechant, setnbGrandMechant] = useState(1);
@@ -25,56 +25,6 @@ export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
       nbJoueur: 8,
     },
   ]);
-
-  async function createGame() {
-    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: choose,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu,
-        unauthorizedZone: zonesInterdites,
-        mechants: mechants,
-        items: items,
-        private: true, //A CHANGER
-        idCreator: 3, //
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        const id = json.gameTemplate.id;
-        launchGame(id);
-      });
-  }
-
-  async function launchGame(id) {
-    fetch("http://127.0.0.1:8000/game/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: id,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        console.log(json);
-      });
-  }
 
   return (
     <div className="menuConfig">
@@ -161,7 +111,7 @@ export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
             </div>
           </div>
         </div>
-        <div onClick={() => createGame()} className="choixMDJ">
+        <div onClick={() => createGame(choose, listeEquipe)} className="choixMDJ">
           Créer la partie
         </div>
       </div>
