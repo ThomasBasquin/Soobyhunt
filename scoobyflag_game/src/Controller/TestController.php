@@ -4,14 +4,14 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Symfony\Component\Routing\Annotation\Route;
 
 class TestController extends AbstractController
 {
-    #[Route('/test', name: 'app_test')]
-    public function publish(HubInterface $hub): Response
+    #[Route('/test', name: 'app_test', methods:["GET"])]
+    public function index(HubInterface $hub): Response
     {
         $update = new Update(
             'https://example.com/users/dunglas',
@@ -20,6 +20,6 @@ class TestController extends AbstractController
 
         $hub->publish($update);
 
-        return $this->json('published!');
+        return new Response('published!');
     }
 }
