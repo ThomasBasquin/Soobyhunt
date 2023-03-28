@@ -178,7 +178,7 @@ export default function Carte() {
     }
 
     async function createGame(modeJeu, listeEquipe) {
-        /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+        const response = await fetch("http://127.0.0.1:8000/game/create/template", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -197,18 +197,20 @@ export default function Carte() {
             }),
         })
             .then((res) => {
+                console.log(res);
                 if (res.ok) {
                     return res.json();
                 }
             })
             .then((json) => {
+                console.log(json);
                 const id = json.gameTemplate.id;
                 launchGame(id);
-            });*/
+            });
 
-        ajouterJoueur([48.530437, 7.735647777777776]);
-        ajouterJoueur([48.531437, 7.735]);
-        setPartieLancee(true);
+        // ajouterJoueur([48.530437, 7.735647777777776]);
+        // ajouterJoueur([48.531437, 7.735]);
+        // setPartieLancee(true);
     }
 
     async function launchGame(id) {

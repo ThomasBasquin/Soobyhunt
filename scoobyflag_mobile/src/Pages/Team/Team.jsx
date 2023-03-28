@@ -66,15 +66,13 @@ function Team({navigation}) {
   };
 
   useEffect(() => {
-    
-    // fetch(URLS.getTemplate.replace('{game}', 18))
-    //   .then(res => res.json())
-    //   .then(res => {
-    //     console.log(res.gameTemplate.gameZones);
-    //     return res;
-    //   })
-    //   .then((e)=>setConfig(e.gameTemplate))
-    //   .finally(()=>setIsLoading(false))
+    fetch(URLS.getTemplate.replace('{game}', 1))
+      .then(res => res.json())
+      .then(res => {
+        return res;
+      })
+      .then((e)=>setConfig(e.gameTemplate))
+      .finally(()=>setIsLoading(false))
   }, []);
 
   return (

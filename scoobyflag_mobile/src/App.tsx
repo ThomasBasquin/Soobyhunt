@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Provider} from 'react-redux';
 import RouteProvider from './Routes/RouteProvider';
 import {PersistGate} from 'redux-persist/integration/react';
@@ -6,17 +6,17 @@ import {persistor, store} from './Services/store';
 import RNEventSource from 'react-native-event-source';
 
 function App() {
-  const uri = encodeURIComponent('https://example.com/users/dunglas');
-  try {
+  useEffect(() => {
+    const uri = encodeURIComponent('https://example.com/users/dunglas');
     const eventSource = new RNEventSource(
       'http://82.165.109.36/.well-known/mercure?topic=' + uri,
     );
     eventSource.addEventListener('message', (event: any) => {
-      console.log(event.type);
-      console.log(event.data);
+      console.log(event);
     });
-  } catch (e) {
-  }
+
+    return ()=> eventSource.removeAllListeners();
+  }, []);
 
   return (
     <Provider store={store}>

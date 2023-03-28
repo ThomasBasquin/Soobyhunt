@@ -69,11 +69,10 @@ export default function Home({route, navigation}) {
     refreshActualEffect();
     // reset();
     const config = route.params.gameConfiguration;
-    setMapCoordinates(config.gameZones.find(g => g.type=="authorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
-    setUnauthorizedZone(config.gameZones.find(g => g.type=="unauthorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
-    // setUnauthorizedZone([MAP_COORDINATE]);
-    setVilainMarkers(config.objectives.map(m => ({...m, team: null, latitude:parseFloat(m.latitude),longitude: parseFloat(m.longitude)})));
-    setItemMarkers(config.items.map(i => ({...i,quantite:3,latitude:parseFloat(i.latitude),longitude:parseFloat(i.longitude)})));
+    setMapCoordinates(config.json.authorizedZone.map(zone => ({latitude:zone.lat, longitude: zone.lng})));
+    setUnauthorizedZone(config.json.unauthorizedZone.map(unauthorizedZone => unauthorizedZone.map(zone => ({latitude:zone.lat, longitude: zone.lng}))));
+    setVilainMarkers(config.json.mechants.map(mechant => ({...mechant, coordonnees:{latitude:mechant.lat, longitude: mechant.lng}})));
+    setItemMarkers(config.json.items.map(zone => ({...zone,quantite:5, coordonnees:{latitude:zone.coordonnees.lat, longitude: zone.coordonnees.lng}})));
     getCurrentPosition(true);
   }, []);
 
@@ -112,13 +111,13 @@ export default function Home({route, navigation}) {
         circleRadius: GAME_CONFIG.visibilityRange.nearRangeFlag / 1000,
       }),
     );
-    const nearItem = itemMarkers.filter(marker =>
-      pointInCircle(marker.latitude, marker.longitude, {
+    const nearItem = itemMarkers.filter(marker =>{
+      return pointInCircle(marker.coordonnees.latitude, marker.coordonnees.longitude, {
         circleLat: e.coordinate.latitude,
         circleLng: e.coordinate.longitude,
         circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
-      }),
-    ).filter(marker => marker.quantite);
+      })
+    }).filter(marker => marker.quantite);
     const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
 
     if (!outOfMap) {
@@ -163,8 +162,8 @@ export default function Home({route, navigation}) {
     return vilainMarkers
       .filter(marker =>
         pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.latitude,
-          circleLng: marker.longitude,
+          circleLat: marker.coordonnees.latitude,
+          circleLng: marker.coordonnees.longitude,
           circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeFlag / 1000,
         }),
       )
@@ -181,8 +180,8 @@ export default function Home({route, navigation}) {
     return itemMarkers
       .filter(marker =>
         pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.latitude,
-          circleLng: marker.longitude,
+          circleLat: marker.coordonnees.latitude,
+          circleLng: marker.coordonnees.longitude,
           circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
         }),
       )
@@ -205,7 +204,7 @@ export default function Home({route, navigation}) {
   }, [mapCoordinates]);
 
   const renderUnauthorizedZone = useCallback(() => {
-    return <UnauthorizedMapPolygon mapCoordinates={unauthorizedZone} />;
+    return unauthorizedZone.map((coordonates,i) => <UnauthorizedMapPolygon key={i} mapCoordinates={coordonates} />);
   }, [unauthorizedZone]);
 
   const EffectComponent = useCallback(
