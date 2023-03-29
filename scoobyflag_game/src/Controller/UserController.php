@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
 
+    private UserService $userService;
     protected $em;
 
     function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+
     }
 
     #[Route('/{user}/position', name: 'update_position', methods: ['PUT'])]
@@ -30,6 +33,7 @@ class UserController extends AbstractController
         $user->setLongitude($data['longitude']);
         $this->em->persist($user);
         $this->em->flush();
+        $this->userService->getEventUserAndAllShitbyDistance($user, $data['viewDistance']);
 
         // $update = new Update(
         //     'https://example.com/users/dunglas',
@@ -46,7 +50,9 @@ class UserController extends AbstractController
     {
         $data = $request->toArray();
         $user = new User;
-        $user->setIdOrigin($data['id']);
+        if(isset($data['id']) ){
+            $user->setIdOrigin($data['id']);
+        }
         $user->setPseudo($data['pseudo']);
         $this->em->persist($user);
         $this->em->flush();
@@ -79,4 +85,6 @@ class UserController extends AbstractController
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
+
+    
 }

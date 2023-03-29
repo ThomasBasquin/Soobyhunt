@@ -17,39 +17,39 @@ class User
     #[ORM\Column]
     #[Groups(['User:read'])]
     private ?int $id = null;
-    
-    #[ORM\Column]
+
+    #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?int $idOrigin = null;
-    
-    #[ORM\Column]
+
+    #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?int $objectiveCaptured = null;
-    
-    #[ORM\Column]
+
+    #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?int $itemGet = null;
-    
-    #[ORM\Column]
+
+    #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?int $itemUsed = null;
-    
-    #[ORM\Column]
+
+    #[ORM\Column(nullable: true)]
     private ?float $distanceWalk = null;
-    
+
     #[ORM\OneToMany(mappedBy: 'capturedBy', targetEntity: ObjectiveUser::class)]
     private Collection $objectiveUsers;
-    
+
     #[ORM\OneToMany(mappedBy: 'getBy', targetEntity: ItemUser::class)]
     private Collection $itemUser;
-    
+
     #[ORM\ManyToOne(inversedBy: 'players')]
     private ?Team $team = null;
-    
+
     #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?float $latitude = null;
-    
+
     #[ORM\Column(nullable: true)]
     #[Groups(['User:read'])]
     private ?float $longitude = null;
@@ -60,7 +60,7 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
-    
+
     public function __construct()
     {
         $this->isReady = false;
@@ -80,7 +80,7 @@ class User
         return $this->idOrigin;
     }
 
-    public function setIdOrigin(int $idOrigin): self
+    public function setIdOrigin(?int $idOrigin): self
     {
         $this->idOrigin = $idOrigin;
 
@@ -92,7 +92,7 @@ class User
         return $this->objectiveCaptured;
     }
 
-    public function setObjectiveCaptured(int $objectiveCaptured): self
+    public function setObjectiveCaptured(?int $objectiveCaptured): self
     {
         $this->objectiveCaptured = $objectiveCaptured;
 
@@ -104,7 +104,7 @@ class User
         return $this->itemGet;
     }
 
-    public function setItemGet(int $itemGet): self
+    public function setItemGet(?int $itemGet): self
     {
         $this->itemGet = $itemGet;
 
@@ -116,7 +116,7 @@ class User
         return $this->itemUsed;
     }
 
-    public function setItemUsed(int $itemUsed): self
+    public function setItemUsed(?int $itemUsed): self
     {
         $this->itemUsed = $itemUsed;
 
@@ -128,7 +128,7 @@ class User
         return $this->distanceWalk;
     }
 
-    public function setDistanceWalk(float $distanceWalk): self
+    public function setDistanceWalk(?float $distanceWalk): self
     {
         $this->distanceWalk = $distanceWalk;
 
