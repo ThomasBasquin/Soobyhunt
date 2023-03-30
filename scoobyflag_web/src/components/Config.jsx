@@ -29,6 +29,20 @@ export default function Config({ createGame }) {
   return (
     <div className="menuConfig">
       <h1 className="titreConfig">Configuration d'une partie</h1>
+      {/* rajouter une croix pour fermer la page */}
+      <Link to="/">
+        <img
+          src="croix.png"
+          style={{
+            width: 30,
+            height: 30,
+            position: "absolute",
+            top: 10,
+            right: 10,
+          }}
+        />
+      </Link>
+
       <div className="scroll">
         <div className="formConfig">
           <div className="">
@@ -111,7 +125,10 @@ export default function Config({ createGame }) {
             </div>
           </div>
         </div>
-        <div onClick={() => createGame(choose, listeEquipe)} className="choixMDJ">
+        <div
+          onClick={() => createGame(choose, listeEquipe)}
+          className="choixMDJ"
+        >
           Créer la partie
         </div>
       </div>

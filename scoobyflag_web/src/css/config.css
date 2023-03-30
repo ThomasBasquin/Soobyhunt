@@ -1,208 +1,209 @@
 .titreConfig {
-    color: var(--violet);
-    padding-bottom: 5%;
+  color: var(--violet);
+  padding-bottom: 5%;
 }
 
 .formConfig {
-    width: 80%;
-    background-color: var(--orange);
-    display: flex;
-    flex-direction: column;
-    border-radius: 15px;
-    margin-top: 10px;
+  width: 80%;
+  background-color: var(--orange);
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  margin-top: 10px;
 }
 
 .modeDeJeu {
-    background-color: var(--violet);
-    width: 70%;
-    margin: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 15px;
+  background-color: var(--violet);
+  width: 70%;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 15px;
 }
 
 .choixMDJ {
-    color: var(--gris);
-    font-size: 22px;
-    text-align: center;
-    background-color: var(--violet);
-    margin: 10px;
-    padding: 1px;
-    border-radius: 25px;
-    color: var(--gris);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 210px;
-    height: 50px;
-    cursor: pointer;
+  color: var(--gris);
+  font-size: 22px;
+  text-align: center;
+  background-color: var(--violet);
+  margin: 10px;
+  padding: 1px;
+  border-radius: 25px;
+  color: var(--gris);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 210px;
+  height: 50px;
+  cursor: pointer;
 }
 
 .menuConfig {
-    right: 20px;
-    position: absolute;
-    border: var(--orange) solid 2px;
-    height: 95%;
-    width: 30%;
-    z-index: 2;
-    background-color: white;
-    transform: translateX(120%);
-    -webkit-transform: translateX(120%);
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 15px;
+  right: 20px;
+  position: absolute;
+  border: var(--orange) solid 2px;
+  height: 95%;
+  width: 30%;
+  z-index: 2;
+  background-color: white;
+  transform: translateX(120%);
+  -webkit-transform: translateX(120%);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 15px;
 }
 
 .scroll {
-    overflow-y: scroll;
-    height: 80%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;}
+  overflow-y: scroll;
+  height: 80%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
 
 .scroll::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .slideIn {
-    -webkit-animation: slideIn 1s forwards;
-    animation: slideIn 1s forwards;
+  -webkit-animation: slideIn 1s forwards;
+  animation: slideIn 1s forwards;
 }
 
 .slideOut {
-    -webkit-animation: slideOut 1s forwards;
-    animation: slideOut 1s forwards;
+  -webkit-animation: slideOut 1s forwards;
+  animation: slideOut 1s forwards;
 }
 
 @-webkit-keyframes slideIn {
-    100% {
-        -webkit-transform: translateX(0%);
-    }
+  100% {
+    -webkit-transform: translateX(0%);
+  }
 }
 
 @keyframes slideIn {
-    100% {
-        transform: translateX(0%);
-    }
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 @-webkit-keyframes slideOut {
-    0% {
-        -webkit-transform: translateX(0%);
-    }
-    100% {
-        -webkit-transform: translateX(120%);
-    }
+  0% {
+    -webkit-transform: translateX(0%);
+  }
+  100% {
+    -webkit-transform: translateX(120%);
+  }
 }
 
 @keyframes slideOut {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(120%);
-    }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
 }
 
 .listMDJ {
-    display: flex;
-    flex-direction: column;
-    height: 500px;
-    justify-content: space-around;
-    margin-left: 30px;
-    transition: display 2s;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  justify-content: space-around;
+  margin-left: 30px;
+  transition: display 2s;
 }
 
 .itemMDJ {
-    display: flex;
-    flex-direction: row;
-    margin-right: 20px;
-    background-color: var(--gris);
-    border-radius: 30px;
-    cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  margin-right: 20px;
+  background-color: var(--gris);
+  border-radius: 30px;
+  cursor: pointer;
 }
 
 .listEcran {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    height: 69px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 69px;
 }
 
 .content {
-    display: none;
-    transition: display 2s;
+  display: none;
+  transition: display 2s;
 }
 
 .active-content {
-    display: flex;
-    transition: "all 1s ease-in"
+  display: flex;
+  transition: "all 1s ease-in";
 }
 
 .active-tab {
-    background-color: blue
+  background-color: blue;
 }
 
 .selected-item {
-    background-color: var(--violet);
-    color: var(--orange);
-    border: 3px var(--gris) solid
+  background-color: var(--violet);
+  color: var(--orange);
+  border: 3px var(--gris) solid;
 }
 
 .addEquipe {
-    background-color: var(--gris);
-    border: 1px var(--violet) solid;
-    margin-right: 30px;
-    padding: 20px;
-    border-radius: 15px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+  background-color: var(--gris);
+  border: 1px var(--violet) solid;
+  margin-right: 30px;
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .nomEquipe {
-    padding: 10px;
-    border-radius: 15px;
-    border: none;
-    width: 150px;
+  padding: 10px;
+  border-radius: 15px;
+  border: none;
+  width: 150px;
 }
 
 .nbJoueur {
-    padding: 10px;
-    border-radius: 15px;
-    width: 40px;
-    margin-left: 5px
+  padding: 10px;
+  border-radius: 15px;
+  width: 40px;
+  margin-left: 5px;
 }
 
 .listeEquipe {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .equipe {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    background-color: var(--gris);
-    width: 300px;
-    margin: 20px;
-    border: 1px solid var(--violet);
-    border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: var(--gris);
+  width: 300px;
+  margin: 20px;
+  border: 1px solid var(--violet);
+  border-radius: 15px;
 }
 
 .listeMechant {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .itemMechant {
-    display: flex;
+  display: flex;
 }
