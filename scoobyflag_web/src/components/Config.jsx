@@ -29,19 +29,6 @@ export default function Config({ createGame }) {
   return (
     <div className="menuConfig">
       <h1 className="titreConfig">Configuration d'une partie</h1>
-      {/* rajouter une croix pour fermer la page */}
-      <Link to="/">
-        <img
-          src="croix.png"
-          style={{
-            width: 30,
-            height: 30,
-            position: "absolute",
-            top: 10,
-            right: 10,
-          }}
-        />
-      </Link>
 
       <div className="scroll">
         <div className="formConfig">
@@ -127,7 +114,7 @@ export default function Config({ createGame }) {
         </div>
         <div
           onClick={() => createGame(choose, listeEquipe)}
-          className="choixMDJ"
+          className="choixMDJ createButton"
         >
           Créer la partie
         </div>
@@ -153,7 +140,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2 style={{ margin: 0, marginTop: 10 }}>TIME</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             L’équipe gagnante est celle qui a le temps cumulé de possession des
             drapeaux le plus important à la fin de la partie
           </p>
@@ -169,7 +156,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2>FLAG</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             L’équipe gagnante est celle qui possède le plus de drapeaux à la fin
             de la partie
           </p>
@@ -185,7 +172,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2>SUPREMACY</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             {" "}
             L’équipe gagnante est la première à posséder la majorité des
             drapeaux
@@ -294,12 +281,18 @@ const Mechants = ({
           <p style={{ display: "flex", justifyContent: "space-around" }}>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbGrandMechant(nbGrandMechant - 1)}
             >
@@ -308,12 +301,18 @@ const Mechants = ({
             <span style={{ padding: 10 }}>{nbGrandMechant} </span>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbGrandMechant(nbGrandMechant + 1)}
             >
@@ -338,12 +337,18 @@ const Mechants = ({
           <p style={{ display: "flex", justifyContent: "space-around" }}>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbPetitMechant(nbPetitMechant - 1)}
             >
@@ -352,12 +357,18 @@ const Mechants = ({
             <span style={{ padding: 10 }}>{nbPetitMechant} </span>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbPetitMechant(nbPetitMechant + 1)}
             >
