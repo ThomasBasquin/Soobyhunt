@@ -20,14 +20,13 @@ class UserService
 
     public function getEventUserAndAllShitbyDistance(User $user, $distanceView)
     {
-
         $latitudeParam = ($distanceView / 1000) * 110.574;
         $longitudeParam = ($distanceView / 1000) * (110.320 . cos($latitudeParam));
 
         $latitudeMax = $user->getLatitude() + $latitudeParam;
         $latitudeMin = $user->getLatitude() - $latitudeParam;
         $longitudeMax = $user->getLongitude() - $longitudeParam;
-        $longitudeMin = $user->getLongitude() - $longitudeParam;""
+        $longitudeMin = $user->getLongitude() - $longitudeParam;
     }
     public function save(User $user)
     {

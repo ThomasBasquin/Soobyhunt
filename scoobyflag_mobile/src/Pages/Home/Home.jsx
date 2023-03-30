@@ -30,6 +30,7 @@ import useItem from '../../Constantes/Hooks/useItem';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
 import {MAP_COORDINATE, USER_MARKERS} from '../../Constantes/mocked';
+import EventSource, {EventSourceListener} from 'react-native-sse';
 
 export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -46,7 +47,7 @@ export default function Home({route, navigation}) {
   const [unauthorizedZone, setUnauthorizedZone] = useState([]);
   const [vilainMarkers, setVilainMarkers] = useVilain(); //MERCURE SEND AND RETRIEVE
   const [itemMarkers, setItemMarkers] = useItem([]); //MERCURE SEND AND RETRIEVE
-  const [userMarkers, setUserMarkers] = useState(USER_MARKERS); //USER_MARKERS //MERCURE RETRIEVE
+  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [itemsUser, setItemsUser] = useState([]);
@@ -97,6 +98,40 @@ export default function Home({route, navigation}) {
       })),
     );
     getCurrentPosition(true);
+
+    const topic = encodeURIComponent('https://scoobyflag/user/0');
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic)
+    );
+
+    eventSource.addEventListener('open', event => {
+      // console.debug("Open SSE connection.");
+    });
+
+    eventSource.addEventListener('message', event => {
+      const user=JSON.parse(JSON.parse(event.data));
+
+      const alreadyInParty=userMarkers.find(u => {console.log(u); return u.id==user.id});
+      setUserMarkers(cur => alreadyInParty ? cur.map(u => u.id==user.id ? user : u) : [...cur,user]);
+    });
+    
+    eventSource.addEventListener('error', event => {
+      if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
+      }
+    });
+
+    eventSource.addEventListener('close', event => {
+      // console.debug("Close SSE connection.");
+    });
+
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
   }, []);
 
   function setEffect(item) {
