@@ -19,21 +19,23 @@ class UserController extends AbstractController
     private UserService $userService;
     protected $em;
 
-    function __construct(EntityManagerInterface $em)
+    function __construct(EntityManagerInterface $em,UserService $userService)
     {
         $this->em = $em;
+        $this->userService = $userService;
+
 
     }
 
-    #[Route('/{user}/position', name: 'update_position', methods: ['PUT'])]
-    public function updatePosition(HubInterface $hub, User $user, Request $request): Response
+    #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
+    public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
     {
-        $data = $request->toArray();
-        $user->setLatitude($data['latitude']);
-        $user->setLongitude($data['longitude']);
-        $this->em->persist($user);
-        $this->em->flush();
-        $this->userService->getEventUserAndAllShitbyDistance($user, $data['viewDistance']);
+        // $data = $request->toArray();
+        // $user->setLatitude($data['latitude']);
+        // $user->setLongitude($data['longitude']);
+        // $this->em->persist($user);
+        // $this->em->flush();
+    $this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30);
 
         // $update = new Update(
         //     'https://example.com/users/dunglas',
@@ -42,7 +44,7 @@ class UserController extends AbstractController
 
         // $hub->publish($update);
 
-        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+        return $this->json($this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
     #[Route('/join', name: 'join', methods: ['POST'])]

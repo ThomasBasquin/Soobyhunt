@@ -38,6 +38,20 @@ class ObjectiveRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function findByLocation($latMin, $latMax, $lngMin, $lngMax)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.latitude > :latMin')
+            ->andWhere('o.latitude < :latMax')
+            ->andWhere('o.longitude > :lngMin')
+            ->andWhere('o.longitude < :lngMax')
+            ->setParameter('latMin', $latMin)
+            ->setParameter('latMax', $latMax)
+            ->setParameter('lngMin', $lngMin)
+            ->setParameter('lngMax', $lngMax)
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Objective[] Returns an array of Objective objects
