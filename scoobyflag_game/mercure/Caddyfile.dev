@@ -1,9 +1,22 @@
 # Learn how to configure the Mercure.rocks Hub on https://mercure.rocks/docs/hub/config
 {
-    auto_https off
+	{$GLOBAL_OPTIONS}
 }
 
-localhost:3000
+{$SERVER_NAME:localhost}
+
+log {
+	format filter {
+		wrap console
+		fields {
+			uri query {
+				replace authorization REDACTED
+			}
+		}
+	}
+}
+
+{$EXTRA_DIRECTIVES}
 
 route {
 	encode zstd gzip

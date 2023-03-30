@@ -16,72 +16,25 @@ class GameTemplate
     #[ORM\Column]
     #[Groups(['GameTemplate:read'])]
     private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups(['GameTemplate:read'])]
-    private ?string $name = null;
     
     #[ORM\ManyToOne(inversedBy: 'gameTemplates')]
     #[Groups(['GameTemplate:read'])]
     private ?User $gameMaster = null;
-    
-    
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: GameZone::class)]
-    #[Groups(['GameTemplate:read'])]
-    private Collection $gameZones;
-    
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Objective::class)]
-    #[Groups(['GameTemplate:read'])]
-    private Collection $objectives;
-    
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Game::class)]
-    private Collection $games;
-    
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Item::class)]
-    #[Groups(['GameTemplate:read'])]
-    private Collection $items;
-    
-    #[ORM\Column]
-    #[Groups(['GameTemplate:read'])]
-    private ?int $limitTime = null;
-    
-    #[ORM\Column(length: 255)]
-    #[Groups(['GameTemplate:read'])]
-    private ?string $mode = null;
-    
-    #[ORM\Column]
-    #[Groups(['GameTemplate:read'])]
-    private ?bool $private = null;
-    
-    #[ORM\OneToMany(mappedBy: 'gameTemplate', targetEntity: Team::class)]
-    #[Groups(['GameTemplate:read'])]
-    private Collection $teams;
 
+    #[ORM\Column]
+    private array $json = [];
+
+    #[ORM\Column]
+    private ?bool $isActive = null;
+    
     public function __construct()
     {
-    
-        $this->gameZones = new ArrayCollection();
-        $this->objectives = new ArrayCollection();
-        $this->games = new ArrayCollection();
-        $this->items = new ArrayCollection();
-        $this->teams = new ArrayCollection();
+        $this->isActive = true;
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getGameMaster(): ?User
@@ -96,190 +49,29 @@ class GameTemplate
         return $this;
     }
 
-
-    /**
-     * @return Collection<int, GameZone>
-     */
-    public function getGameZones(): Collection
+    public function getJson(): array
     {
-        return $this->gameZones;
+        return $this->json;
     }
 
-    public function addGameZone(GameZone $gameZone): self
+    public function setJson(array $json): self
     {
-        if (!$this->gameZones->contains($gameZone)) {
-            $this->gameZones->add($gameZone);
-            $gameZone->setGameTemplate($this);
-        }
+        $this->json = $json;
 
         return $this;
     }
 
-    public function removeGameZone(GameZone $gameZone): self
+    public function isIsActive(): ?bool
     {
-        if ($this->gameZones->removeElement($gameZone)) {
-            // set the owning side to null (unless already changed)
-            if ($gameZone->getGameTemplate() === $this) {
-                $gameZone->setGameTemplate(null);
-            }
-        }
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Objective>
-     */
-    public function getObjectives(): Collection
-    {
-        return $this->objectives;
-    }
 
-    public function addObjective(Objective $objective): self
-    {
-        if (!$this->objectives->contains($objective)) {
-            $this->objectives->add($objective);
-            $objective->setGameTemplate($this);
-        }
-
-        return $this;
-    }
-
-    public function removeObjective(Objective $objective): self
-    {
-        if ($this->objectives->removeElement($objective)) {
-            // set the owning side to null (unless already changed)
-            if ($objective->getGameTemplate() === $this) {
-                $objective->setGameTemplate(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Game>
-     */
-    public function getGames(): Collection
-    {
-        return $this->games;
-    }
-
-    public function addGame(Game $game): self
-    {
-        if (!$this->games->contains($game)) {
-            $this->games->add($game);
-            $game->setGameTemplate($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGame(Game $game): self
-    {
-        if ($this->games->removeElement($game)) {
-            // set the owning side to null (unless already changed)
-            if ($game->getGameTemplate() === $this) {
-                $game->setGameTemplate(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Item>
-     */
-    public function getItems(): Collection
-    {
-        return $this->items;
-    }
-
-    public function addItem(Item $item): self
-    {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-            $item->setGameTemplate($this);
-        }
-
-        return $this;
-    }
-
-    public function removeItem(Item $item): self
-    {
-        if ($this->items->removeElement($item)) {
-            // set the owning side to null (unless already changed)
-            if ($item->getGameTemplate() === $this) {
-                $item->setGameTemplate(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getLimitTime(): ?int
-    {
-        return $this->limitTime;
-    }
-
-    public function setLimitTime(int $limitTime): self
-    {
-        $this->limitTime = $limitTime;
-
-        return $this;
-    }
-
-    public function getMode(): ?string
-    {
-        return $this->mode;
-    }
-
-    public function setMode(string $mode): self
-    {
-        $this->mode = $mode;
-
-        return $this;
-    }
-
-    public function isPrivate(): ?bool
-    {
-        return $this->private;
-    }
-
-    public function setPrivate(bool $private): self
-    {
-        $this->private = $private;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
-    {
-        return $this->teams;
-    }
-
-    public function addTeam(Team $team): self
-    {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->setGameTemplate($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTeam(Team $team): self
-    {
-        if ($this->teams->removeElement($team)) {
-            // set the owning side to null (unless already changed)
-            if ($team->getGameTemplate() === $this) {
-                $team->setGameTemplate(null);
-            }
-        }
-
-        return $this;
-    }
 }

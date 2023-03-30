@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -14,21 +15,26 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['User:read'])]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
     private ?int $idOrigin = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
     private ?int $objectiveCaptured = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
     private ?int $itemGet = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
     private ?int $itemUsed = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?float $distanceWalk = null;
 
     #[ORM\OneToMany(mappedBy: 'capturedBy', targetEntity: ObjectiveUser::class)]
@@ -40,9 +46,24 @@ class User
     #[ORM\ManyToOne(inversedBy: 'players')]
     private ?Team $team = null;
 
-    
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
+    private ?float $latitude = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['User:read'])]
+    private ?float $longitude = null;
+
+    #[ORM\Column]
+    private ?bool $isReady = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $pseudo = null;
+
+
     public function __construct()
     {
+        $this->isReady = false;
         $this->itemGet = 0;
         $this->distanceWalk = 0;
         $this->itemUsed = 0;
@@ -59,7 +80,7 @@ class User
         return $this->idOrigin;
     }
 
-    public function setIdOrigin(int $idOrigin): self
+    public function setIdOrigin(?int $idOrigin): self
     {
         $this->idOrigin = $idOrigin;
 
@@ -71,7 +92,7 @@ class User
         return $this->objectiveCaptured;
     }
 
-    public function setObjectiveCaptured(int $objectiveCaptured): self
+    public function setObjectiveCaptured(?int $objectiveCaptured): self
     {
         $this->objectiveCaptured = $objectiveCaptured;
 
@@ -83,7 +104,7 @@ class User
         return $this->itemGet;
     }
 
-    public function setItemGet(int $itemGet): self
+    public function setItemGet(?int $itemGet): self
     {
         $this->itemGet = $itemGet;
 
@@ -95,7 +116,7 @@ class User
         return $this->itemUsed;
     }
 
-    public function setItemUsed(int $itemUsed): self
+    public function setItemUsed(?int $itemUsed): self
     {
         $this->itemUsed = $itemUsed;
 
@@ -107,7 +128,7 @@ class User
         return $this->distanceWalk;
     }
 
-    public function setDistanceWalk(float $distanceWalk): self
+    public function setDistanceWalk(?float $distanceWalk): self
     {
         $this->distanceWalk = $distanceWalk;
 
@@ -182,6 +203,54 @@ class User
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function isIsReady(): ?bool
+    {
+        return $this->isReady;
+    }
+
+    public function setIsReady(bool $isReady): self
+    {
+        $this->isReady = $isReady;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): self
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }

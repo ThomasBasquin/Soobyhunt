@@ -2,6 +2,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Home from '../Pages/Home/Home';
 import Team from '../Pages/Team/Team';
 
+
 const Stack = createNativeStackNavigator();
 
 export default function AppRoutes() {
