@@ -29,13 +29,13 @@ import useVilain from '../../Constantes/Hooks/useVilain';
 import useItem from '../../Constantes/Hooks/useItem';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
-import { MAP_COORDINATE, USER_MARKERS } from '../../Constantes/mocked';
+import {MAP_COORDINATE, USER_MARKERS} from '../../Constantes/mocked';
 
 export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
-  });//MERCURE SEND
+  }); //MERCURE SEND
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -44,7 +44,7 @@ export default function Home({route, navigation}) {
   });
   const [mapCoordinates, setMapCoordinates] = useState();
   const [unauthorizedZone, setUnauthorizedZone] = useState([]);
-  const [vilainMarkers, setVilainMarkers] = useVilain();//MERCURE SEND AND RETRIEVE
+  const [vilainMarkers, setVilainMarkers] = useVilain(); //MERCURE SEND AND RETRIEVE
   const [itemMarkers, setItemMarkers] = useItem([]); //MERCURE SEND AND RETRIEVE
   const [userMarkers, setUserMarkers] = useState(USER_MARKERS); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
@@ -61,18 +61,41 @@ export default function Home({route, navigation}) {
   });
 
   useEffect(() => {
-    if (!route.params.gameConfiguration){
+    if (!route.params.gameConfiguration) {
       Alert.alert('Une configuration est requise');
-      navigation.navigate("Team");
-      return
+      navigation.navigate('Team');
+      return;
     }
     refreshActualEffect();
     // reset();
     const config = route.params.gameConfiguration;
-    setMapCoordinates(config.json.authorizedZone.map(zone => ({latitude:zone.lat, longitude: zone.lng})));
-    setUnauthorizedZone(config.json.unauthorizedZone.map(unauthorizedZone => unauthorizedZone.map(zone => ({latitude:zone.lat, longitude: zone.lng}))));
-    setVilainMarkers(config.json.mechants.map(mechant => ({...mechant, coordonnees:{latitude:mechant.lat, longitude: mechant.lng}})));
-    setItemMarkers(config.json.items.map(zone => ({...zone,quantite:5, coordonnees:{latitude:zone.coordonnees.lat, longitude: zone.coordonnees.lng}})));
+    setMapCoordinates(
+      config.json.authorizedZone.map(zone => ({
+        latitude: zone.latitude,
+        longitude: zone.longitude,
+      })),
+    );
+    setUnauthorizedZone(
+      config.json.unauthorizedZone.map(unauthorizedZone =>
+        unauthorizedZone.map(zone => ({
+          latitude: zone.lat,
+          longitude: zone.lng,
+        })),
+      ),
+    );
+    setVilainMarkers(
+      config.json.mechants.map(mechant => ({
+        ...mechant,
+        coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
+      })),
+    );
+    setItemMarkers(
+      config.json.items.map(zone => ({
+        ...zone,
+        quantite: 5,
+        coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
+      })),
+    );
     getCurrentPosition(true);
   }, []);
 
@@ -111,13 +134,19 @@ export default function Home({route, navigation}) {
         circleRadius: GAME_CONFIG.visibilityRange.nearRangeFlag / 1000,
       }),
     );
-    const nearItem = itemMarkers.filter(marker =>{
-      return pointInCircle(marker.coordonnees.latitude, marker.coordonnees.longitude, {
-        circleLat: e.coordinate.latitude,
-        circleLng: e.coordinate.longitude,
-        circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
+    const nearItem = itemMarkers
+      .filter(marker => {
+        return pointInCircle(
+          marker.coordonnees.latitude,
+          marker.coordonnees.longitude,
+          {
+            circleLat: e.coordinate.latitude,
+            circleLng: e.coordinate.longitude,
+            circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
+          },
+        );
       })
-    }).filter(marker => marker.quantite);
+      .filter(marker => marker.quantite);
     const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
 
     if (!outOfMap) {
@@ -156,7 +185,7 @@ export default function Home({route, navigation}) {
 
   const renderUserMarkers = useCallback(() => {
     return userMarkers.map((user, i) => <UserMarker key={i} user={user} />);
-  },[userMarkers]);
+  }, [userMarkers]);
 
   const renderVilainMarkers = useCallback(() => {
     return vilainMarkers
@@ -178,13 +207,18 @@ export default function Home({route, navigation}) {
 
   const renderItemMarkers = useCallback(() => {
     return itemMarkers
-      .filter(marker =>
-        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.coordonnees.latitude,
-          circleLng: marker.coordonnees.longitude,
-          circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
-        }),
-      )
+      .filter(marker => {
+        return pointInCircle(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          {
+            circleLat: marker.coordonnees.latitude,
+            circleLng: marker.coordonnees.longitude,
+            circleRadius:
+              GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
+          },
+        );
+      })
       .filter(marker => marker.quantite > 0)
       .map((item, i) => (
         <ItemMarker
@@ -204,7 +238,9 @@ export default function Home({route, navigation}) {
   }, [mapCoordinates]);
 
   const renderUnauthorizedZone = useCallback(() => {
-    return unauthorizedZone.map((coordonates,i) => <UnauthorizedMapPolygon key={i} mapCoordinates={coordonates} />);
+    return unauthorizedZone.map((coordonates, i) => (
+      <UnauthorizedMapPolygon key={i} mapCoordinates={coordonates} />
+    ));
   }, [unauthorizedZone]);
 
   const EffectComponent = useCallback(
@@ -244,7 +280,13 @@ export default function Home({route, navigation}) {
       {stateVilainModal.isOpen ? (
         <VilainModal
           state={stateVilainModal}
-          onSubmit={(vilain) => setVilainMarkers(vilainMarkers.map(v => v.id==vilain.id ? {...v,team:"MOUGOU"} : v))}//TODO : Récupérer l'équipe du joueur
+          onSubmit={vilain =>
+            setVilainMarkers(
+              vilainMarkers.map(v =>
+                v.id == vilain.id ? {...v, team: 'MOUGOU'} : v,
+              ),
+            )
+          } //TODO : Récupérer l'équipe du joueur
           onRequestClose={() =>
             setStateVilainModal({...stateVilainModal, isOpen: false})
           }

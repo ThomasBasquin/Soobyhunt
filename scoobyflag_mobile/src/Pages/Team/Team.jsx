@@ -3,7 +3,7 @@ import {TouchableOpacity, Text, View, Image} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 import URLS from '../../Constantes/URLS';
-import EventSource, { EventSourceListener } from "react-native-sse";
+import EventSource, {EventSourceListener} from 'react-native-sse';
 
 function Team({navigation}) {
   const [config, setConfig] = useState(null);
@@ -66,13 +66,41 @@ function Team({navigation}) {
   };
 
   useEffect(() => {
-    fetch(URLS.getTemplate.replace('{game}', 1))
+    fetch(URLS.getTemplate.replace('{game}', 18))
       .then(res => res.json())
-      .then(res => {
-        return res;
-      })
-      .then((e)=>setConfig(e.gameTemplate))
-      .finally(()=>setIsLoading(false))
+      .then(e => setConfig(e.gameTemplate))
+      .finally(() => setIsLoading(false));
+
+    const topic = encodeURIComponent('https://scoobyflag/user/0');
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+    );
+
+    eventSource.addEventListener('open', event => {
+      // console.debug("Open SSE connection.");
+    });
+
+    eventSource.addEventListener('message', event => {
+      console.log(event.data);
+    });
+
+    eventSource.addEventListener('error', event => {
+      if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
+      }
+    });
+
+    eventSource.addEventListener('close', event => {
+      // console.debug("Close SSE connection.");
+    });
+
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
   }, []);
 
   return (
@@ -111,7 +139,7 @@ function Team({navigation}) {
           Charger la configuration
         </Text>
       </TouchableOpacity>
-        <Text>{test}</Text>
+      <Text>{test}</Text>
       {isLoading ? <Text>Chargement...</Text> : null}
     </View>
   );
