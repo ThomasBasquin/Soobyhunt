@@ -23,18 +23,26 @@ export default function Carte() {
     const [mechants, setMechants] = useState([]);
     const [items, setItems] = useState([]);
     const [joueurs, setJoueurs] = useState([]);
+    const [aa, setAa] = useState(0);
 
     useEffect(() => {
         getLocation();
 
         const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
-        url.searchParams.append("topic", "https://scoobyflag/user/{userId}".replace("{userId}", 0/*userId.toString()*/));
+        url.searchParams.append("topic", "https://scoobyflag/user/{userId}".replace("{userId}", 5/*userId.toString()*/));
 
         const eventSource = new EventSource(url);
 
         eventSource.onmessage = ({ data }) => {
             console.log(data);
-            deplacerJoueur(0, [48.536, 7.735647777777776])
+            if (data.includes("ajouter")) {
+                ajouterJoueur([48.530437, 7.735647777777776]);
+                ajouterJoueur([48.531437, 7.735]);
+            }
+            else if (data.includes("deplacer")) {
+                deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
+            }
+            console.log(joueurs);
         }
     }, [])
 
@@ -178,6 +186,7 @@ export default function Carte() {
     }
 
     const ajouterJoueur = (coordonnees) => {
+        //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
         setJoueurs(oldJoueurs => [...oldJoueurs, { id: oldJoueurs.length, coordonnees: coordonnees }]);
     }
 
@@ -190,6 +199,7 @@ export default function Carte() {
             }
         });
         setJoueurs(newJoueurs);
+        //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
     }
 
     async function createGame(modeJeu, listeEquipe) {
@@ -221,8 +231,19 @@ export default function Carte() {
                 launchGame(id);
             });*/
 
-        ajouterJoueur([48.530437, 7.735647777777776]);
-        ajouterJoueur([48.531437, 7.735]);
+        console.log(JSON.stringify({
+            name: "Sprint 1", //A CHANGER
+            modeDeJeu: modeJeu,
+            limitTime: 600, //A CHANGER
+            teams: listeEquipe,
+            authorizedZone: zoneJeu,
+            unauthorizedZone: zonesInterdites,
+            mechants: mechants,
+            items: items,
+            private: true, //A CHANGER
+            idCreator: 3
+        }))
+
         setPartieLancee(true);
     }
 
@@ -247,8 +268,14 @@ export default function Carte() {
     }
 
     const test = () => {
-        console.log("a");
-        deplacerJoueur(0, [48.536, 7.735647777777776])
+        if (aa == 0) {
+            ajouterJoueur([48.530437, 7.735647777777776]);
+            ajouterJoueur([48.531437, 7.735]);
+            setAa(1);
+        }
+        else {
+            deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
+        }
     }
 
     return (status == null ? <>
