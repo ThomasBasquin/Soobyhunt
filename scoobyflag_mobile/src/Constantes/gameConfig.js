@@ -1,11 +1,11 @@
 const GAME_CONFIG={
     visibilityRange: {
         //Visibilité en mètre
-        nearRangeFlag: 100,
-        test:50,
-        visibilityRangeFlag: 50,
-        nearRangeItem: 100,
-        visibilityRangeItem: 50,
+        nearRangeFlag: 1000000000,
+        test:1000000000,
+        visibilityRangeFlag: 1000000000,
+        nearRangeItem: 1000000000,
+        visibilityRangeItem: 1000000000,
       },
       map:{
         refreshUserLocation:10000,

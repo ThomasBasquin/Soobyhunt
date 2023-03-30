@@ -60,7 +60,7 @@ export function pointInPolygon(point, polygon) {
 export function findPiture(name) {
   if (name == 'SAC_A_DOS') {
     return require('./../Assets/items/SAC_A_DOS.png');
-  } else if (name == 'LUNETTE_DE_VERRA') {
+  } else if (name == 'lunette de véra') {
     return require('./../Assets/items/LUNETTE_DE_VERRA.png');
   } else if (name == 'FANTOME') {
     return require('./../Assets/items/FANTOME.png');

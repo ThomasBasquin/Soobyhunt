@@ -1,12 +1,12 @@
-import {useMemo, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {TouchableOpacity, Text, View, Image} from 'react-native';
 import COLORS from '../../Constantes/colors';
-import usePlayer from '../../Constantes/Hooks/usePlayer';
 import URLS from '../../Constantes/URLS';
 
 function Team({navigation}) {
   const [config, setConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [test, setTest] = useState(true);
 
   const stest = {
     gameTemplate: {
@@ -64,15 +64,10 @@ function Team({navigation}) {
   };
 
   useEffect(() => {
-    
-    // fetch(URLS.getTemplate.replace('{game}', 18))
-    //   .then(res => res.json())
-    //   .then(res => {
-    //     console.log(res.gameTemplate.gameZones);
-    //     return res;
-    //   })
-    //   .then((e)=>setConfig(e.gameTemplate))
-    //   .finally(()=>setIsLoading(false))
+    fetch(URLS.getTemplate.replace('{game}', 18))
+      .then(res => res.json())
+      .then(e => setConfig(e.gameTemplate))
+      .finally(() => setIsLoading(false));
   }, []);
 
   return (
@@ -111,6 +106,7 @@ function Team({navigation}) {
           Charger la configuration
         </Text>
       </TouchableOpacity>
+      <Text>{test}</Text>
       {isLoading ? <Text>Chargement...</Text> : null}
     </View>
   );
