@@ -53,8 +53,9 @@
 
 .iconBar {
   width: 64%;
-  max-height: 90%; /* Ajout d'une hauteur maximale pour les icônes */
-  object-fit: contain; /* Garantir que les icônes sont redimensionnées proportionnellement */
+  max-height: 90%;
+  object-fit: contain;
+  padding-bottom: 0.3rem;
 }
 
 .btnConfig {
