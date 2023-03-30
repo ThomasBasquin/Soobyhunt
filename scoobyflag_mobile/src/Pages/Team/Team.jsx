@@ -66,41 +66,13 @@ function Team({navigation}) {
   };
 
   useEffect(() => {
-    const url = new URL("https://82.165.109.36/.well-known/mercure");
-
-    url.searchParams.append("topic", "https://example.com/users/dunglas");
-    const es = new EventSource(url, {
-      headers: {
-        Authorization: {
-          toString: function () {
-            return "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOlsiKiJdfX0.a8cjcSRUAcHdnGNMKifA4BK5epRXxQI0UBp2XpNrBdw";
-          },
-        },
-      },
-    });
-
-    const listener = (event) => {
-      if (event.type === "open") {
-        console.log("open");
-      } else if (event.type === "message") {
-        const book = JSON.parse(event.data);
-        console.log(book);
-
-      } else if (event.type === "error") {
-        console.log(event.message);
-      } else if (event.type === "exception") {
-        console.log("Error:", event.message, event.error);
-      }
-    };
-
-    es.addEventListener("open", listener);
-    es.addEventListener("message", listener);
-    es.addEventListener("error", listener);
-
-    return () => {
-      es.removeAllEventListeners();
-      es.close();
-    };
+    fetch(URLS.getTemplate.replace('{game}', 1))
+      .then(res => res.json())
+      .then(res => {
+        return res;
+      })
+      .then((e)=>setConfig(e.gameTemplate))
+      .finally(()=>setIsLoading(false))
   }, []);
 
   return (

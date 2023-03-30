@@ -1,7 +1,7 @@
 const GAME_CONFIG={
     visibilityRange: {
         //Visibilité en mètre
-        nearRangeFlag: 100,
+        nearRangeFlag: 50,
         test:50,
         visibilityRangeFlag: 50,
         nearRangeItem: 100,
