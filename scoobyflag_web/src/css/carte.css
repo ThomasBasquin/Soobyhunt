@@ -15,14 +15,14 @@
 .sideBar {
     position: absolute;
     z-index: 2;
-    background-color: var(--orange);
-    width: 120px;
+    background-color: white;
+    width: 100px;
     left: 20px;
-    top: 20px;
+    top: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: black 2px solid;
+    border: var(--orange) 4px solid;
     font-weight: bold;
     border-radius: 10px;
 }
@@ -39,11 +39,10 @@
 }
 
 .btnSideBar:hover {
-    background-color: var(--violet);
+    background-color: var(--orange);
 }
 
 .iconBar {
-    height: 70%;
     width: 70%;
 }
 

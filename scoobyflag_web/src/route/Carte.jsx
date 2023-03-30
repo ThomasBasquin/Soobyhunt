@@ -5,6 +5,7 @@ import "../css/carte.css";
 import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
 import loupe from "../assets/loupe.png";
+import player from "../assets/points.png"
 import pointInPolygon from "point-in-polygon";
 import Config from "../components/Config";
 import { EditControl } from 'react-leaflet-draw';
@@ -25,6 +26,16 @@ export default function Carte() {
 
     useEffect(() => {
         getLocation();
+
+        const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
+        url.searchParams.append("topic", "https://scoobyflag/user/{userId}".replace("{userId}", 0/*userId.toString()*/));
+
+        const eventSource = new EventSource(url);
+
+        eventSource.onmessage = ({ data }) => {
+            console.log(data);
+            deplacerJoueur(0, [48.536, 7.735647777777776])
+        }
     }, [])
 
     const getLocation = () => {
@@ -57,6 +68,12 @@ export default function Carte() {
         iconUrl: loupe,
         iconSize: [50, 50],
         iconAnchor: [25, 25]
+    })
+
+    const playerIcon = new L.icon({
+        iconUrl: player,
+        iconSize: [25, 25],
+        iconAnchor: [12.5, 12.5]
     })
 
     const clickBtnConfig = () => {
@@ -167,10 +184,8 @@ export default function Carte() {
     const deplacerJoueur = (idJoueur, coordonnees) => {
         const newJoueurs = joueurs.map((joueur, i) => {
             if (i === idJoueur) {
-                // Increment the clicked counter
                 return { id: joueur.id, coordonnees: coordonnees };
             } else {
-                // The rest haven't changed
                 return joueur;
             }
         });
@@ -278,7 +293,7 @@ export default function Carte() {
             </FeatureGroup>
             {partieLancee ? <>
                 {joueurs.map(joueur => {
-                    return <Marker key={joueur.id} position={joueur.coordonnees}>
+                    return <Marker key={joueur.id} position={joueur.coordonnees} icon={playerIcon}>
                         <Popup>ID Joueur : {joueur.id}</Popup>
                     </Marker>
                 })}
