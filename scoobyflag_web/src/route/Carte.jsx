@@ -15,6 +15,7 @@ import player from "../assets/points.png";
 import pointInPolygon from "point-in-polygon";
 import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
+import { useCallback } from "react";
 
 export default function Carte() {
   const [latitude, setLatitude] = useState(0.0);
@@ -24,33 +25,47 @@ export default function Carte() {
   const [clickedSupprimer, setClickedSupprimer] = useState(false);
   const [partieLancee, setPartieLancee] = useState(false);
 
-    const [zoneJeu, setZoneJeu] = useState([]);
-    const [zonesInterdites, setZonesInterdites] = useState([]);
-    const [mechants, setMechants] = useState([]);
-    const [items, setItems] = useState([]);
-    const [joueurs, setJoueurs] = useState([]);
-    const [aa, setAa] = useState(0);
+  const [zoneJeu, setZoneJeu] = useState([]);
+  const [zonesInterdites, setZonesInterdites] = useState([]);
+  const [mechants, setMechants] = useState([]);
+  const [items, setItems] = useState([]);
+  const [joueurs, setJoueurs] = useState([]);
+  const [aa, setAa] = useState(0);
 
   useEffect(() => {
     getLocation();
+  }, []);
 
-        const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
-        url.searchParams.append("topic", "https://scoobyflag/user/{userId}".replace("{userId}", 5/*userId.toString()*/));
+  useEffect(() => {
+    const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
+    url.searchParams.append(
+      "topic",
+      "https://scoobyflag/user/{userId}".replace(
+        "{userId}",
+        0 /*userId.toString()*/
+      )
+    );
 
     const eventSource = new EventSource(url);
 
-        eventSource.onmessage = ({ data }) => {
-            console.log(data);
-            if (data.includes("ajouter")) {
-                ajouterJoueur([48.530437, 7.735647777777776]);
-                ajouterJoueur([48.531437, 7.735]);
-            }
-            else if (data.includes("deplacer")) {
-                deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
-            }
-            console.log(joueurs);
-        }
-    }, [])
+    eventSource.onmessage = ({ data }) => {
+      const user = JSON.parse(JSON.parse(data));
+      const alreadyExist = joueurs.find((u) => u.id == user.id);
+
+      console.log(alreadyExist);
+      if (!alreadyExist) {
+        ajouterJoueur(user.id, [user.latitude, user.longitude]);
+      } else {
+        deplacerJoueur(user.id, [user.latitude, user.longitude]);
+      }
+
+      // else if (data.includes("deplacer")) {
+      //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
+      // }
+    };
+
+    return () => eventSource.close();
+  }, [joueurs]);
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -101,109 +116,30 @@ export default function Carte() {
     }
   };
 
-    const onCreated = (e) => {
-        console.log(e.layerType);
-        if (e.layerType === 'polygon') {
-            if (e.layer.options.color == 'red') {
-                var tabTemp = zonesInterdites;
-                tabTemp.push(e.layer.getLatLngs()[0]);
-                setZonesInterdites(tabTemp);
-            }
-            else {
-                setZoneJeu(e.layer.getLatLngs()[0]);
-            }
-        }
-        else {
-            console.log(zoneJeu);
-            console.log(pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], zoneJeu));
-            if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
-                var tabTemp = mechants;
-                tabTemp.push(e.layer.getLatLng());
-                setMechants(tabTemp);
-            }
-            else {
-                var tabTemp = items;
-                tabTemp.push({
-                    "name": "loupe",
-                    "coordonnees": e.layer.getLatLng()
-                });
-                setItems(tabTemp);
-            }
-        }
-    }
-
-    const clickZoneJeu = (e) => {
-        if (zoneJeu.length > 0) {
-            alert("La zone de jeu est déjà présente, modifiez la ou supprimez la pour en créer une nouvelle.");
-        }
-        else {
-            var e = document.createEvent('Event');
-            e.initEvent('click', true, true);
-            var cb = document.getElementsByClassName('leaflet-draw-draw-polygon');
-            return !cb[0].dispatchEvent(e);
-        }
-    }
-
-    const clickZoneInterdite = (e) => {
-        var e = document.createEvent('Event');
-        e.initEvent('click', true, true);
-        var cb = document.getElementsByClassName('leaflet-draw-draw-polygon');
-        return !cb[1].dispatchEvent(e);
-    }
-
-    const clickMechant = (e) => {
-        var e = document.createEvent('Event');
-        e.initEvent('click', true, true);
-        var cb = document.getElementsByClassName('leaflet-draw-draw-marker');
-        return !cb[0].dispatchEvent(e);
-    }
-
-    const clickObjet = (e) => {
-        var e = document.createEvent('Event');
-        e.initEvent('click', true, true);
-        var cb = document.getElementsByClassName('leaflet-draw-draw-marker');
-        return !cb[1].dispatchEvent(e);
-    }
-
-    const clickEdit = (e) => {
-        var e = document.createEvent('Event');
-        e.initEvent('click', true, true);
-        var cb = document.getElementsByClassName('leaflet-draw-edit-edit');
-        return !cb[0].dispatchEvent(e);
-    }
-
-    const clickSupprimer = (e) => {
-        if (clickedSupprimer) {
-            //setClickedSupprimer(false);
-            var e = document.createEvent('Event');
-            e.initEvent('click', true, true);
-            var cb = document.getElementsByClassName('leaflet-draw-actions')[2].children[1];
-            return !cb.dispatchEvent(e);
-        }
-        else {
-            //setClickedSupprimer(true);
-            var e = document.createEvent('Event');
-            e.initEvent('click', true, true);
-            var cb = document.getElementsByClassName('leaflet-draw-edit-remove');
-            return !cb[0].dispatchEvent(e);
-        }
-    }
-
-    const ajouterJoueur = (coordonnees) => {
-        //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
-        setJoueurs(oldJoueurs => [...oldJoueurs, { id: oldJoueurs.length, coordonnees: coordonnees }]);
-    }
-
-    const deplacerJoueur = (idJoueur, coordonnees) => {
-        const newJoueurs = joueurs.map((joueur, i) => {
-            if (i === idJoueur) {
-                return { id: joueur.id, coordonnees: coordonnees };
-            } else {
-                return joueur;
-            }
+  const onCreated = (e) => {
+    if (e.layerType === "polygon") {
+      if (e.layer.options.color == "red") {
+        var tabTemp = zonesInterdites;
+        tabTemp.push(e.layer.getLatLngs()[0]);
+        setZonesInterdites(tabTemp);
+      } else {
+        setZoneJeu(e.layer.getLatLngs()[0]);
+      }
+    } else {
+      if (
+        e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"
+      ) {
+        var tabTemp = mechants;
+        tabTemp.push(e.layer.getLatLng());
+        setMechants(tabTemp);
+      } else {
+        var tabTemp = items;
+        tabTemp.push({
+          name: "loupe",
+          coordonnees: e.layer.getLatLng(),
         });
-        setJoueurs(newJoueurs);
-        //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
+        setItems(tabTemp);
+      }
     }
   };
 
@@ -265,22 +201,25 @@ export default function Carte() {
     }
   };
 
-  const ajouterJoueur = (coordonnees) => {
+  const ajouterJoueur = (id, coordonnees) => {
+    //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
     setJoueurs((oldJoueurs) => [
       ...oldJoueurs,
-      { id: oldJoueurs.length, coordonnees: coordonnees },
+      { id: id, coordonnees: coordonnees },
     ]);
   };
 
   const deplacerJoueur = (idJoueur, coordonnees) => {
-    const newJoueurs = joueurs.map((joueur, i) => {
-      if (i === idJoueur) {
-        return { id: joueur.id, coordonnees: coordonnees };
-      } else {
-        return joueur;
-      }
-    });
-    setJoueurs(newJoueurs);
+    setJoueurs((cur) =>
+      cur.map((joueur, i) => {
+        if (joueur.id === idJoueur) {
+          return { id: joueur.id, coordonnees: coordonnees };
+        } else {
+          return joueur;
+        }
+      })
+    );
+    //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
 
   async function createGame(modeJeu, listeEquipe) {
@@ -312,21 +251,23 @@ export default function Carte() {
                 launchGame(id);
             });*/
 
-        console.log(JSON.stringify({
-            name: "Sprint 1", //A CHANGER
-            modeDeJeu: modeJeu,
-            limitTime: 600, //A CHANGER
-            teams: listeEquipe,
-            authorizedZone: zoneJeu,
-            unauthorizedZone: zonesInterdites,
-            mechants: mechants,
-            items: items,
-            private: true, //A CHANGER
-            idCreator: 3
-        }))
+    console.log(
+      JSON.stringify({
+        name: "Sprint 1", //A CHANGER
+        modeDeJeu: modeJeu,
+        limitTime: 600, //A CHANGER
+        teams: listeEquipe,
+        authorizedZone: zoneJeu,
+        unauthorizedZone: zonesInterdites,
+        mechants: mechants,
+        items: items,
+        private: true, //A CHANGER
+        idCreator: 3,
+      })
+    );
 
-        setPartieLancee(true);
-    }
+    setPartieLancee(true);
+  }
 
   async function launchGame(id) {
     fetch("http://127.0.0.1:8000/game/create", {
@@ -348,16 +289,18 @@ export default function Carte() {
       });
   }
 
-    const test = () => {
-        if (aa == 0) {
-            ajouterJoueur([48.530437, 7.735647777777776]);
-            ajouterJoueur([48.531437, 7.735]);
-            setAa(1);
-        }
-        else {
-            deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
-        }
+  const test = () => {
+    if (aa == 0) {
+      ajouterJoueur([48.530437, 7.735647777777776]);
+      ajouterJoueur([48.531437, 7.735]);
+      setAa(1);
+    } else {
+      deplacerJoueur(0, [
+        Math.random() * (48.54 - 48.53) + 48.53,
+        Math.random() * (7.74 - 7.73) + 7.73,
+      ]);
     }
+  };
 
   return status == null ? (
     <>
@@ -407,10 +350,10 @@ export default function Carte() {
         </FeatureGroup>
         {partieLancee ? (
           <>
-            {joueurs.map((joueur) => {
+            {joueurs.map((joueur, id) => {
               return (
                 <Marker
-                  key={joueur.id}
+                  key={id}
                   position={joueur.coordonnees}
                   icon={playerIcon}
                 >
@@ -441,14 +384,14 @@ export default function Carte() {
               className="btnSideBar"
             >
               <img src="forbidden.png" alt="" className="iconBar" />
-              interdit
+              Zone interdite
             </div>
             <div
               id="btnFlag"
               onClick={(e) => clickMechant(e)}
               className="btnSideBar"
             >
-              <img src="villain.png" alt="" className="iconBar" />
+              <img src="mechant1.png" alt="" className="iconBar" />
               Méchants
             </div>
             <div
@@ -456,7 +399,7 @@ export default function Carte() {
               onClick={(e) => clickObjet(e)}
               className="btnSideBar"
             >
-              <img src="object.png" alt="" className="iconBar" />
+              <img src="loupe.png" alt="" className="iconBar" />
               Objets
             </div>
             <div
