@@ -6,6 +6,7 @@ use App\Repository\GameInterdictionLocalisationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameInterdictionLocalisationRepository::class)]
 class GameInterdictionLocalisation
@@ -20,6 +21,7 @@ class GameInterdictionLocalisation
     private ?Game $game = null;
 
     #[ORM\OneToMany(mappedBy: 'localisation', targetEntity: Location::class)]
+    #[Groups(['Game:read'])]
     private Collection $locations;
 
     public function __construct()

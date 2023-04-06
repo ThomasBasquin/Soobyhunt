@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ObjectiveRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ObjectiveRepository::class)]
 class Objective
@@ -11,24 +12,29 @@ class Objective
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Objective:read'])]
     private ?int $id = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'objectives')]
-    private ?Game $game = null;
+    private ?Game $game = null;    
 
-    #[ORM\Column(length: 255)]
-    private ?string $type = null;
-
-    #[ORM\Column]
+    
+    #[ORM\Column(nullable:true,length: 255)]
+    #[Groups(['Objective:read'])]
+    private ?string $type;
+    
+    #[ORM\Column(nullable:true)]
     private ?int $visionRange = null;
-
-    #[ORM\Column]
+    
+    #[ORM\Column(nullable:true)]
     private ?int $activeRange = null;
-
+    
     #[ORM\Column]
+    #[Groups(['Objective:read'])]
     private ?float $longitude = null;
-
+    
     #[ORM\Column]
+    #[Groups(['Objective:read'])]
     private ?float $latitude = null;
 
     public function getId(): ?int
@@ -53,7 +59,7 @@ class Objective
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
 
@@ -65,7 +71,7 @@ class Objective
         return $this->visionRange;
     }
 
-    public function setVisionRange(int $visionRange): self
+    public function setVisionRange(?int $visionRange): self
     {
         $this->visionRange = $visionRange;
 
@@ -77,7 +83,7 @@ class Objective
         return $this->activeRange;
     }
 
-    public function setActiveRange(int $activeRange): self
+    public function setActiveRange(?int $activeRange): self
     {
         $this->activeRange = $activeRange;
 
