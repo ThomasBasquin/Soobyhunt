@@ -13,6 +13,8 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Serializer\SerializerInterface;
+
 #[Route('/user', name: 'user')]
 class UserController extends AbstractController
 {
@@ -29,7 +31,7 @@ class UserController extends AbstractController
 
     }
 
-    #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
+    #[Route('/{currentUser}/position', name: 'update_position', methods: ['GET'])]
     #[OA\Response(
         response: 200,
         description: 'Retourne la position des users et ce que l\'utilisateur voit',
@@ -45,14 +47,14 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'user_update_position')]
-    public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
+    public function updatePosition(HubInterface $hub, User $currentUser/*, Request $request*/): Response
     {
         // $data = $request->toArray();
         // $user->setLatitude($data['latitude']);
         // $user->setLongitude($data['longitude']);
         // $this->em->persist($user);
         // $this->em->flush();
-    $this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30);
+    $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
         $users = $this->userService->findAll();
 

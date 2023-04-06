@@ -24,6 +24,9 @@ class UserService
         $this->objectiveRepository = $objectiveRepository;
     }
 
+    public function findAll(){
+        return $this->userRepository->findAll();
+    }
 
 
     public function getEventUserAndAllShitbyDistance(User $user, $distanceViewRadius)
