@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
-
+use OpenApi\Attributes as OA;
 #[Route('/user', name: 'user')]
 class UserController extends AbstractController
 {
@@ -28,6 +29,21 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Retourne la position des users et ce que l\'utilisateur voit',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model( groups: ["User:read", "Objective:read", "Item:read"]))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'user_update_position',
+        in: 'header',
+        description: 'Sauvegarde la position et revoie dans mercure ce qu\il voit',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Tag(name: 'user_update_position')]
     public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
     {
         // $data = $request->toArray();
@@ -48,6 +64,21 @@ class UserController extends AbstractController
     }
 
     #[Route('/join', name: 'join', methods: ['POST'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Créer un user en fonction d\'un user central',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type:User::class, groups: ["User:read"]))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'user_join',
+        in: 'header',
+        description: 'Créer un user en fonction de ce qu\'on renvoie',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Tag(name: 'user_join')]
     public function join(HubInterface $hub, Request $request): Response
     {
         $data = $request->toArray();
