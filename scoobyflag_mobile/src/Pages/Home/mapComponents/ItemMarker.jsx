@@ -9,7 +9,7 @@ function ItemMarker({item, openModal}){
 
     return (
         <MarkerComponent
-        onPress={() => openModal(item)}
+          onPress={() => openModal(item)}
           tappable={false}
           zIndex={2}
           coordinate={{latitude:item.coordonnees.latitude,longitude:item.coordonnees.longitude}}>
