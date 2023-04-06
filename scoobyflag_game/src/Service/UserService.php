@@ -12,10 +12,14 @@ class UserService
     public EntityManagerInterface $em;
     private UserRepository $userRepository;
 
-    public function __construct(EntityManagerInterface $em, UserRepository $userRepository)
+    function __construct(EntityManagerInterface $em, UserRepository $userRepository)
     {
         $this->em = $em;
         $this->userRepository = $userRepository;
+    }
+
+    function findAll(){
+        return $this->userRepository->findAll();
     }
 
     public function getEventUserAndAllShitbyDistance(User $user, $distanceView)

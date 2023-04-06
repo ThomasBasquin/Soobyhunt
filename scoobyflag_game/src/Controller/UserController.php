@@ -27,32 +27,39 @@ class UserController extends AbstractController
         $this->em = $em;
         $this->userService = $userService;
         $this->serializer = $serializer;
-
     }
 
-    #[Route('/{user}/position', name: 'update_position', methods: ['PUT'])]
-    public function updatePosition(HubInterface $hub, User $user, Request $request): Response
+    #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
+    public function updatePosition(HubInterface $hub, User $currentUser, Request $request): Response
     {
         $data = $request->toArray();
-        $user->setLatitude($data['latitude']);
-        $user->setLongitude($data['longitude']);
-        $this->em->persist($user);
+        $currentUser->setLatitude($data['latitude']);
+        $currentUser->setLongitude($data['longitude']);
+        $this->em->persist($currentUser);
         $this->em->flush();
-        // $this->userService->getEventUserAndAllShitbyDistance($user, $data['viewDistance']);
+        // $this->userService->getEventUserAndAllShitbyDistance($currentUser, $data['viewDistance']);
 
-        $update = new Update(
-            'https://scoobyflag/user/0',
-            json_encode($this->serializer->serialize($user,"json",["groups" => ["User:read"]]))
-        );
+        $users = $this->userService->findAll();
 
-        try{
-
-            $hub->publish($update);
-        }catch(Exception $e){
-            dump($e);
+        foreach ($users as $user) {
+            if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+                $update = new Update(
+                    "https://scoobyflag/user/" . $user->getId(),
+                    json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+                );
+                $hub->publish($update);
+            }
         }
 
-        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+            $update = new Update(
+                "https://scoobyflag/user/0",
+                json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+            );
+            $hub->publish($update);
+        }
+
+        return $this->json([$currentUser], 200, [], ['groups' => ["User:read"]]);
     }
 
     #[Route('/join', name: 'join', methods: ['POST'])]
@@ -60,7 +67,7 @@ class UserController extends AbstractController
     {
         $data = $request->toArray();
         $user = new User;
-        if(isset($data['id']) ){
+        if (isset($data['id'])) {
             $user->setIdOrigin($data['id']);
         }
         $user->setPseudo($data['pseudo']);
@@ -74,7 +81,7 @@ class UserController extends AbstractController
 
         // $hub->publish($update);
 
-        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+        return $this->json($user, 200, [], ['groups' => ["User:read"]]);
     }
 
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
@@ -95,6 +102,4 @@ class UserController extends AbstractController
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
-
-    
 }

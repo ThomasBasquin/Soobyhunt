@@ -8,63 +8,8 @@ function Team({navigation}) {
   const [isLoading, setIsLoading] = useState(true);
   const [test, setTest] = useState(true);
 
-  const stest = {
-    gameTemplate: {
-      id: 6,
-      name: 'Sprint 1',
-      gameMaster: null,
-      gameZones: [
-        {
-          id: 7,
-          locations: [
-            {id: 32, latitude: '48.528499756822', longitude: '7.7330231666565'},
-            {id: 33, latitude: '48.528499756822', longitude: '7.7330231666565'},
-            {id: 34, latitude: '48.528499756822', longitude: '7.7330231666565'},
-            {id: 35, latitude: '48.528499756822', longitude: '7.7330231666565'},
-          ],
-          type: 'unauthorized',
-        },
-        {
-          id: 8,
-          locations: [
-            {id: 28, latitude: '48.530887028951', longitude: '7.7333235740662'},
-            {id: 29, latitude: '48.530823085629', longitude: '7.7383178472519'},
-            {id: 30, latitude: '48.52835410116', longitude: '7.7384197711945'},
-            {id: 31, latitude: '48.528499756822', longitude: '7.7330231666565'},
-          ],
-          type: 'authorized',
-        },
-      ],
-      objectives: [
-        {
-          id: 6,
-          latitude: '48.530379032552',
-          longitude: '7.7366656064987',
-          visionRange: 10,
-          activeRange: 10,
-        },
-      ],
-      items: [
-        {
-          visionRange: 10,
-          activeRange: 10,
-          longitude: '7.736890912056',
-          latitude: '48.530244039645',
-          name: 'loupe',
-        },
-      ],
-      limitTime: 600,
-      mode: 'time',
-      private: true,
-      teams: [
-        {id: 11, name: 'equipe1', playerMax: 4},
-        {id: 12, name: 'equipe2', playerMax: 8},
-      ],
-    },
-  };
-
   useEffect(() => {
-    fetch(URLS.getTemplate.replace('{game}', 18))
+    fetch(URLS.getTemplate.replace('{game}', 20))
       .then(res => res.json())
       .then(e => setConfig(e.gameTemplate))
       .finally(() => setIsLoading(false));

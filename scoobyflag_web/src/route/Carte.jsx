@@ -52,7 +52,6 @@ export default function Carte() {
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
 
-      console.log(alreadyExist);
       if (!alreadyExist) {
         ajouterJoueur(user.id, [user.latitude, user.longitude]);
       } else {
@@ -223,7 +222,7 @@ export default function Carte() {
   };
 
   async function createGame(modeJeu, listeEquipe) {
-    /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -233,10 +232,10 @@ export default function Carte() {
                 modeDeJeu: modeJeu,
                 limitTime: 600, //A CHANGER
                 teams: listeEquipe,
-                authorizedZone: zoneJeu,
-                unauthorizedZone: zonesInterdites,
-                mechants: mechants,
-                items: items,
+                authorizedZone: zoneJeu.map(zone => ({latitude:zone.lat,longitude:zone.lng})),
+                unauthorizedZone: zonesInterdites.map(zone => zone.map(pts => ({latitude:pts.lat,longitude:pts.lng}))),
+                mechants: mechants.map(mechant => ({latitude:mechant.lat,longitude:mechant.lng})),
+                items: items.map(item => ({latitude:item.lat,longitude:item.lng})),
                 private: true, //A CHANGER
                 idCreator: 3, //
             }),
@@ -249,7 +248,7 @@ export default function Carte() {
             .then((json) => {
                 const id = json.gameTemplate.id;
                 launchGame(id);
-            });*/
+            });
 
     console.log(
       JSON.stringify({

@@ -23,7 +23,7 @@ export default function Index() {
       <div className="" style={{marginLeft : 80}}>
       <div className="titre">CTF Grandeur nature !</div>
       <div className="presentation">
-        Venez joueur sur le meilleur jeu de capture the Flag grandeur nature sur
+        Venez jouer sur le meilleur jeu de capture the Flag grandeur nature sur
         le thème Scooby-Doo
       </div>
       <Link className="createGame" to="/carte" onClick={() => createGame()}>

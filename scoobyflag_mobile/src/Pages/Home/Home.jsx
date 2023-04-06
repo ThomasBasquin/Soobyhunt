@@ -31,6 +31,7 @@ import usePlayer from '../../Constantes/Hooks/usePlayer';
 import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
 import {MAP_COORDINATE, USER_MARKERS} from '../../Constantes/mocked';
 import EventSource, {EventSourceListener} from 'react-native-sse';
+import URLS from '../../Constantes/URLS';
 
 export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -60,47 +61,13 @@ export default function Home({route, navigation}) {
     isOpen: false,
     item: null,
   });
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    if (!route.params.gameConfiguration) {
-      Alert.alert('Une configuration est requise');
-      navigation.navigate('Team');
-      return;
-    }
-    refreshActualEffect();
-    // reset();
-    const config = route.params.gameConfiguration;
-    setMapCoordinates(
-      config.json.authorizedZone.map(zone => ({
-        latitude: zone.latitude,
-        longitude: zone.longitude,
-      })),
-    );
-    setUnauthorizedZone(
-      config.json.unauthorizedZone.map(unauthorizedZone =>
-        unauthorizedZone.map(zone => ({
-          latitude: zone.lat,
-          longitude: zone.lng,
-        })),
-      ),
-    );
-    setVilainMarkers(
-      config.json.mechants.map(mechant => ({
-        ...mechant,
-        coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
-      })),
-    );
-    setItemMarkers(
-      config.json.items.map(zone => ({
-        ...zone,
-        quantite: 5,
-        coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
-      })),
-    );
-    getCurrentPosition(true);
 
-    const topic = encodeURIComponent('https://scoobyflag/user/0');
-
+    if(!currentUser)return;
+    const topic = encodeURIComponent('https://scoobyflag/user/'+currentUser.id);
+    
     const eventSource = new EventSource(
       'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic)
     );
@@ -132,6 +99,58 @@ export default function Home({route, navigation}) {
       eventSource.removeAllEventListeners();
       eventSource.close();
     };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!route.params.gameConfiguration) {
+      Alert.alert('Une configuration est requise');
+      navigation.navigate('Team');
+      return;
+    }
+    fetch(URLS.joinGame,{
+      method:"POST",
+      headers:{
+        "Content-type" : "Application/json"
+      },
+      body:JSON.stringify({pseudo:"coiquoubé"})
+    })
+    .then(res => res.json())
+    .then(user => {
+      setCurrentUser(user);
+    })
+    
+    refreshActualEffect();
+    // reset();
+    const config = route.params.gameConfiguration;
+    setMapCoordinates(
+      config.json.authorizedZone.map(zone => ({
+        latitude: zone.latitude,
+        longitude: zone.longitude,
+      })),
+    );
+    // setUnauthorizedZone(
+    //   config.json.unauthorizedZone.map(unauthorizedZone =>
+    //     unauthorizedZone.map(zone => ({
+    //       latitude: zone.lat,
+    //       longitude: zone.lng,
+    //     })),
+    //   ),
+    // );
+    setVilainMarkers(
+      config.json.mechants.map(mechant => ({
+        ...mechant,
+        coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
+      })),
+    );
+    setItemMarkers(
+      config.json.items.map(zone => ({
+        ...zone,
+        quantite: 5,
+        coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
+      })),
+    );
+    getCurrentPosition(true);
+
   }, []);
 
   function setEffect(item) {
@@ -156,6 +175,15 @@ export default function Home({route, navigation}) {
   }
 
   function updateUserLocation(e) {
+    fetch(URLS.putPosition.replace("{userId}",currentUser.id),{
+      method:"PUT",
+      headers:{
+        "Content-type" : "Application/json"
+      },
+      body:JSON.stringify({latitude: e.coordinate.latitude, longitude: e.coordinate.longitude})
+    });
+
+
     setCurrentPosition({
       latitude: e.coordinate.latitude,
       longitude: e.coordinate.longitude,
