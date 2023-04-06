@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\GameLocationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameLocationRepository::class)]
 class GameLocation
@@ -17,9 +18,12 @@ class GameLocation
     private ?Game $game = null;
 
     #[ORM\Column]
+    #[Groups(['Game:read'])]
+
     private ?float $longitude = null;
 
     #[ORM\Column]
+    #[Groups(['Game:read'])]
     private ?float $latitude = null;
 
     public function getId(): ?int

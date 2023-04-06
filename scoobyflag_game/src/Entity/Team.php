@@ -6,6 +6,7 @@ use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TeamRepository::class)]
 class Team
@@ -13,16 +14,22 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Team:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['Team:read'])]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teams')]
+    #[ORM\ManyToOne(inversedBy: 'teams')]    
+
     private ?Game $game = null;
 
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class)]
     private Collection $players;
+
+    #[ORM\Column]
+    private ?int $nbPlayer = null;
 
     public function __construct()
     {
@@ -84,6 +91,18 @@ class Team
                 $player->setTeam(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNbPlayer(): ?int
+    {
+        return $this->nbPlayer;
+    }
+
+    public function setNbPlayer(int $nbPlayer): self
+    {
+        $this->nbPlayer = $nbPlayer;
 
         return $this;
     }

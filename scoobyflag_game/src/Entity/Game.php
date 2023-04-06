@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\GameRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GameRepository::class)]
 class Game
@@ -13,36 +15,46 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Game:read'])]
     private ?int $id = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(['Game:read'])]
     private ?string $name = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups(['Game:read'])]
     private ?string $mode = null;
-
-    #[ORM\Column]
+    
+    #[ORM\Column(nullable:true)]
+    #[Groups(['Game:read'])]
     private ?\DateTimeImmutable $startAt = null;
-
+    
     #[ORM\Column]
+    #[Groups(['Game:read'])]
     private ?int $limitTime = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?User $gameMaster = null;
-
+    
+    // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    // private ?User $gameMaster = null;
+    
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: GameInterdictionLocalisation::class)]
+    #[Groups(['Game:read'])]
     private Collection $gameInterdictionLocalisations;
-
+    
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: GameLocation::class)]
+    #[Groups(['Game:read'])]
     private Collection $gameLocations;
-
+    
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Objective::class)]
+    #[Groups(['Game:read'])]
     private Collection $objectives;
-
+    
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Item::class)]
+    #[Groups(['Game:read'])]
     private Collection $items;
-
+    
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Team::class)]
+    #[Groups(['Game:read'])]
     private Collection $teams;
 
     public function __construct()
@@ -88,7 +100,7 @@ class Game
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeImmutable $startAt): self
+    public function setStartAt(?DateTimeImmutable $startAt): self
     {
         $this->startAt = $startAt;
 
@@ -107,17 +119,17 @@ class Game
         return $this;
     }
 
-    public function getGameMaster(): ?User
-    {
-        return $this->gameMaster;
-    }
+    // public function getGameMaster(): ?User
+    // {
+    //     return $this->gameMaster;
+    // }
 
-    public function setGameMaster(?User $gameMaster): self
-    {
-        $this->gameMaster = $gameMaster;
+    // public function setGameMaster(?User $gameMaster): self
+    // {
+    //     $this->gameMaster = $gameMaster;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection<int, GameInterdictionLocalisation>
