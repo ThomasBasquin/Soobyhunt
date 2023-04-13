@@ -12,10 +12,8 @@ import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
 import loupe from "../assets/loupe.png";
 import player from "../assets/points.png";
-import pointInPolygon from "point-in-polygon";
 import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
-import { useCallback } from "react";
 
 export default function Carte() {
   const [latitude, setLatitude] = useState(0.0);
@@ -222,9 +220,10 @@ export default function Carte() {
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
 
+  console.log(items);
   async function createGame(modeJeu, listeEquipe) {
     const response = await fetch("http://127.0.0.1:8000/game/create/template", {
-            method: "POST",
+      method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -236,7 +235,7 @@ export default function Carte() {
                 authorizedZone: zoneJeu.map(zone => ({latitude:zone.lat,longitude:zone.lng})),
                 unauthorizedZone: zonesInterdites.map(zone => zone.map(pts => ({latitude:pts.lat,longitude:pts.lng}))),
                 mechants: mechants.map(mechant => ({latitude:mechant.lat,longitude:mechant.lng})),
-                items: items.map(item => ({latitude:item.lat,longitude:item.lng})),
+                items: items.map(item => ({latitude:item.coordonnees.lat,longitude:item.coordonnees.lng})),
                 private: true, //A CHANGER
                 idCreator: 3, //
             }),
