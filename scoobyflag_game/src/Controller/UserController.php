@@ -25,21 +25,20 @@ class UserController extends AbstractController
     protected $em;
     private SerializerInterface $serializer;
 
-    function __construct(EntityManagerInterface $em,UserService $userService)
+    function __construct(EntityManagerInterface $em, UserService $userService, SerializerInterface $serializer)
     {
         $this->em = $em;
         $this->userService = $userService;
-
-
+        $this->serializer=$serializer;
     }
 
-    #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
+    #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
     #[OA\Response(
         response: 200,
         description: 'Retourne la position des users et ce que l\'utilisateur voit',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model( groups: ["User:read", "Objective:read", "Item:read"]))
+            items: new OA\Items(ref: new Model(groups: ["User:read", "Objective:read", "Item:read"]))
         )
     )]
     #[OA\Parameter(
@@ -49,14 +48,14 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'user_update_position')]
-    public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
+    public function updatePosition(HubInterface $hub, User $currentUser, Request $request): Response
     {
-        // $data = $request->toArray();
-        // $user->setLatitude($data['latitude']);
-        // $user->setLongitude($data['longitude']);
-        // $this->em->persist($user);
-        // $this->em->flush();
-    $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
+        $data = $request->toArray();
+        $currentUser->setLatitude($data['latitude']);
+        $currentUser->setLongitude($data['longitude']);
+        $this->em->persist($currentUser);
+        $this->em->flush();
+        $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
         $users = $this->userService->findAll();
 
@@ -69,12 +68,17 @@ class UserController extends AbstractController
                 $hub->publish($update);
             }
         }
-
-        return $this->json($this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
+            $update = new Update(
+                "https://scoobyflag/user/0",
+                json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+            );
+            $hub->publish($update);
+        }
+        return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
     #[Route('/join', name: 'join', methods: ['POST'])]
-   
     public function join(HubInterface $hub, Request $request): Response
     {
         $data = $request->toArray();
@@ -114,6 +118,4 @@ class UserController extends AbstractController
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
-
-    
 }
