@@ -12,7 +12,6 @@ import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
 import loupe from "../assets/loupe.png";
 import player from "../assets/points.png";
-import pointInPolygon from "point-in-polygon";
 import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
 
@@ -46,6 +45,7 @@ export default function Carte() {
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = ({ data }) => {
+      console.log(data);
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
 
@@ -246,6 +246,7 @@ export default function Carte() {
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
 
+  console.log(items);
   async function createGame(modeJeu, listeEquipe) {
     const response = await fetch("http://127.0.0.1:8000/game/create/template", {
       method: "POST",

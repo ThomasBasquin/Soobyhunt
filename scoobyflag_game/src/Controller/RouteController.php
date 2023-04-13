@@ -11,18 +11,18 @@ class RouteController extends AbstractController
     #[Route('/', name: 'home', methods:["GET"])]
     public function home(): Response
     {
-        return $this->render('home.html.twig');
+        return $this->render('Home.html.twig');
     }
 
     #[Route('/choiceTeam', name: 'choice_team', methods:["GET"])]
     public function choiceTeam(): Response
     {
-        return $this->render('choiceTeam.html.twig');
+        return $this->render('ChoiceTeam.html.twig');
     }
 
     #[Route('/game', name: 'game', methods:["GET"])]
     public function Game(): Response
     {
-        return $this->render('game.html.twig');
+        return $this->render('Game.html.twig');
     }
 }

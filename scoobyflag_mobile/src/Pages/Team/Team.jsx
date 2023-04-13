@@ -9,7 +9,7 @@ function Team({navigation}) {
   const [test, setTest] = useState(true);
 
   useEffect(() => {
-    fetch(URLS.getTemplate.replace('{game}', 20))
+    fetch(URLS.getTemplate.replace('{game}', 13))
       .then(res => res.json())
       .then(e => setConfig(e.gameTemplate))
       .finally(() => setIsLoading(false));
