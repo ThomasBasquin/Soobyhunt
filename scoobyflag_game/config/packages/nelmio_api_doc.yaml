@@ -1,4 +1,5 @@
 nelmio_api_doc:
+    use_validation_groups: true
     documentation:
         info:
             title: My App
@@ -6,4 +7,4 @@ nelmio_api_doc:
             version: 1.0.0
     areas: # to filter documented areas
         path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - '^/(?!api/doc|_.*/).*$' # Accepts routes under /api except /api/doc
