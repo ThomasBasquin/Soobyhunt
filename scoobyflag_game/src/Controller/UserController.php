@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Team;
 use App\Entity\User;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
+use OpenApi\Attributes as OA;
+// #[OA\Tag(name: 'userController')]
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/user', name: 'user')]
@@ -22,22 +25,38 @@ class UserController extends AbstractController
     protected $em;
     private SerializerInterface $serializer;
 
-    function __construct(EntityManagerInterface $em, UserService $userService, SerializerInterface $serializer)
+    function __construct(EntityManagerInterface $em,UserService $userService)
     {
         $this->em = $em;
         $this->userService = $userService;
-        $this->serializer = $serializer;
+
+
     }
 
-    #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
-    public function updatePosition(HubInterface $hub, User $currentUser, Request $request): Response
+    #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Retourne la position des users et ce que l\'utilisateur voit',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model( groups: ["User:read", "Objective:read", "Item:read"]))
+        )
+    )]
+    #[OA\Parameter(
+        name: 'user_update_position',
+        in: 'header',
+        description: 'Sauvegarde la position et revoie dans mercure ce qu\il voit',
+        schema: new OA\Schema(type: 'string')
+    )]
+    #[OA\Tag(name: 'user_update_position')]
+    public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
     {
-        $data = $request->toArray();
-        $currentUser->setLatitude($data['latitude']);
-        $currentUser->setLongitude($data['longitude']);
-        $this->em->persist($currentUser);
-        $this->em->flush();
-        // $this->userService->getEventUserAndAllShitbyDistance($currentUser, $data['viewDistance']);
+        // $data = $request->toArray();
+        // $user->setLatitude($data['latitude']);
+        // $user->setLongitude($data['longitude']);
+        // $this->em->persist($user);
+        // $this->em->flush();
+    $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
         $users = $this->userService->findAll();
 
@@ -51,18 +70,11 @@ class UserController extends AbstractController
             }
         }
 
-        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-            $update = new Update(
-                "https://scoobyflag/user/0",
-                json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
-            );
-            $hub->publish($update);
-        }
-
-        return $this->json([$currentUser], 200, [], ['groups' => ["User:read"]]);
+        return $this->json($this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
     #[Route('/join', name: 'join', methods: ['POST'])]
+   
     public function join(HubInterface $hub, Request $request): Response
     {
         $data = $request->toArray();
@@ -102,4 +114,6 @@ class UserController extends AbstractController
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
+
+    
 }
