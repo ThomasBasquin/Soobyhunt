@@ -28,4 +28,9 @@ class GameController extends AbstractController
     {
         return $this->json($game, 200, [], ['groups' => ["Game:read", 'Item:read', 'Team:read', 'Objective:read']]);
     }
+    #[Route('/game/stat', name: 'get_game', methods: ['GET'])]
+    public function stat()
+    {
+        return $this->json($this->gameService->stat());
+    }
 }

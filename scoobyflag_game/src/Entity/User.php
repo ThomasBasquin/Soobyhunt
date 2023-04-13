@@ -37,8 +37,6 @@ class User
     #[ORM\Column(nullable: true)]
     private ?float $distanceWalk = null;
 
-    #[ORM\OneToMany(mappedBy: 'capturedBy', targetEntity: ObjectiveUser::class)]
-    private Collection $objectiveUsers;
 
     #[ORM\OneToMany(mappedBy: 'getBy', targetEntity: ItemUser::class)]
     private Collection $itemUser;
@@ -60,6 +58,9 @@ class User
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Objective::class)]
+    private Collection $objectives;
+
 
     public function __construct()
     {
@@ -67,8 +68,8 @@ class User
         $this->itemGet = 0;
         $this->distanceWalk = 0;
         $this->itemUsed = 0;
-        $this->objectiveUsers = new ArrayCollection();
         $this->itemUser = new ArrayCollection();
+        $this->objectives = new ArrayCollection();
     }
     public function getId(): ?int
     {
@@ -135,35 +136,7 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection<int, ObjectiveUser>
-     */
-    public function getObjectiveUsers(): Collection
-    {
-        return $this->objectiveUsers;
-    }
-
-    public function addObjectiveUser(ObjectiveUser $objectiveUser): self
-    {
-        if (!$this->objectiveUsers->contains($objectiveUser)) {
-            $this->objectiveUsers->add($objectiveUser);
-            $objectiveUser->setCapturedBy($this);
-        }
-
-        return $this;
-    }
-
-    public function removeObjectiveUser(ObjectiveUser $objectiveUser): self
-    {
-        if ($this->objectiveUsers->removeElement($objectiveUser)) {
-            // set the owning side to null (unless already changed)
-            if ($objectiveUser->getCapturedBy() === $this) {
-                $objectiveUser->setCapturedBy(null);
-            }
-        }
-
-        return $this;
-    }
+  
 
     /**
      * @return Collection<int, ItemUser>
@@ -251,6 +224,36 @@ class User
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Objective>
+     */
+    public function getObjectives(): Collection
+    {
+        return $this->objectives;
+    }
+
+    public function addObjective(Objective $objective): self
+    {
+        if (!$this->objectives->contains($objective)) {
+            $this->objectives->add($objective);
+            $objective->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjective(Objective $objective): self
+    {
+        if ($this->objectives->removeElement($objective)) {
+            // set the owning side to null (unless already changed)
+            if ($objective->getUser() === $this) {
+                $objective->setUser(null);
+            }
+        }
 
         return $this;
     }

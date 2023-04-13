@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Team;
+use App\Entity\Item;
+use App\Entity\ItemUser;
 use App\Entity\User;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +16,8 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 // #[OA\Tag(name: 'userController')]
 #[Route('/user', name: 'user')]
 class UserController extends AbstractController
@@ -22,16 +26,14 @@ class UserController extends AbstractController
     private UserService $userService;
     protected $em;
 
-    function __construct(EntityManagerInterface $em,UserService $userService)
+    function __construct(EntityManagerInterface $em, UserService $userService)
     {
         $this->em = $em;
         $this->userService = $userService;
-
-
     }
 
     #[Route('/{user}/position', name: 'update_position', methods: ['GET'])]
-    
+
     public function updatePosition(HubInterface $hub, User $user/*, Request $request*/): Response
     {
         // $data = $request->toArray();
@@ -39,7 +41,7 @@ class UserController extends AbstractController
         // $user->setLongitude($data['longitude']);
         // $this->em->persist($user);
         // $this->em->flush();
-    $this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30);
+        $this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30);
 
         // $update = new Update(
         //     'https://example.com/users/dunglas',
@@ -51,13 +53,14 @@ class UserController extends AbstractController
         return $this->json($this->userService->getEventUserAndAllShitbyDistance($user,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
+
     #[Route('/join', name: 'join', methods: ['POST'])]
-   
+
     public function join(HubInterface $hub, Request $request): Response
     {
         $data = $request->toArray();
         $user = new User;
-        if(isset($data['id']) ){
+        if (isset($data['id'])) {
             $user->setIdOrigin($data['id']);
         }
         $user->setPseudo($data['pseudo']);
@@ -72,6 +75,23 @@ class UserController extends AbstractController
         // $hub->publish($update);
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+    }
+    #[Route('{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
+
+    public function itemGet(Item $item, Request $request, User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($item->getQuantity()) {
+            $item->setQuantity($item->getQuantity() - 1);
+            $itemUser = new ItemUser();
+            $itemUser->setGetBy($user);
+            $itemUser->setItem($item);
+            $this->em->persist($itemUser);
+            $this->em->persist($item);
+            $this->em->flush();
+            return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+        }
+        return new JsonResponse("Il n'y a plus d'item dispo", 302);
     }
 
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
@@ -93,7 +113,7 @@ class UserController extends AbstractController
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
 
-    #[Route('/{user}/team/{team}', name: 'is_ready', methods: ['PUT'])]
+    #[Route('/{user}/team/{team}', name: 'change_team', methods: ['PUT'])]
     public function changeTeam(HubInterface $hub, User $user, Team $team): Response
     {
 
@@ -110,6 +130,4 @@ class UserController extends AbstractController
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
-
-    
 }
