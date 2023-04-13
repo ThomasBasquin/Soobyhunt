@@ -49,6 +49,7 @@ export default function Carte() {
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = ({ data }) => {
+      console.log(data);
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
 

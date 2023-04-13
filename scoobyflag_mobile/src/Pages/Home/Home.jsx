@@ -64,12 +64,13 @@ export default function Home({route, navigation}) {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    if (!currentUser) return;
+    const topic = encodeURIComponent(
+      'https://scoobyflag/user/' + currentUser.id,
+    );
 
-    if(!currentUser)return;
-    const topic = encodeURIComponent('https://scoobyflag/user/'+currentUser.id);
-    
     const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic)
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
     );
 
     eventSource.addEventListener('open', event => {
@@ -77,12 +78,19 @@ export default function Home({route, navigation}) {
     });
 
     eventSource.addEventListener('message', event => {
-      const user=JSON.parse(JSON.parse(event.data));
+      const user = JSON.parse(JSON.parse(event.data));
 
-      const alreadyInParty=userMarkers.find(u => {console.log(u); return u.id==user.id});
-      setUserMarkers(cur => alreadyInParty ? cur.map(u => u.id==user.id ? user : u) : [...cur,user]);
+      const alreadyInParty = userMarkers.find(u => {
+        console.log(u);
+        return u.id == user.id;
+      });
+      setUserMarkers(cur =>
+        alreadyInParty
+          ? cur.map(u => (u.id == user.id ? user : u))
+          : [...cur, user],
+      );
     });
-    
+
     eventSource.addEventListener('error', event => {
       if (event.type === 'error') {
         console.error('Connection error:', event.message);
@@ -107,18 +115,18 @@ export default function Home({route, navigation}) {
       navigation.navigate('Team');
       return;
     }
-    fetch(URLS.joinGame,{
-      method:"POST",
-      headers:{
-        "Content-type" : "Application/json"
+    fetch(URLS.joinGame, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'Application/json',
       },
-      body:JSON.stringify({pseudo:"coiquoubé"})
+      body: JSON.stringify({pseudo: 'coiquoubé'}),
     })
-    .then(res => res.json())
-    .then(user => {
-      setCurrentUser(user);
-    })
-    
+      .then(res => res.json())
+      .then(user => {
+        setCurrentUser(user);
+      });
+
     refreshActualEffect();
     // reset();
     const config = route.params.gameConfiguration;
@@ -150,7 +158,6 @@ export default function Home({route, navigation}) {
       })),
     );
     getCurrentPosition(true);
-
   }, []);
 
   function setEffect(item) {
@@ -175,14 +182,17 @@ export default function Home({route, navigation}) {
   }
 
   function updateUserLocation(e) {
-    fetch(URLS.putPosition.replace("{userId}",currentUser.id),{
-      method:"PUT",
-      headers:{
-        "Content-type" : "Application/json"
+    if(!currentUser)return;
+    fetch(URLS.putPosition.replace('{userId}', currentUser.id), {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'Application/json',
       },
-      body:JSON.stringify({latitude: e.coordinate.latitude, longitude: e.coordinate.longitude})
+      body: JSON.stringify({
+        latitude: e.coordinate.latitude,
+        longitude: e.coordinate.longitude,
+      }),
     });
-
 
     setCurrentPosition({
       latitude: e.coordinate.latitude,
@@ -337,7 +347,6 @@ export default function Home({route, navigation}) {
 
   return region.longitude &&
     region.latitude &&
-    vilainMarkers.length &&
     mapCoordinates.length ? (
     <View>
       {stateVilainModal.isOpen ? (
