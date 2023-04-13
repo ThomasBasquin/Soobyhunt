@@ -81,7 +81,6 @@ export default function Home({route, navigation}) {
       const user = JSON.parse(JSON.parse(event.data));
 
       const alreadyInParty = userMarkers.find(u => {
-        console.log(u);
         return u.id == user.id;
       });
       setUserMarkers(cur =>
@@ -136,7 +135,6 @@ export default function Home({route, navigation}) {
         longitude: zone.longitude,
       })),
     );
-    console.log(config.json.unauthorizedZone);
     setUnauthorizedZone(config.json.unauthorizedZone);
     setVilainMarkers(
       config.json.mechants.map(mechant => ({
@@ -177,7 +175,6 @@ export default function Home({route, navigation}) {
 
   function updateUserLocation(e) {
     if(!currentUser)return;
-    return ;
     fetch(URLS.putPosition.replace('{userId}', currentUser.id), {
       method: 'PUT',
       headers: {
@@ -227,8 +224,6 @@ export default function Home({route, navigation}) {
       }
     }
   }
-
-  console.log(unauthorizedZone);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
