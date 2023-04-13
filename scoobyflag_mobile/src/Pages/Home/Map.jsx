@@ -29,13 +29,15 @@ import useVilain from '../../Constantes/Hooks/useVilain';
 import useItem from '../../Constantes/Hooks/useItem';
 import usePlayer from '../../Constantes/Hooks/usePlayer';
 import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
-import { MAP_COORDINATE, USER_MARKERS } from '../../Constantes/mocked';
+import {MAP_COORDINATE, USER_MARKERS} from '../../Constantes/mocked';
+import EventSource, {EventSourceListener} from 'react-native-sse';
+import URLS from '../../Constantes/URLS';
 
 export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: null,
     longitude: null,
-  });//MERCURE SEND
+  }); //MERCURE SEND
   const [region, setRegion] = useState({
     latitude: null,
     longitude: null,
@@ -44,9 +46,9 @@ export default function Home({route, navigation}) {
   });
   const [mapCoordinates, setMapCoordinates] = useState();
   const [unauthorizedZone, setUnauthorizedZone] = useState([]);
-  const [vilainMarkers, setVilainMarkers] = useVilain();//MERCURE SEND AND RETRIEVE
+  const [vilainMarkers, setVilainMarkers] = useVilain(); //MERCURE SEND AND RETRIEVE
   const [itemMarkers, setItemMarkers] = useItem([]); //MERCURE SEND AND RETRIEVE
-  const [userMarkers, setUserMarkers] = useState(USER_MARKERS); //USER_MARKERS //MERCURE RETRIEVE
+  const [userMarkers, setUserMarkers] = useState([]); //USER_MARKERS //MERCURE RETRIEVE
   const [notifInApp, setNotifInApp] = useState(false);
   const [isMountedMap, setIsMountedMap] = useState(null);
   const [itemsUser, setItemsUser] = useState([]);
@@ -59,21 +61,94 @@ export default function Home({route, navigation}) {
     isOpen: false,
     item: null,
   });
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    if (!route.params.gameConfiguration){
+    if (!currentUser) return;
+    const topic = encodeURIComponent(
+      'https://scoobyflag/user/' + currentUser.id,
+    );
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+    );
+
+    eventSource.addEventListener('open', event => {
+      // console.debug("Open SSE connection.");
+    });
+
+    eventSource.addEventListener('message', event => {
+      const user = JSON.parse(JSON.parse(event.data));
+
+      const alreadyInParty = userMarkers.find(u => {
+        return u.id == user.id;
+      });
+      setUserMarkers(cur =>
+        alreadyInParty
+          ? cur.map(u => (u.id == user.id ? user : u))
+          : [...cur, user],
+      );
+    });
+
+    eventSource.addEventListener('error', event => {
+      if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
+      }
+    });
+
+    eventSource.addEventListener('close', event => {
+      // console.debug("Close SSE connection.");
+    });
+
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!route.params.gameConfiguration) {
       Alert.alert('Une configuration est requise');
-      navigation.navigate("Team");
-      return
+      navigation.navigate('Team');
+      return;
     }
+    fetch(URLS.joinGame, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'Application/json',
+      },
+      body: JSON.stringify({pseudo: 'coiquoubé'}),
+    })
+      .then(res => res.json())
+      .then(user => {
+        setCurrentUser(user);
+      });
+
     refreshActualEffect();
     // reset();
     const config = route.params.gameConfiguration;
-    setMapCoordinates(config.gameZones.find(g => g.type=="authorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
-    setUnauthorizedZone(config.gameZones.find(g => g.type=="unauthorized").locations.map(l => ({latitude:parseFloat(l.latitude), longitude:parseFloat(l.longitude)})));
-    // setUnauthorizedZone([MAP_COORDINATE]);
-    setVilainMarkers(config.objectives.map(m => ({...m, team: null, latitude:parseFloat(m.latitude),longitude: parseFloat(m.longitude)})));
-    setItemMarkers(config.items.map(i => ({...i,quantite:3,latitude:parseFloat(i.latitude),longitude:parseFloat(i.longitude)})));
+    setMapCoordinates(
+      config.json.authorizedZone.map(zone => ({
+        latitude: zone.latitude,
+        longitude: zone.longitude,
+      })),
+    );
+    setUnauthorizedZone(config.json.unauthorizedZone);
+    setVilainMarkers(
+      config.json.mechants.map(mechant => ({
+        ...mechant,
+        coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
+      })),
+    );
+    setItemMarkers(
+      config.json.items.map(zone => ({
+        ...zone,
+        quantite: 5,
+        coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
+      })),
+    );
     getCurrentPosition(true);
   }, []);
 
@@ -99,6 +174,18 @@ export default function Home({route, navigation}) {
   }
 
   function updateUserLocation(e) {
+    if(!currentUser)return;
+    fetch(URLS.putPosition.replace('{userId}', currentUser.id), {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'Application/json',
+      },
+      body: JSON.stringify({
+        latitude: e.coordinate.latitude,
+        longitude: e.coordinate.longitude,
+      }),
+    });
+
     setCurrentPosition({
       latitude: e.coordinate.latitude,
       longitude: e.coordinate.longitude,
@@ -112,13 +199,19 @@ export default function Home({route, navigation}) {
         circleRadius: GAME_CONFIG.visibilityRange.nearRangeFlag / 1000,
       }),
     );
-    const nearItem = itemMarkers.filter(marker =>
-      pointInCircle(marker.latitude, marker.longitude, {
-        circleLat: e.coordinate.latitude,
-        circleLng: e.coordinate.longitude,
-        circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
-      }),
-    ).filter(marker => marker.quantite);
+    const nearItem = itemMarkers
+      .filter(marker => {
+        return pointInCircle(
+          marker.coordonnees.latitude,
+          marker.coordonnees.longitude,
+          {
+            circleLat: e.coordinate.latitude,
+            circleLng: e.coordinate.longitude,
+            circleRadius: GAME_CONFIG.visibilityRange.nearRangeItem / 1000,
+          },
+        );
+      })
+      .filter(marker => marker.quantite);
     const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
 
     if (!outOfMap) {
@@ -157,14 +250,14 @@ export default function Home({route, navigation}) {
 
   const renderUserMarkers = useCallback(() => {
     return userMarkers.map((user, i) => <UserMarker key={i} user={user} />);
-  },[userMarkers]);
+  }, [userMarkers]);
 
   const renderVilainMarkers = useCallback(() => {
     return vilainMarkers
       .filter(marker =>
         pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.latitude,
-          circleLng: marker.longitude,
+          circleLat: marker.coordonnees.latitude,
+          circleLng: marker.coordonnees.longitude,
           circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeFlag / 1000,
         }),
       )
@@ -179,13 +272,18 @@ export default function Home({route, navigation}) {
 
   const renderItemMarkers = useCallback(() => {
     return itemMarkers
-      .filter(marker =>
-        pointInCircle(currentPosition.latitude, currentPosition.longitude, {
-          circleLat: marker.latitude,
-          circleLng: marker.longitude,
-          circleRadius: GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
-        }),
-      )
+      .filter(marker => {
+        return pointInCircle(
+          currentPosition.latitude,
+          currentPosition.longitude,
+          {
+            circleLat: marker.coordonnees.latitude,
+            circleLng: marker.coordonnees.longitude,
+            circleRadius:
+              GAME_CONFIG.visibilityRange.visibilityRangeItem / 1000,
+          },
+        );
+      })
       .filter(marker => marker.quantite > 0)
       .map((item, i) => (
         <ItemMarker
@@ -205,7 +303,9 @@ export default function Home({route, navigation}) {
   }, [mapCoordinates]);
 
   const renderUnauthorizedZone = useCallback(() => {
-    return <UnauthorizedMapPolygon mapCoordinates={unauthorizedZone} />;
+    return unauthorizedZone.map((coordonates, i) => (
+      <UnauthorizedMapPolygon key={i} mapCoordinates={coordonates} />
+    ));
   }, [unauthorizedZone]);
 
   const EffectComponent = useCallback(
@@ -239,13 +339,18 @@ export default function Home({route, navigation}) {
 
   return region.longitude &&
     region.latitude &&
-    vilainMarkers.length &&
     mapCoordinates.length ? (
     <View>
       {stateVilainModal.isOpen ? (
         <VilainModal
           state={stateVilainModal}
-          onSubmit={(vilain) => setVilainMarkers(vilainMarkers.map(v => v.id==vilain.id ? {...v,team:"MOUGOU"} : v))}//TODO : Récupérer l'équipe du joueur
+          onSubmit={vilain =>
+            setVilainMarkers(
+              vilainMarkers.map(v =>
+                v.id == vilain.id ? {...v, team: 'MOUGOU'} : v,
+              ),
+            )
+          } //TODO : Récupérer l'équipe du joueur
           onRequestClose={() =>
             setStateVilainModal({...stateVilainModal, isOpen: false})
           }

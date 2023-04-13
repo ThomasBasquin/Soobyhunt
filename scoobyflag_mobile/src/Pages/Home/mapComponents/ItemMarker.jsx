@@ -9,10 +9,10 @@ function ItemMarker({item, openModal}){
 
     return (
         <MarkerComponent
-        onPress={() => openModal(item)}
+          onPress={() => openModal(item)}
           tappable={false}
           zIndex={2}
-          coordinate={{latitude:item.latitude,longitude:item.longitude}}>
+          coordinate={{latitude:item.coordonnees.latitude,longitude:item.coordonnees.longitude}}>
           <Image
             source={picture.current}
             style={{width: 50, height: 70}}

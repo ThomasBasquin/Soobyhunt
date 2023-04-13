@@ -3,12 +3,12 @@ import {Marker as MarkerComponent} from 'react-native-maps';
 import {Image, View} from 'react-native';
 
 function UserMarker({user}){
-    return (
+  return (
         <MarkerComponent
           tappable={false}
           zIndex={2}
           pinColor={'navy'}
-          title={user.username}
+          title={"erfgthnj,"}
           coordinate={{latitude:user.latitude,longitude:user.longitude}} >
             <View style={{width:15,height:15,borderRadius:50, backgroundColor:"#181fde", borderColor:"#FFFFFF",borderWidth:1}} />
           </MarkerComponent>

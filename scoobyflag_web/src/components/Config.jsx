@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import "../css/config.css";
 import React, { useState } from "react";
 
-export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
+export default function Config({ createGame }) {
   const [toggleState, setToggleState] = useState(1);
   const [choose, setChoose] = useState("");
   const [nbGrandMechant, setnbGrandMechant] = useState(1);
@@ -26,59 +26,10 @@ export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
     },
   ]);
 
-  async function createGame() {
-    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: choose,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu,
-        unauthorizedZone: zonesInterdites,
-        mechants: mechants,
-        items: items,
-        private: true, //A CHANGER
-        idCreator: 3, //
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        const id = json.gameTemplate.id;
-        launchGame(id);
-      });
-  }
-
-  async function launchGame(id) {
-    fetch("http://127.0.0.1:8000/game/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: id,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        console.log(json);
-      });
-  }
-
   return (
     <div className="menuConfig">
       <h1 className="titreConfig">Configuration d'une partie</h1>
+
       <div className="scroll">
         <div className="formConfig">
           <div className="">
@@ -161,7 +112,10 @@ export default function Config({ zoneJeu, zonesInterdites, mechants, items }) {
             </div>
           </div>
         </div>
-        <div onClick={() => createGame()} className="choixMDJ">
+        <div
+          onClick={() => createGame(choose, listeEquipe)}
+          className="choixMDJ createButton"
+        >
           Créer la partie
         </div>
       </div>
@@ -186,7 +140,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2 style={{ margin: 0, marginTop: 10 }}>TIME</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             L’équipe gagnante est celle qui a le temps cumulé de possession des
             drapeaux le plus important à la fin de la partie
           </p>
@@ -202,7 +156,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2>FLAG</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             L’équipe gagnante est celle qui possède le plus de drapeaux à la fin
             de la partie
           </p>
@@ -218,7 +172,7 @@ const ModeDeJeu = ({ choose, chooseItem, toggleState }) => {
         />
         <div className="" style={{ marginLeft: 10, marginRight: 10 }}>
           <h2>SUPREMACY</h2>
-          <p>
+          <p style={{ margin: 0, marginTop: 10, marginBottom: 10 }}>
             {" "}
             L’équipe gagnante est la première à posséder la majorité des
             drapeaux
@@ -327,12 +281,18 @@ const Mechants = ({
           <p style={{ display: "flex", justifyContent: "space-around" }}>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbGrandMechant(nbGrandMechant - 1)}
             >
@@ -341,12 +301,18 @@ const Mechants = ({
             <span style={{ padding: 10 }}>{nbGrandMechant} </span>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbGrandMechant(nbGrandMechant + 1)}
             >
@@ -371,12 +337,18 @@ const Mechants = ({
           <p style={{ display: "flex", justifyContent: "space-around" }}>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbPetitMechant(nbPetitMechant - 1)}
             >
@@ -385,12 +357,18 @@ const Mechants = ({
             <span style={{ padding: 10 }}>{nbPetitMechant} </span>
             <span
               style={{
+                display: "flex", // Ajout pour centrer le contenu
+                justifyContent: "center", // Ajout pour centrer le contenu
+                alignItems: "center", // Ajout pour centrer le contenu
                 backgroundColor: "var(--violet)",
                 color: "var(--gris)",
                 padding: 5,
                 fontSize: 18,
-                borderRadius: 100,
+                height: "20px", // Modification pour rendre le style cohérent
+                width: "20px", // Modification pour rendre le style cohérent
+                borderRadius: "50%",
                 cursor: "pointer",
+                lineHeight: 0, // Ajout pour réduire l'espace vertical
               }}
               onClick={() => setnbPetitMechant(nbPetitMechant + 1)}
             >

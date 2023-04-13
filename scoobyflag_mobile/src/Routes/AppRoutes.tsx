@@ -1,5 +1,5 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Home from '../Pages/Home/Home';
+import Home from '../Pages/Home/Map';
 import Team from '../Pages/Team/Team';
 
 
