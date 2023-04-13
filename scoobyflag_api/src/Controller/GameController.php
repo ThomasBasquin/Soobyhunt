@@ -68,6 +68,7 @@ class GameController extends AbstractController
     public function create(Request $request)
     {
         $data = json_decode($request->getContent(), true);
+        dump($data);
         $gameTemplate = $this->gameService->createTemplate($data);
         return $this->json(['gameTemplate' => $gameTemplate]);
     }

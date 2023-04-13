@@ -136,14 +136,8 @@ export default function Home({route, navigation}) {
         longitude: zone.longitude,
       })),
     );
-    // setUnauthorizedZone(
-    //   config.json.unauthorizedZone.map(unauthorizedZone =>
-    //     unauthorizedZone.map(zone => ({
-    //       latitude: zone.lat,
-    //       longitude: zone.lng,
-    //     })),
-    //   ),
-    // );
+    console.log(config.json.unauthorizedZone);
+    setUnauthorizedZone(config.json.unauthorizedZone);
     setVilainMarkers(
       config.json.mechants.map(mechant => ({
         ...mechant,
@@ -183,6 +177,7 @@ export default function Home({route, navigation}) {
 
   function updateUserLocation(e) {
     if(!currentUser)return;
+    return ;
     fetch(URLS.putPosition.replace('{userId}', currentUser.id), {
       method: 'PUT',
       headers: {
@@ -232,6 +227,8 @@ export default function Home({route, navigation}) {
       }
     }
   }
+
+  console.log(unauthorizedZone);
 
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(

@@ -235,7 +235,7 @@ export default function Carte() {
                 authorizedZone: zoneJeu.map(zone => ({latitude:zone.lat,longitude:zone.lng})),
                 unauthorizedZone: zonesInterdites.map(zone => zone.map(pts => ({latitude:pts.lat,longitude:pts.lng}))),
                 mechants: mechants.map(mechant => ({latitude:mechant.lat,longitude:mechant.lng})),
-                items: items.map(item => ({latitude:item.coordonnees.lat,longitude:item.coordonnees.lng})),
+                items: items.map(item => ({...item, latitude:item.coordonnees.lat,longitude:item.coordonnees.lng})),
                 private: true, //A CHANGER
                 idCreator: 3, //
             }),
