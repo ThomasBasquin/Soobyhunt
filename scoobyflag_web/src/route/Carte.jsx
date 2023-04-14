@@ -6,16 +6,24 @@ import {
   Popup,
 } from "react-leaflet";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "../css/carte.css";
 import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
+import mechant2 from "../assets/mechant2.png";
 import loupe from "../assets/loupe.png";
+import lunettes from "../assets/lunettes.png";
+import sac from "../assets/sac.png";
+import ghost from "../assets/ghost.png";
 import player from "../assets/points.png";
 import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
+import pointInPolygon from "point-in-polygon";
 
 export default function Carte() {
+  const navigate = useNavigate();
+
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
@@ -88,8 +96,32 @@ export default function Carte() {
     iconAnchor: [25, 25],
   });
 
+  const mechant2Icon = new L.icon({
+    iconUrl: mechant2,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
+
   const loupeIcon = new L.icon({
     iconUrl: loupe,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
+
+  const lunettesIcon = new L.icon({
+    iconUrl: lunettes,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
+
+  const sacIcon = new L.icon({
+    iconUrl: sac,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
+
+  const ghostIcon = new L.icon({
+    iconUrl: ghost,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
   });
@@ -105,6 +137,10 @@ export default function Carte() {
     document.querySelector(".menuConfig").classList.remove("slideOut");
   };
 
+  const clickUser = () => {
+    navigate("/user");
+  }
+
   const onCreated = (e) => {
     if (e.layerType === "polygon") {
       if (e.layer.options.color == "red") {
@@ -112,17 +148,44 @@ export default function Carte() {
         tabTemp.push(e.layer.getLatLngs()[0]);
         setZonesInterdites(tabTemp);
       } else {
-        setZoneJeu(e.layer.getLatLngs()[0]);
+        var tabTemp = zoneJeu;
+        tabTemp[0] = e.layer.getLatLngs()[0];
+        setZoneJeu(tabTemp);
       }
     } else {
-      if (
-        e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"
-      ) {
-        console.log(pointInPolygon(e.layer.getLatLng, zoneJeu));
+      var ok = true;
+      var tabZone = [];
+
+      for (var i = 0; i < zonesInterdites.length; i++) {
+        tabZone = [];
+        for (var j = 0; j < zonesInterdites[i].length; j++) {
+          tabZone.push(Object.values(zonesInterdites[i][j]));
+        }
+        if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+          ok = false;
+        }
+      }
+
+      tabZone = [];
+      for (var k = 0; k < zoneJeu[0].length; k++) {
+        tabZone.push(Object.values(zoneJeu[0][k]));
+      }
+      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+        ok = false;
+      }
+
+      console.log(ok);
+
+      if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
         var tabTemp = mechants;
         tabTemp.push(e.layer.getLatLng());
         setMechants(tabTemp);
-      } else {
+      } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
+        var tabTemp = mechants;
+        tabTemp.push(e.layer.getLatLng());
+        setMechants(tabTemp);
+      }
+      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
         var tabTemp = items;
         tabTemp.push({
           name: "loupe",
@@ -130,8 +193,36 @@ export default function Carte() {
         });
         setItems(tabTemp);
       }
+      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
+        var tabTemp = items;
+        tabTemp.push({
+          name: "lunettes",
+          coordonnees: e.layer.getLatLng(),
+        });
+        setItems(tabTemp);
+      }
+      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
+        var tabTemp = items;
+        tabTemp.push({
+          name: "sac",
+          coordonnees: e.layer.getLatLng(),
+        });
+        setItems(tabTemp);
+      }
+      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
+        var tabTemp = items;
+        tabTemp.push({
+          name: "ghost",
+          coordonnees: e.layer.getLatLng(),
+        });
+        setItems(tabTemp);
+      }
     }
   };
+
+  const onDeleted = (e) => {
+    console.log(e.layers);
+  }
 
   const clickZoneJeu = (e) => {
     if (zoneJeu.length > 0) {
@@ -154,11 +245,29 @@ export default function Carte() {
   };
 
   const clickMechant = (e) => {
-    document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
+    if (zoneJeu.length == 0) {
+      alert("Créer d'abord une zone de jeu.");
+    } else {
+      if (document.getElementById("detailsMechants").style.visibility == "visible") {
+        document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
+      }
+      else {
+        document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
+      }
+    }
   };
 
   const clickObjet = (e) => {
-    document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
+    if (zoneJeu.length == 0) {
+      alert("Créer d'abord une zone de jeu.");
+    } else {
+      if (document.getElementById("detailsItems").style.visibility == "visible") {
+        document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
+      }
+      else {
+        document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
+      }
+    }
   };
 
   const clickEdit = (e) => {
@@ -209,20 +318,20 @@ export default function Carte() {
     return !cb.dispatchEvent(e);
   }
 
-  const chooseItem = (e) => {
+  const chooseItem = (e, index) => {
     document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-draw-marker");
-    return !cb[1].dispatchEvent(e);
+    return !cb[index].dispatchEvent(e);
   }
 
-  const chooseMechant = (e) => {
+  const chooseMechant = (e, index) => {
     document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-draw-marker");
-    return !cb[0].dispatchEvent(e);
+    return !cb[index].dispatchEvent(e);
   }
 
   const ajouterJoueur = (id, coordonnees) => {
@@ -246,9 +355,8 @@ export default function Carte() {
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
 
-  console.log(items);
   async function createGame(modeJeu, listeEquipe) {
-    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+    /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -274,9 +382,9 @@ export default function Carte() {
       .then((json) => {
         const id = json.gameTemplate.id;
         launchGame(id);
-      });
+      });*/
 
-    console.log(
+    /*console.log(
       JSON.stringify({
         name: "Sprint 1", //A CHANGER
         modeDeJeu: modeJeu,
@@ -289,9 +397,22 @@ export default function Carte() {
         private: true, //A CHANGER
         idCreator: 3,
       })
-    );
+    );*/
 
-    setPartieLancee(true);
+    console.log({
+      name: "Sprint 1", //A CHANGER
+      modeDeJeu: modeJeu,
+      limitTime: 600, //A CHANGER
+      teams: listeEquipe,
+      authorizedZone: zoneJeu,
+      unauthorizedZone: zonesInterdites,
+      mechants: mechants,
+      items: items,
+      private: true, //A CHANGER
+      idCreator: 3,
+    });
+
+    //setPartieLancee(true);
   }
 
   async function launchGame(id) {
@@ -352,6 +473,26 @@ export default function Carte() {
               edit: false,
             }}
             onCreated={(e) => onCreated(e)}
+            onDeleted={(e) => onDeleted(e)}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant2Icon,
+              },
+              polygon: {
+                shapeOptions: {
+                  guidelineDistance: 10,
+                  color: "red",
+                  weight: 3,
+                },
+              },
+            }}
           />
           <EditControl
             position="topright"
@@ -363,13 +504,62 @@ export default function Carte() {
               marker: {
                 icon: loupeIcon,
               },
-              polygon: {
-                shapeOptions: {
-                  guidelineDistance: 10,
-                  color: "red",
-                  weight: 3,
-                },
+              polygon: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: lunettesIcon,
               },
+              polygon: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: sacIcon,
+              },
+              polygon: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: ghostIcon,
+              },
+              polygon: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
             }}
           />
         </FeatureGroup>
@@ -392,6 +582,7 @@ export default function Carte() {
           <></>
         )}
       </MapContainer>
+      <img src="profile.png" alt="" className="btnUser" onClick={clickUser} />
       {!partieLancee ? (
         <>
           <div className="sideBar">
@@ -421,17 +612,17 @@ export default function Carte() {
                 onClick={(e) => clickMechant(e)}
                 className="btnSideBar"
               >
-                <img src="mechant1.png" alt="" className="iconBar" />
+                <img src="villain.png" alt="" className="iconBar" />
                 Méchants
               </div>
 
               <div className="detail" id="detailsMechants">
-                <div className="btnDetail" onClick={(e) => chooseMechant(e)}>
+                <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
                   <img src="mechant1.png" alt="" className="iconBar" />
                   Méchant 1
                 </div>
-                <div className="btnDetail" onClick={(e) => chooseMechant(e)}>
-                  <img src="mechant1.png" alt="" className="iconBar" />
+                <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
+                  <img src="mechant2.png" alt="" className="iconBar" />
                   Méchant 2
                 </div>
               </div>
@@ -442,25 +633,25 @@ export default function Carte() {
                 onClick={(e) => clickObjet(e)}
                 className="btnSideBar"
               >
-                <img src="loupe.png" alt="" className="iconBar" />
+                <img src="object.png" alt="" className="iconBar" />
                 Objets
               </div>
 
               <div className="detail" id="detailsItems">
-                <div className="btnDetail" onClick={(e) => chooseItem(e)}>
+                <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
                   <img src="loupe.png" alt="" className="iconBar" />
                   Item 1
                 </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e)}>
-                  <img src="loupe.png" alt="" className="iconBar" />
+                <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+                  <img src="lunettes.png" alt="" className="iconBar" />
                   Item 2
                 </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e)}>
-                  <img src="loupe.png" alt="" className="iconBar" />
+                <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
+                  <img src="sac.png" alt="" className="iconBar" />
                   Item 3
                 </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e)}>
-                  <img src="loupe.png" alt="" className="iconBar" />
+                <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
+                  <img src="ghost.png" alt="" className="iconBar" />
                   Item 4
                 </div>
               </div>
