@@ -1,6 +1,15 @@
 .boxBlanche {
     background: white;
     height: 90%;
-    width: 80%;
+    width: 70%;
+    border-radius: 25px;
+}
+
+.listeJoueurs {
+    width: 20%;
+    height: 90%;
+    background: var(--gris);
+    display: flex;
+    flex-direction: column;
     border-radius: 25px;
 }
