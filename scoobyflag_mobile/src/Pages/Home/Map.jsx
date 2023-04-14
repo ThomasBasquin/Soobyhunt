@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
-import {View, Alert} from 'react-native';
+import {View, Alert, Text, Pressable} from 'react-native';
 import {DateTime} from 'luxon';
 import MapView, {PROVIDER_DEFAULT, UrlTile} from 'react-native-maps';
 import {
@@ -27,11 +27,12 @@ import ItemMarker from './mapComponents/ItemMarker';
 import ItemModal from './ItemModal';
 import useVilain from '../../Constantes/Hooks/useVilain';
 import useItem from '../../Constantes/Hooks/useItem';
-import usePlayer from '../../Constantes/Hooks/usePlayer';
 import UnauthorizedMapPolygon from './mapComponents/UnauthorizedMapPolygon';
-import {MAP_COORDINATE, USER_MARKERS} from '../../Constantes/mocked';
-import EventSource, {EventSourceListener} from 'react-native-sse';
+import EventSource from 'react-native-sse';
 import URLS from '../../Constantes/URLS';
+import useUrl from '../../Constantes/Hooks/useUrl';
+import useServer from '../../Constantes/Hooks/useServer';
+import COLORS from '../../Constantes/colors';
 
 export default function Home({route, navigation}) {
   const [currentPosition, setCurrentPosition] = useState({
@@ -57,11 +58,13 @@ export default function Home({route, navigation}) {
     isOpen: false,
     vilain: null,
   });
+  const {GAME} = useUrl();
   const [stateItemModal, setStateItemModal] = useState({
     isOpen: false,
     item: null,
   });
   const [currentUser, setCurrentUser] = useState(null);
+  const [{idUser, map}] = useServer();
 
   useEffect(() => {
     if (!currentUser) return;
@@ -109,41 +112,29 @@ export default function Home({route, navigation}) {
   }, [currentUser]);
 
   useEffect(() => {
-    if (!route.params.gameConfiguration) {
+    if (!map) {
       Alert.alert('Une configuration est requise');
       navigation.navigate('Team');
       return;
     }
-    fetch(URLS.joinGame, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'Application/json',
-      },
-      body: JSON.stringify({pseudo: 'coiquoubé'}),
-    })
-      .then(res => res.json())
-      .then(user => {
-        setCurrentUser(user);
-      });
 
     refreshActualEffect();
     // reset();
-    const config = route.params.gameConfiguration;
     setMapCoordinates(
-      config.json.authorizedZone.map(zone => ({
+      map.authorizedZone.map(zone => ({
         latitude: zone.latitude,
         longitude: zone.longitude,
       })),
     );
-    setUnauthorizedZone(config.json.unauthorizedZone);
+    setUnauthorizedZone(map.unauthorizedZone);
     setVilainMarkers(
-      config.json.mechants.map(mechant => ({
+      map.mechants.map(mechant => ({
         ...mechant,
         coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
       })),
     );
     setItemMarkers(
-      config.json.items.map(zone => ({
+      map.items.map(zone => ({
         ...zone,
         quantite: 5,
         coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
@@ -174,8 +165,8 @@ export default function Home({route, navigation}) {
   }
 
   function updateUserLocation(e) {
-    if(!currentUser)return;
-    fetch(URLS.putPosition.replace('{userId}', currentUser.id), {
+    if (!idUser) return;
+    fetch(GAME.putPosition.replace('{userId}', idUser), {
       method: 'PUT',
       headers: {
         'Content-type': 'Application/json',
@@ -213,8 +204,18 @@ export default function Home({route, navigation}) {
       })
       .filter(marker => marker.quantite);
     const outOfMap = pointInPolygon(e.coordinate, mapCoordinates);
+    let inUnauthorizedZone = false;
+    unauthorizedZone.forEach(zone => {
+      const inZone = pointInPolygon(e.coordinate, zone);
+      if (inZone) {
+        inUnauthorizedZone = true;
+        return;
+      }
+    });
 
-    if (!outOfMap) {
+    if (inUnauthorizedZone) {
+      setNotifInApp(NOTIF_IN_MAP.inUnauthorizedZone);
+    } else if (!outOfMap) {
       setNotifInApp(NOTIF_IN_MAP.outOfMap);
     } else {
       if ([...nearVilain, ...nearItem].length) {
@@ -337,9 +338,13 @@ export default function Home({route, navigation}) {
     [isMountedMap, notifInApp],
   );
 
-  return region.longitude &&
-    region.latitude &&
-    mapCoordinates.length ? (
+  const renderBackParty = useCallback(() => (
+    <Pressable onPress={() => navigation.navigate("Party")} style={{position:"absolute", top:10, left:10, padding:10, zIndex:10, borderRadius:10, backgroundColor: COLORS.secondary}}>
+      <Text style={{fontWeight:"800"}}>Retour</Text>
+    </Pressable>
+  ));
+
+  return region.longitude && region.latitude && mapCoordinates.length ? (
     <View>
       {stateVilainModal.isOpen ? (
         <VilainModal
@@ -388,6 +393,7 @@ export default function Home({route, navigation}) {
           }
         />
       ) : null}
+      {renderBackParty()}
       {EffectComponent()}
       {ItemComponent()}
       {notifComponent()}

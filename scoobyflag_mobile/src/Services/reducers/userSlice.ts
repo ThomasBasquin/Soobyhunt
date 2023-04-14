@@ -1,12 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import IUser from "../../Constantes/interfaces/user";
+import IUser from "../../Constantes/interfaces/IUser";
 
-const initialState: IUser = {
-  username:"",
-  team:"",
-  latitude:0,
-  longitude:0
-};
+const initialState: IUser = {};
 
 export const userSlice = createSlice({
     name: "user",
