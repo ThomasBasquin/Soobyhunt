@@ -21,8 +21,9 @@ class GameController extends AbstractController
     public function import(Request $request)
     {
         $data = $request->toArray();
-        return $this->json($this->gameService->importGameSetting($data['gameTemplate']['json']), 200, [], ['groups' => ["Game:read", 'Item:read', 'Team:read', 'Objective:read']]);
+        return $this->json($this->gameService->importGameSetting($data['gameTemplate']['json']), 200, [], ["groups" => ["Game:read", "Item:read", "Team:read", "Objective:read"]]);
     }
+
     #[Route('/game/{game}', name: 'get_game', methods: ['GET'])]
     public function get(Game $game)
     {

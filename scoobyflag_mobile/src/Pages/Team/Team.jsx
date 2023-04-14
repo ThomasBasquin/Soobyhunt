@@ -1,15 +1,17 @@
-import {useState} from 'react';
-import {Pressable, ActivityIndicator, Text, View, Image} from 'react-native';
+import {useState, useEffect} from 'react';
+import {Pressable, ActivityIndicator, Text, View} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 
 function Team({navigation}) {
-  const [config, setConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [test, setTest] = useState(true);
   const [server, setServer] = useServer();
-  const {API} = useUrl();
+  const {API, GAME} = useUrl();
+
+  useEffect(() => {
+    // fetch(GAME)
+  }, []);
 
   function loadMap() {
     setIsLoading(true);
@@ -20,24 +22,16 @@ function Team({navigation}) {
   }
 
   return (
-    <View
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        flex: 1,
-      }}>
-      <Image
-        source={require('../../Assets/LOGO.png')}
-        style={{width: 150, height: 150, marginVertical: 50}}
-      />
+    <View style={{width: '100%', flex: 1}}>
       <Pressable
         style={{
-          opacity: isLoading ? .7 : 1,
-          marginVertical: '1%',
+          position: 'absolute',
+          bottom: 10,
+          opacity: isLoading ? 0.7 : 1,
+          marginVertical: '5%',
+          marginHorizontal: '25%',
           padding: 10,
-          width: '48%',
+          width: '50%',
           backgroundColor: COLORS.primary,
           borderRadius: 15,
           justifyContent: 'center',
@@ -54,7 +48,7 @@ function Team({navigation}) {
               fontWeight: '600',
               color: COLORS.white,
             }}>
-            Charger la configuration
+            Se mettre prêt
           </Text>
         )}
       </Pressable>
