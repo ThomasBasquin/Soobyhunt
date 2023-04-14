@@ -112,13 +112,17 @@ class GameService
         foreach ($teams as $team) {
             $players = $team->getPlayers();
             $nbObjectives = 0;
+            $playersScore = [];
             foreach ($players as $player) {
                 $nbObjectives += count($player->getObjectives());
-                # code...
+                $playersScore[] = ['pseudo' => $player->getPseudo(),'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
             }
-            $data[] = ['team' => $team->getName(), 'nbObjectives' => $nbObjectives];
+            $data[] = [
+                'team' => $team->getName(),
+                'nbObjectives' => $nbObjectives,
+                'playersScore' => $playersScore
+            ];
         }
-        dump($data);
         return $data;
     }
 
