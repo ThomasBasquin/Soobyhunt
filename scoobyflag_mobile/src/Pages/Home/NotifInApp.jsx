@@ -7,7 +7,7 @@ export default function NotifInApp({isMountedMap, notifInApp}) {
   const transitionAnim=useRef(new Animated.Value(-150)).current;
 
   useEffect(() => {
-    notifInApp!==null ? showNotif() : hideNotif();
+    notifInApp ? showNotif() : hideNotif();
   }, [notifInApp]);
 
   function showNotif(){

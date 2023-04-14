@@ -1,5 +1,7 @@
 FROM php:8.1-apache
 
+LABEL image_name="game-server"
+
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 RUN chmod +x /usr/local/bin/install-php-extensions && \
@@ -12,15 +14,22 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 
 COPY . /var/www/
 
-COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
+RUN chown -R www-data:www-data /var/www/var && \
+    chmod -R 775 /var/www/var && \
+    chown -R www-data:www-data /var/www/var/log && \
+    chmod -R 775 /var/www/var/log
+
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
 RUN cd /var/www && \
-    composer install 
+    composer install
     # npm install --force && \
     # npm run build
     
 WORKDIR /var/www/
 
-ENTRYPOINT ["bash", "./docker/docker.sh"]
+ENTRYPOINT ["bash", "./docker.sh"]
 
 EXPOSE 80
