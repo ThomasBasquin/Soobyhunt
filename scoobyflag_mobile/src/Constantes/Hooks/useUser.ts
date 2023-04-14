@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import IUser from "../interfaces/user";
+import IUser from "../interfaces/IUser";
 import {setUser as setUserRedux} from "../../Services/reducers/userSlice";
 
 export default function useUser(){

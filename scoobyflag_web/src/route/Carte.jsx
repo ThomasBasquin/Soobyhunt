@@ -222,7 +222,7 @@ export default function Carte() {
 
   console.log(items);
   async function createGame(modeJeu, listeEquipe) {
-    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+    const response = await fetch("https://scoobyhunt.fr/game/create/template", {
       method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -269,7 +269,7 @@ export default function Carte() {
   }
 
   async function launchGame(id) {
-    fetch("http://127.0.0.1:8000/game/create", {
+    fetch("https://scoobyhunt.fr/game/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
