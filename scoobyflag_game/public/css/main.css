@@ -18,7 +18,7 @@ body {
     overflow-x: hidden;
 }
 
-#root {
+#GameRoot {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -27,7 +27,7 @@ body {
     width: 100%;
 }
 
-#root>main {
+#GameRoot>main {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -37,7 +37,6 @@ body {
 }
 
 .fondSamy {
-    background-image: url(../assets/fondSamyScooby.png);
     width: 100%;
     height: 100%;
     padding-top: 380px;

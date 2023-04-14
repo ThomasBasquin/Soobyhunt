@@ -2,24 +2,22 @@ import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 import React from "react";
 import { useState, useEffect } from "react";
 import L from "leaflet";
-import "./css/carte.css";
-import "./css/config.css";
 import {
-    MapContainer,
-    TileLayer,
-    FeatureGroup,
-    Marker,
-    Popup,
-  } from "react-leaflet";
+  MapContainer,
+  TileLayer,
+  FeatureGroup,
+  Marker,
+  Popup,
+} from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
-import mechant1 from "../../assets/mechant1";
-import loupe from "../assets/loupe.png";
-import player from "../assets/points.png";
+import mechant1 from "../../assets/mechant1.png";
+import loupe from "../../assets/loupe.png";
+import player from "../../assets/points.png";
+
 import style from "./Game.module.scss";
 
-export default function Game(){
-
-    const [latitude, setLatitude] = useState(0.0);
+export default function Game() {
+  const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
   const [menuConfig, setMenuConfig] = useState(false);
@@ -37,36 +35,36 @@ export default function Game(){
     getLocation();
   }, []);
 
-  useEffect(() => {
-    const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
-    url.searchParams.append(
-      "topic",
-      "https://scoobyflag/user/{userId}".replace(
-        "{userId}",
-        0 /*userId.toString()*/
-      )
-    );
+  // useEffect(() => {
+  //   const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
+  //   url.searchParams.append(
+  //     "topic",
+  //     "https://scoobyflag/user/{userId}".replace(
+  //       "{userId}",
+  //       0 /*userId.toString()*/
+  //     )
+  //   );
 
-    const eventSource = new EventSource(url);
+  //   const eventSource = new EventSource(url);
 
-    eventSource.onmessage = ({ data }) => {
-      console.log(data);
-      const user = JSON.parse(JSON.parse(data));
-      const alreadyExist = joueurs.find((u) => u.id == user.id);
+  //   eventSource.onmessage = ({ data }) => {
+  //     console.log(data);
+  //     const user = JSON.parse(JSON.parse(data));
+  //     const alreadyExist = joueurs.find((u) => u.id == user.id);
 
-      if (!alreadyExist) {
-        ajouterJoueur(user.id, [user.latitude, user.longitude]);
-      } else {
-        deplacerJoueur(user.id, [user.latitude, user.longitude]);
-      }
+  //     if (!alreadyExist) {
+  //       ajouterJoueur(user.id, [user.latitude, user.longitude]);
+  //     } else {
+  //       deplacerJoueur(user.id, [user.latitude, user.longitude]);
+  //     }
 
-      // else if (data.includes("deplacer")) {
-      //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
-      // }
-    };
+  //     // else if (data.includes("deplacer")) {
+  //     //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
+  //     // }
+  //   };
 
-    return () => eventSource.close();
-  }, [joueurs]);
+  //   return () => eventSource.close();
+  // }, [joueurs]);
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -225,33 +223,45 @@ export default function Game(){
 
   console.log(items);
   async function createGame(modeJeu, listeEquipe) {
-    const response = await fetch("http://127.0.0.1:8000/game/create/template", {
+    const response = await fetch("https://scoobyhunt.fr/game/create/template", {
       method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: "Sprint 1", //A CHANGER
-                modeDeJeu: modeJeu,
-                limitTime: 600, //A CHANGER
-                teams: listeEquipe,
-                authorizedZone: zoneJeu.map(zone => ({latitude:zone.lat,longitude:zone.lng})),
-                unauthorizedZone: zonesInterdites.map(zone => zone.map(pts => ({latitude:pts.lat,longitude:pts.lng}))),
-                mechants: mechants.map(mechant => ({latitude:mechant.lat,longitude:mechant.lng})),
-                items: items.map(item => ({...item, latitude:item.coordonnees.lat,longitude:item.coordonnees.lng})),
-                private: true, //A CHANGER
-                idCreator: 3, //
-            }),
-        })
-            .then((res) => {
-                if (res.ok) {
-                    return res.json();
-                }
-            })
-            .then((json) => {
-                const id = json.gameTemplate.id;
-                launchGame(id);
-            });
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Sprint 1", //A CHANGER
+        modeDeJeu: modeJeu,
+        limitTime: 600, //A CHANGER
+        teams: listeEquipe,
+        authorizedZone: zoneJeu.map((zone) => ({
+          latitude: zone.lat,
+          longitude: zone.lng,
+        })),
+        unauthorizedZone: zonesInterdites.map((zone) =>
+          zone.map((pts) => ({ latitude: pts.lat, longitude: pts.lng }))
+        ),
+        mechants: mechants.map((mechant) => ({
+          latitude: mechant.lat,
+          longitude: mechant.lng,
+        })),
+        items: items.map((item) => ({
+          ...item,
+          latitude: item.coordonnees.lat,
+          longitude: item.coordonnees.lng,
+        })),
+        private: true, //A CHANGER
+        idCreator: 3, //
+      }),
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        const id = json.gameTemplate.id;
+        launchGame(id);
+      });
 
     console.log(
       JSON.stringify({
@@ -272,7 +282,7 @@ export default function Game(){
   }
 
   async function launchGame(id) {
-    fetch("http://127.0.0.1:8000/game/create", {
+    fetch("https://scoobyhunt.fr/game/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -350,92 +360,20 @@ export default function Game(){
             }}
           />
         </FeatureGroup>
-        {partieLancee ? (
-          <>
-            {joueurs.map((joueur, id) => {
-              return (
-                <Marker
-                  key={id}
-                  position={joueur.coordonnees}
-                  icon={playerIcon}
-                >
-                  <Popup>ID Joueur : {joueur.id}</Popup>
-                </Marker>
-              );
-            })}
-            <div onClick={test} className="btnTest"></div>
-          </>
-        ) : (
-          <></>
-        )}
+
+        {joueurs.map((joueur, id) => {
+          return (
+            <Marker key={id} position={joueur.coordonnees} icon={playerIcon}>
+              <Popup>ID Joueur : {joueur.id}</Popup>
+            </Marker>
+          );
+        })}
+        
       </MapContainer>
-      {!partieLancee ? (
-        <>
-          <div className="sideBar">
-            <div
-              id="btnZone"
-              onClick={(e) => clickZoneJeu(e)}
-              className="btnSideBar"
-            >
-              <img src="gaming-zone.png" alt="" className="iconBar" />
-              Zone de jeu
-            </div>
-            <div
-              id="btnZoneInterdite"
-              onClick={(e) => clickZoneInterdite(e)}
-              className="btnSideBar"
-            >
-              <img src="forbidden.png" alt="" className="iconBar" />
-              Zone interdite
-            </div>
-            <div
-              id="btnFlag"
-              onClick={(e) => clickMechant(e)}
-              className="btnSideBar"
-            >
-              <img src="mechant1.png" alt="" className="iconBar" />
-              Méchants
-            </div>
-            <div
-              id="btnItems"
-              onClick={(e) => clickObjet(e)}
-              className="btnSideBar"
-            >
-              <img src="loupe.png" alt="" className="iconBar" />
-              Objets
-            </div>
-            <div
-              id="btnZone"
-              onClick={(e) => clickEdit(e)}
-              className="btnSideBar"
-            >
-              <img src="edit.png" alt="" className="iconBar" />
-              Editer
-            </div>
-            <div
-              id="btnZone"
-              onClick={(e) => clickSupprimer(e)}
-              className="btnSideBar"
-            >
-              <img src="bin.png" alt="" className="iconBar" />
-              Supprimer
-            </div>
-          </div>
-          <img
-            onClick={() => clickBtnConfig()}
-            className="btnConfig"
-            src="settings.svg"
-            alt=""
-          />
-          <Config createGame={createGame} />{" "}
-        </>
-      ) : (
-        <></>
-      )}
     </>
   ) : (
     <h1>{status}</h1>
   );
 }
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
-renderOnDomLoaded(<Game />,"GameRoot");
+renderOnDomLoaded(<Game />, "GameRoot");
