@@ -1,12 +1,16 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 import style from "./ChoiceTeam.module.scss";
 
 function ChoiceTeam(){
-    return <><p className={style.title}>Choix des équipes</p>
-        <button onClick={()=> document.location.href="/"}>Aller à l'accueil</button>
-    <button onClick={()=> document.location.href="/game"}>Aller à la partie de jeu</button>
-</>
+
+    const [nomPartie, setnomPartie] = useState("Hudog");
+    return <div style={{height: "100%", width: "100%", background:"linear-gradient(#6B2B94, #EE9158)", display : 'flex', justifyContent: 'center', alignItems: 'center'}}>
+       <div className="boxBlanche">
+        <h1 style={{textAlign: 'center'}}>Partie de {nomPartie}</h1>
+       </div>
+    </div>
 }
 
 renderOnDomLoaded(<ChoiceTeam />,"ChoiceTeamRoot");
