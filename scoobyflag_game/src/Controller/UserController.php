@@ -6,6 +6,7 @@ use App\Entity\Team;
 use App\Entity\Item;
 use App\Entity\ItemUser;
 use App\Entity\User;
+use App\Service\MercureService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -28,12 +29,14 @@ class UserController extends AbstractController
     private UserService $userService;
     protected $em;
     private SerializerInterface $serializer;
+    private MercureService $mercureService;
 
-    function __construct(EntityManagerInterface $em, UserService $userService, SerializerInterface $serializer)
+    function __construct(EntityManagerInterface $em, UserService $userService, SerializerInterface $serializer, MercureService $mercureService)
     {
         $this->em = $em;
         $this->userService = $userService;
-        $this->serializer=$serializer;
+        $this->serializer = $serializer;
+        $this->mercureService = $mercureService;
     }
 
     #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
@@ -61,7 +64,7 @@ class UserController extends AbstractController
         $this->em->flush();
         $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
-        $users = $this->userService->findAll();
+        $users = $this->userService->findAll(); //TODO A CHANGER
 
         foreach ($users as $user) {
             if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
@@ -72,7 +75,7 @@ class UserController extends AbstractController
                 $hub->publish($update);
             }
         }
-        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
+        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
             $update = new Update(
                 "https://scoobyflag/user/0",
                 json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
@@ -84,7 +87,7 @@ class UserController extends AbstractController
 
 
     #[Route('/join', name: 'join', methods: ['POST'])]
-    public function join(HubInterface $hub, Request $request): Response
+    public function join(Request $request): Response
     {
         $data = $request->toArray();
         $user = new User;
@@ -95,12 +98,7 @@ class UserController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
-        // $update = new Update(
-        //     'https://example.com/users/dunglas',
-        //     json_encode(['status' => 'OutOfStock'])
-        // );
-
-        // $hub->publish($update);
+        $this->mercureService->publish($this->userService->findAll(), $user, $this->serializer->serialize($user, "json", ["groups" => ["User:read"]]), false);
 
         return $this->json($user, 200, [], ['groups' => ["User:read"]]);
     }
@@ -136,38 +134,31 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
-    public function isReady(HubInterface $hub, User $user, Request $request): Response
+    public function isReady(User $user): Response
     {
-        $data = $request->toArray();
-
         $user->setIsReady(!$user->isIsReady());
         $this->em->persist($user);
         $this->em->flush();
+        $users = $this->userService->findAll();
 
-        // $update = new Update(
-        //     'https://example.com/users/dunglas',
-        //     json_encode(['status' => 'OutOfStock'])
-        // );
-
-        // $hub->publish($update);
+        $this->mercureService->publish($users, $user, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }
 
     #[Route('/{user}/team/{team}', name: 'change_team', methods: ['PUT'])]
-    public function changeTeam(HubInterface $hub, User $user, Team $team): Response
+    public function changeTeam(User $user, Team $team): Response
     {
+        if ($user->getTeam() != $team) {
 
-        $user->setTeam($team);
-        $this->em->persist($user);
-        $this->em->flush();
+            $user->setTeam($team);
+            $this->em->persist($user);
+            $this->em->flush();
 
-        // $update = new Update(
-        //     'https://example.com/users/dunglas',
-        //     json_encode(['status' => 'OutOfStock'])
-        // );
+            $users = $this->userService->findAll();
 
-        // $hub->publish($update);
+            $this->mercureService->publish($this->userService->findAll(), $users, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
+        }
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
     }

@@ -15,7 +15,7 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read',"Team:get"])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
@@ -42,7 +42,8 @@ class User
     #[Groups(['User:read'])]
     private Collection $itemUser;
 
-    #[ORM\ManyToOne(inversedBy: 'players')]
+    #[ORM\ManyToOne(inversedBy: 'players', cascade:["persist"])]
+    #[Groups(['User:read'])]
     private ?Team $team = null;
 
     #[ORM\Column(nullable: true)]
@@ -54,9 +55,11 @@ class User
     private ?float $longitude = null;
 
     #[ORM\Column]
+    #[Groups(['User:read'])]
     private ?bool $isReady = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['User:read',"Team:get"])]
     private ?string $pseudo = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Objective::class)]
