@@ -14,11 +14,11 @@ class Team
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Team:read'])]
+    #[Groups(['Team:read',"Team:get"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Team:read'])]
+    #[Groups(['Team:read',"Team:get"])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'teams')]    
@@ -26,9 +26,11 @@ class Team
     private ?Game $game = null;
 
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: User::class)]
+    #[Groups(["Team:get"])]
     private Collection $players;
 
     #[ORM\Column]
+    #[Groups(["Team:get"])]
     private ?int $nbPlayer = null;
 
     public function __construct()
