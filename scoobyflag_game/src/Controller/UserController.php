@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Team;
 use App\Entity\Item;
 use App\Entity\ItemUser;
+use App\Entity\Objective;
 use App\Entity\User;
 use App\Service\MercureService;
 use App\Service\UserService;
@@ -18,7 +19,6 @@ use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
 // #[OA\Tag(name: 'userController')]
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -39,6 +39,36 @@ class UserController extends AbstractController
         $this->mercureService = $mercureService;
     }
 
+    #[Route('/{currentUser}/position', name: 'get_position', methods: ['GET'])]
+    public function position(HubInterface $hub, User $currentUser): Response
+    {
+        // $data = $request->toArray();
+        // $currentUser->setLatitude($data['latitude']);
+        // $currentUser->setLongitude($data['longitude']);
+        // $this->em->persist($currentUser);
+        // $this->em->flush();
+        // $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
+
+        $users = $this->userService->findAll();
+
+        // foreach ($users as $user) {
+        //     if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+        //         $update = new Update(
+        //             "https://scoobyflag/user/" . $user->getId(),
+        //             json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+        //         );
+        //         $hub->publish($update);
+        //     }
+        // }
+        // if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
+        //     $update = new Update(
+        //         "https://scoobyflag/user/0",
+        //         json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+        //     );
+        //     $hub->publish($update);
+        // }
+        return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+    }
     #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
     #[OA\Response(
         response: 200,
@@ -62,11 +92,10 @@ class UserController extends AbstractController
         $currentUser->setLongitude($data['longitude']);
         $this->em->persist($currentUser);
         $this->em->flush();
-        $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
+        $data = $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
-        $users = $this->userService->findAll(); //TODO A CHANGER
 
-        foreach ($users as $user) {
+        foreach ($data['users'] as $user) {
             if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
                 $update = new Update(
                     "https://scoobyflag/user/" . $user->getId(),
@@ -82,9 +111,8 @@ class UserController extends AbstractController
             );
             $hub->publish($update);
         }
-        return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+        return $this->json($data, 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
-
 
     #[Route('/join', name: 'join', methods: ['POST'])]
     public function join(Request $request): Response
@@ -101,36 +129,6 @@ class UserController extends AbstractController
         $this->mercureService->publish($this->userService->findAll(), $user, $this->serializer->serialize($user, "json", ["groups" => ["User:read"]]), false);
 
         return $this->json($user, 200, [], ['groups' => ["User:read"]]);
-    }
-
-    #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
-    public function itemGet(Item $item, Request $request, User $user): Response
-    {
-        // $user = $this->getUser();
-        if ($item->getQuantity()) {
-            $item->setQuantity($item->getQuantity() - 1);
-            $itemUser = new ItemUser();
-            $itemUser->setGetBy($user);
-            $itemUser->setItem($item);
-            $this->em->persist($itemUser);
-            $this->em->persist($item);
-            $this->em->flush();
-            return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
-        }
-        return new JsonResponse("Il n'y a plus d'item dispo", 302);
-    }
-
-    #[Route('/{user}/item/use/{itemUser}', name: 'use_item', methods: ['PUT'])]
-    public function useItem(ItemUser $itemUser, Request $request,  User $user): Response
-    {
-        // $user = $this->getUser();
-        if ($itemUser) {
-            $itemUser->setUsed(true);
-            $this->em->persist($itemUser);
-            $this->em->flush();
-            return $this->json($user->getItemUser(), 200, [], ['groups' => ["User:read", "ItemUser:read", "Item:read"]]);
-        }
-        return new JsonResponse("un pb est survenu", 302);
     }
 
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
@@ -161,5 +159,53 @@ class UserController extends AbstractController
         }
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+    }
+
+    #[Route('/{user}/objective/{objective}', name: 'capture_objective', methods: ['PUT'])]
+    public function captureObjective(HubInterface $hub, User $user, Objective $objective)
+    {
+
+        $objective->setUser($user);
+        $this->em->persist($objective);
+        $this->em->flush();
+
+        // $update = new Update(
+        //     'https://example.com/users/dunglas',
+        //     json_encode(['status' => 'OutOfStock'])
+        // );
+
+        // $hub->publish($update);
+
+        return $this->json($user, 200, [], ['groups' => ["User:read", "Objective:read"]]);
+    }
+
+    #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
+    public function itemGet(Item $item, Request $request, User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($item->getQuantity()) {
+            $item->setQuantity($item->getQuantity() - 1);
+            $itemUser = new ItemUser();
+            $itemUser->setGetBy($user);
+            $itemUser->setItem($item);
+            $this->em->persist($itemUser);
+            $this->em->persist($item);
+            $this->em->flush();
+            return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+        }
+        return new JsonResponse("Il n'y a plus d'item dispo", 302);
+    }
+
+    #[Route('/{user}/item/use/{itemUser}', name: 'use_item', methods: ['PUT'])]
+    public function useItem(ItemUser $itemUser, Request $request,  User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($itemUser) {
+            $itemUser->setUsed(true);
+            $this->em->persist($itemUser);
+            $this->em->flush();
+            return $this->json($user->getItemUser(), 200, [], ['groups' => ["User:read", "ItemUser:read", "Item:read"]]);
+        }
+        return new JsonResponse("un pb est survenu", 302);
     }
 }

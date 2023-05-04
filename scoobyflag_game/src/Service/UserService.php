@@ -44,7 +44,7 @@ class UserService
 
 
 
-        $users = $this->userRepository->findByTeam($user);
+        $users = $this->userRepository->findByTeam($user,$latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
         $items = $this->itemRepository->findByLocation($latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
         $objectives = $this->objectiveRepository->findByLocation($latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
 
