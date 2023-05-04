@@ -1,48 +1,35 @@
-# Utiliser l'image officielle de PHP avec support FPM
-FROM php:8.1-fpm-alpine
+FROM php:8.1-apache
 
-RUN COMPOSER_ALLOW_SUPERUSER=1
+LABEL image_name="game-server"
 
-# Installer les dépendances et extensions PHP nécessaires
-RUN apk add --no-cache \
-    git \
-    unzip \
-    zlib-dev \
-    libzip-dev \
-    icu-dev \
-    oniguruma-dev \
-    nginx \
-    postgresql-dev \
-    && docker-php-ext-install \
-    zip \
-    intl \
-    pdo_pgsql \
-    opcache \
-    mbstring
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Installer Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN chmod +x /usr/local/bin/install-php-extensions && \
+    install-php-extensions pdo_mysql intl
 
-# Configurer le répertoire de travail
-WORKDIR /var/www
+RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
+   mv composer.phar /usr/local/bin/composer
 
-# Copier les fichiers du projet
-COPY . /var/www
+# RUN apt update && apt install -yqq nodejs npm
 
-# Installer les dépendances avec Composer
-RUN composer install --prefer-dist --no-scripts --no-dev --no-interaction --optimize-autoloader
+COPY . /var/www/
 
-# Configurer Nginx
-RUN rm -rf /etc/nginx/sites-enabled/default \
-    && rm -rf /etc/nginx/sites-available/default \
-    && rm -rf /etc/nginx/nginx.conf
+RUN chown -R www-data:www-data /var/www/var && \
+    chmod -R 775 /var/www/var && \
+    chown -R www-data:www-data /var/www/var/log && \
+    chmod -R 775 /var/www/var/log
 
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Configurer les permissions
-RUN chown -R www-data:www-data /var/www
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Exposer le port 80
-EXPOSE 1650
+RUN cd /var/www && \
+    composer install
+    # npm install --force && \
+    # npm run build
+    
+WORKDIR /var/www/
 
-# Démarrer Nginx et PHP-FPM
-CMD ["sh", "-c", "nginx && php-fpm"]
+ENTRYPOINT ["bash", "./docker.sh"]
+
+EXPOSE 80

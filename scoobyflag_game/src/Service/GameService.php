@@ -41,15 +41,13 @@ class GameService
         $game->setName($data['name']);
         $game->setMode($data['modeDeJeu']);
         $this->em->persist($game);
-        $this->em->flush($game);
 
         $zone = [];
         foreach ($data['authorizedZone'] as $zone) {
-            # code...
             $newZone = new GameLocation();
-            $newZone->setGame($game);
-            $newZone->setLatitude($zone['lat']);
-            $newZone->setLongitude($zone['lng']);
+            $game->addGameLocation($newZone);
+            $newZone->setLatitude($zone['latitude']);
+            $newZone->setLongitude($zone['longitude']);
             $zone[] = $newZone;
 
             $this->em->persist($newZone);
@@ -57,11 +55,11 @@ class GameService
 
         foreach ($data['unauthorizedZone'] as $zone) {
             $newZone = new GameInterdictionLocalisation();
-            $newZone->setGame($game);
+            $game->addGameInterdictionLocalisation($newZone);
             foreach ($zone as $location) {
                 $newLocation = new Location();
-                $newLocation->setLatitude($location['lat']);
-                $newLocation->setLongitude($location['lng']);
+                $newLocation->setLatitude($location['latitude']);
+                $newLocation->setLongitude($location['longitude']);
                 $newLocation->setLocalisation($newZone);
                 $this->em->persist($newLocation);
             }
@@ -70,11 +68,10 @@ class GameService
         }
         $items = [];
         foreach ($data['items'] as $item) {
-            # code...
             $newItem = new Item();
-            $newItem->setGame($game);
-            $newItem->setLatitude($item['coordonnees']['lat']);
-            $newItem->setLongitude($item['coordonnees']['lng']);
+            $game->addItem($newItem);
+            $newItem->setLatitude($item['latitude']);
+            $newItem->setLongitude($item['longitude']);
             $newItem->setQuantity(3);
             $newItem->setType($item['name']);
             $items[] = $newItem;
@@ -83,19 +80,19 @@ class GameService
         $objectives = [];
         foreach ($data['mechants'] as $objective) {
             $newObjective = new Objective();
-            $newObjective->setGame($game);
-            $newObjective->setLatitude($objective['lat']);
-            $newObjective->setLongitude($objective['lng']);
+            $game->addObjective($newObjective);
+            $newObjective->setLatitude($objective['latitude']);
+            $newObjective->setLongitude($objective['longitude']);
             $objectives[] = $newObjective;
             $this->em->persist($newObjective);
         }
         $teams = [];
         foreach ($data['teams'] as $team) {
             $newTeam = new Team();
-            $newTeam->setGame($game);
             $newTeam->setNbPlayer($team['nbJoueur']);
             $newTeam->setName($team['nom']);
             $teams[] = $newTeam;
+            $game->addTeam($newTeam);
             $this->em->persist($newTeam);
         }
         $this->em->flush();

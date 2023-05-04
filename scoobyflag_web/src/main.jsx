@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./route/Auth";
 import Index from "./route/Index";
 import Carte from "./route/Carte";
+import User from "./route/User";
 import "./css/main.css";
 
 const router = createBrowserRouter([
@@ -19,7 +20,11 @@ const router = createBrowserRouter([
     path: "/carte",
     element: <Carte />
   },
- 
+  {
+    path: "/user",
+    element: <User />
+  },
+
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

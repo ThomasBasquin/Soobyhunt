@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import "../css/config.css";
 import React, { useState } from "react";
 
@@ -26,32 +25,36 @@ export default function Config({ createGame }) {
     },
   ]);
 
+  const closeMenu = () => {
+    document.querySelector(".menuConfig").classList.add("slideOut");
+    document.querySelector(".menuConfig").classList.remove("slideIn");
+  }
+
   return (
     <div className="menuConfig">
-      <h1 className="titreConfig">Configuration d'une partie</h1>
+      <img src="croix.png" alt="" className="closeBtn" onClick={closeMenu} />
+      <h1 className="titreConfig">Paramètres de la partie</h1>
 
       <div className="scroll">
-        <div className="formConfig">
-          <div className="">
-            <div className="listEcran">
-              <div
-                className={
-                  toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"
-                }
-                onClick={() => toggleTab(1)}
-              >
-                Mode de jeu
-              </div>
-              <div
-                className={
-                  toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"
-                }
-                onClick={() => toggleTab(2)}
-              >
-                Équipes
-              </div>
-            </div>
-            <div className="listEcran">
+        <div className="listEcran">
+          <div
+            className={
+              toggleState === 1 ? "choixMDJ active-tab" : "choixMDJ"
+            }
+            onClick={() => toggleTab(1)}
+          >
+            Mode de jeu
+          </div>
+          <div
+            className={
+              toggleState === 2 ? "choixMDJ active-tab" : "choixMDJ"
+            }
+            onClick={() => toggleTab(2)}
+          >
+            Équipes
+          </div>
+        </div>
+        {/*<div className="listEcran">
               <div
                 className={
                   toggleState === 3 ? "choixMDJ active-tab" : "choixMDJ"
@@ -68,56 +71,51 @@ export default function Config({ createGame }) {
               >
                 Items
               </div>
-            </div>
+              </div>*/}
 
-            <ModeDeJeu
-              choose={choose}
-              chooseItem={chooseItem}
-              toggleState={toggleState}
-            />
-            <div
-              className={
-                toggleState === 2
-                  ? "listMDJ content active-content"
-                  : "listMDJ content"
-              }
-            >
-              <Equipes
-                listeEquipe={listeEquipe}
-                setListeEquipe={setListeEquipe}
-              />
-            </div>
-            <div
-              className={
-                toggleState === 3
-                  ? "listMDJ content active-content"
-                  : "listMDJ content"
-              }
-            >
-              <Mechants
-                nbGrandMechant={nbGrandMechant}
-                nbPetitMechant={nbPetitMechant}
-                setnbGrandMechant={setnbGrandMechant}
-                setnbPetitMechant={setnbPetitMechant}
-              />
-            </div>
-            <div
-              className={
-                toggleState === 4
-                  ? "listMDJ content active-content"
-                  : "listMDJ content"
-              }
-            >
-              <Items />
-            </div>
-          </div>
+        <ModeDeJeu
+          choose={choose}
+          chooseItem={chooseItem}
+          toggleState={toggleState}
+        />
+        <div
+          className={
+            toggleState === 2
+              ? "listMDJ content active-content"
+              : "listMDJ content"
+          }
+        >
+          <Equipes
+            listeEquipe={listeEquipe}
+            setListeEquipe={setListeEquipe}
+          />
         </div>
         <div
-          onClick={() => createGame(choose, listeEquipe)}
-          className="choixMDJ createButton"
+          className={
+            toggleState === 3
+              ? "listMDJ content active-content"
+              : "listMDJ content"
+          }
         >
-          Créer la partie
+          <Mechants
+            nbGrandMechant={nbGrandMechant}
+            nbPetitMechant={nbPetitMechant}
+            setnbGrandMechant={setnbGrandMechant}
+            setnbPetitMechant={setnbPetitMechant}
+          />
         </div>
+        <div
+          className={
+            toggleState === 4
+              ? "listMDJ content active-content"
+              : "listMDJ content"
+          }
+        >
+          <Items />
+        </div>
+      </div>
+      <div className="createButton" onClick={() => createGame(choose, listeEquipe)}>
+        Créer la partie
       </div>
     </div>
   );

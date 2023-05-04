@@ -8,6 +8,7 @@
 /public/bundles/
 /var/
 /vendor/
+/docker/data/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

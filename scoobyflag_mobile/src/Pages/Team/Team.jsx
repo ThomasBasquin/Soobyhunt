@@ -1,58 +1,57 @@
-import {useEffect, useState} from 'react';
-import {TouchableOpacity, Text, View, Image} from 'react-native';
+import {useState, useEffect} from 'react';
+import {Pressable, ActivityIndicator, Text, View} from 'react-native';
 import COLORS from '../../Constantes/colors';
-import URLS from '../../Constantes/URLS';
+import useUrl from '../../Constantes/Hooks/useUrl';
+import useServer from '../../Constantes/Hooks/useServer';
 
 function Team({navigation}) {
-  const [config, setConfig] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [test, setTest] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [server, setServer] = useServer();
+  const {API, GAME} = useUrl();
 
   useEffect(() => {
-    fetch(URLS.getTemplate.replace('{game}', 13))
-      .then(res => res.json())
-      .then(e => setConfig(e.gameTemplate))
-      .finally(() => setIsLoading(false));
+    // fetch(GAME)
   }, []);
 
+  function loadMap() {
+    setIsLoading(true);
+    fetch(API.getTemplate.replace('{game}', 4))
+      .then(res => res.json())
+      .then(e => setServer({...server, map: e.gameTemplate.json}))
+      .finally(() => setIsLoading(false));
+  }
+
   return (
-    <View
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        flex: 1,
-      }}>
-      <Image
-        source={require('../../Assets/LOGO.png')}
-        style={{width: 150, height: 150, marginVertical: 50}}
-      />
-      <TouchableOpacity
+    <View style={{width: '100%', flex: 1}}>
+      <Pressable
         style={{
-          marginVertical: '1%',
+          position: 'absolute',
+          bottom: 10,
+          opacity: isLoading ? 0.7 : 1,
+          marginVertical: '5%',
+          marginHorizontal: '25%',
           padding: 10,
-          width: '48%',
+          width: '50%',
           backgroundColor: COLORS.primary,
           borderRadius: 15,
           justifyContent: 'center',
           alignItems: 'center',
         }}
         disabled={isLoading}
-        onPress={() => {
-          navigation.navigate('Home', {gameConfiguration: config});
-        }}>
-        <Text
-          style={{
-            fontSize: 15,
-            fontWeight: '600',
-            color: COLORS.white,
-          }}>
-          Charger la configuration
-        </Text>
-      </TouchableOpacity>
-      <Text>{test}</Text>
-      {isLoading ? <Text>Chargement...</Text> : null}
+        onPress={loadMap}>
+        {isLoading ? (
+          <ActivityIndicator size="small" color={COLORS.secondary} />
+        ) : (
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '600',
+              color: COLORS.white,
+            }}>
+            Se mettre prêt
+          </Text>
+        )}
+      </Pressable>
     </View>
   );
 }

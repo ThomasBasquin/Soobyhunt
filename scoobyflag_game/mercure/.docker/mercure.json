@@ -1,0 +1,9 @@
+{
+  "jwt_key": "!ChangeThisMercureHubJWTSecretKey!",
+  "publish_allowed_origins": ["http://localhost"],
+  "subscriptions_allowed_origins": ["http://localhost"],
+  "cors_allowed_origins": ["http://localhost"],
+  "http": {
+    "addr": ":16640"
+  }
+}
