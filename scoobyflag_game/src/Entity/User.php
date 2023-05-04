@@ -39,6 +39,7 @@ class User
 
 
     #[ORM\OneToMany(mappedBy: 'getBy', targetEntity: ItemUser::class)]
+    #[Groups(['User:read'])]
     private Collection $itemUser;
 
     #[ORM\ManyToOne(inversedBy: 'players')]

@@ -104,8 +104,8 @@ class UserController extends AbstractController
 
         return $this->json($user, 200, [], ['groups' => ["User:read"]]);
     }
-    #[Route('{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
 
+    #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
     public function itemGet(Item $item, Request $request, User $user): Response
     {
         // $user = $this->getUser();
@@ -120,6 +120,19 @@ class UserController extends AbstractController
             return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
         }
         return new JsonResponse("Il n'y a plus d'item dispo", 302);
+    }
+
+    #[Route('/{user}/item/use/{itemUser}', name: 'use_item', methods: ['PUT'])]
+    public function useItem(ItemUser $itemUser, Request $request,  User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($itemUser) {
+            $itemUser->setUsed(true);
+            $this->em->persist($itemUser);
+            $this->em->flush();
+            return $this->json($user->getItemUser(), 200, [], ['groups' => ["User:read", "ItemUser:read", "Item:read"]]);
+        }
+        return new JsonResponse("un pb est survenu", 302);
     }
 
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
