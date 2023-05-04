@@ -11,10 +11,8 @@ route {
 	mercure {
 		# Transport to use (default to Bolt)
 		transport_url {$MERCURE_TRANSPORT_URL:bolt://mercure.db}
-		# Publisher JWT key
-		publisher_jwt !ChangeThisMercureHubJWTSecretKey! {env.MERCURE_PUBLISHER_JWT_ALG}
-		# Subscriber JWT key
-		subscriber_jwt !ChangeThisMercureHubJWTSecretKey! {env.MERCURE_SUBSCRIBER_JWT_ALG}
+		publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+		subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
 		# Permissive configuration for the development environment
 		cors_origins *
 		publish_origins *
@@ -27,5 +25,13 @@ route {
 
 	redir / /.well-known/mercure/ui/
 	respond /healthz 200
+
+    route /.well-known/mercure/ui/* {
+        uri strip_prefix /.well-known/mercure/ui
+        file_server browse {
+            root /var/mercure/assets
+        }
+    }
+
 	respond "Not Found" 404
 }
