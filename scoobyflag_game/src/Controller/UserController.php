@@ -3,6 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Team;
+use App\Entity\Item;
+use App\Entity\ItemUser;
+use App\Entity\Objective;
 use App\Entity\User;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,6 +35,36 @@ class UserController extends AbstractController
         $this->serializer=$serializer;
     }
 
+    #[Route('/{currentUser}/position', name: 'get_position', methods: ['GET'])]
+    public function position(HubInterface $hub, User $currentUser): Response
+    {
+        // $data = $request->toArray();
+        // $currentUser->setLatitude($data['latitude']);
+        // $currentUser->setLongitude($data['longitude']);
+        // $this->em->persist($currentUser);
+        // $this->em->flush();
+        // $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
+
+        $users = $this->userService->findAll();
+
+        // foreach ($users as $user) {
+        //     if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+        //         $update = new Update(
+        //             "https://scoobyflag/user/" . $user->getId(),
+        //             json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+        //         );
+        //         $hub->publish($update);
+        //     }
+        // }
+        // if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
+        //     $update = new Update(
+        //         "https://scoobyflag/user/0",
+        //         json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+        //     );
+        //     $hub->publish($update);
+        // }
+        return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+    }
     #[Route('/{currentUser}/position', name: 'update_position', methods: ['PUT'])]
     #[OA\Response(
         response: 200,
@@ -55,26 +88,26 @@ class UserController extends AbstractController
         $currentUser->setLongitude($data['longitude']);
         $this->em->persist($currentUser);
         $this->em->flush();
-        $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
+        // $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
         $users = $this->userService->findAll();
 
-        foreach ($users as $user) {
-            if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-                $update = new Update(
-                    "https://scoobyflag/user/" . $user->getId(),
-                    json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
-                );
-                $hub->publish($update);
-            }
-        }
-        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
-            $update = new Update(
-                "https://scoobyflag/user/0",
-                json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
-            );
-            $hub->publish($update);
-        }
+        // foreach ($users as $user) {
+        //     if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+        //         $update = new Update(
+        //             "https://scoobyflag/user/" . $user->getId(),
+        //             json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+        //         );
+        //         $hub->publish($update);
+        //     }
+        // }
+        // if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {    
+        //     $update = new Update(
+        //         "https://scoobyflag/user/0",
+        //         json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+        //     );
+        //     $hub->publish($update);
+        // }
         return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
@@ -117,5 +150,41 @@ class UserController extends AbstractController
         // $hub->publish($update);
 
         return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+    }
+
+    #[Route('/{user}/team/{team}', name: 'change_team', methods: ['PUT'])]
+    public function changeTeam(HubInterface $hub, User $user, Team $team): Response
+    {
+
+        $user->setTeam($team);
+        $this->em->persist($user);
+        $this->em->flush();
+
+        // $update = new Update(
+        //     'https://example.com/users/dunglas',
+        //     json_encode(['status' => 'OutOfStock'])
+        // );
+
+        // $hub->publish($update);
+
+        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+    }
+
+    #[Route('/{user}/objective/{objective}', name: 'capture_objective', methods: ['PUT'])]
+    public function captureObjective(HubInterface $hub, User $user, Objective $objective)
+    {
+
+        $objective->setUser($user);
+        $this->em->persist($objective);
+        $this->em->flush();
+
+        // $update = new Update(
+        //     'https://example.com/users/dunglas',
+        //     json_encode(['status' => 'OutOfStock'])
+        // );
+
+        // $hub->publish($update);
+
+        return $this->json($user, 200, [], ['groups' => ["User:read", "Objective:read"]]);
     }
 }
