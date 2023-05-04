@@ -55,7 +55,7 @@ class User
     private ?float $longitude = null;
 
     #[ORM\Column]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read',"Team:get"])]
     private ?bool $isReady = null;
 
     #[ORM\Column(length: 255)]

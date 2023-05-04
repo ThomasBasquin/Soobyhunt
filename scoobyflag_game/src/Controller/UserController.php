@@ -141,7 +141,7 @@ class UserController extends AbstractController
 
         $this->mercureService->publish($users, $user, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
 
-        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+        return $this->json([$user], 200, [], ['groups' => ["Team:get"]]);
     }
 
     #[Route('/{user}/team/{team}', name: 'change_team', methods: ['PUT'])]
@@ -158,11 +158,11 @@ class UserController extends AbstractController
             $this->mercureService->publish($this->userService->findAll(), $users, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
         }
 
-        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+        return $this->json([$user], 200, [], ['groups' => ["Team:get"]]);
     }
 
     #[Route('/{user}/objective/{objective}', name: 'capture_objective', methods: ['PUT'])]
-    public function captureObjective(HubInterface $hub, User $user, Objective $objective)
+    public function captureObjective(User $user, Objective $objective)
     {
 
         $objective->setUser($user);

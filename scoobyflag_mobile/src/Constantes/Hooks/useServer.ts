@@ -10,5 +10,5 @@ export default function useServer(){
         dispatch(setServerRedux(server));
     }
 
-    return [server as IServer,setServer as (user:IServer)=>void] as const
+    return [server as IServer,setServer as (server:IServer)=>void] as const
 }

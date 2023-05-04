@@ -23,7 +23,10 @@ export function UrlProvider({children}:IProps){
     
     const GAME={
         joinGame: GAME_DOMAIN+"/user/join",
+        ready: GAME_DOMAIN+"/user/{user}/ready",
         putPosition: GAME_DOMAIN+"/user/{userId}/position",
+        team: GAME_DOMAIN+"/team",
+        changeTeam:GAME_DOMAIN+"/user/{user}/team/{team}",
     };
     
     const API={
