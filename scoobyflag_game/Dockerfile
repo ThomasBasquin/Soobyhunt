@@ -14,6 +14,7 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 
 COPY . /var/www/
 
+RUN mkdir -p /var/www/var /var/www/var/log 
 RUN chown -R www-data:www-data /var/www/var && \
     chmod -R 775 /var/www/var && \
     chown -R www-data:www-data /var/www/var/log && \

@@ -4,7 +4,7 @@ DB_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 DB_USER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 DB_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 DB_PORT=$(shuf -i 3307-3399 -n 1)
-HOST_PORT=$(shuf -i 8000-9000 -n 1)
+HOST_PORT=$(shuf -i 8001-8999 -n 1)
 
 MERCURE_PUBLISHER_JWT_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 MERCURE_SUBSCRIBER_JWT_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
