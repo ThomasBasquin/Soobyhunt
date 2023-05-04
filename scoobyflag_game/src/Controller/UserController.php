@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Team;
+use App\Entity\Item;
+use App\Entity\ItemUser;
 use App\Entity\User;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +16,8 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 // #[OA\Tag(name: 'userController')]
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -78,6 +82,7 @@ class UserController extends AbstractController
         return $this->json($this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30), 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
+
     #[Route('/join', name: 'join', methods: ['POST'])]
     public function join(HubInterface $hub, Request $request): Response
     {
@@ -100,12 +105,60 @@ class UserController extends AbstractController
         return $this->json($user, 200, [], ['groups' => ["User:read"]]);
     }
 
+    #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
+    public function itemGet(Item $item, Request $request, User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($item->getQuantity()) {
+            $item->setQuantity($item->getQuantity() - 1);
+            $itemUser = new ItemUser();
+            $itemUser->setGetBy($user);
+            $itemUser->setItem($item);
+            $this->em->persist($itemUser);
+            $this->em->persist($item);
+            $this->em->flush();
+            return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+        }
+        return new JsonResponse("Il n'y a plus d'item dispo", 302);
+    }
+
+    #[Route('/{user}/item/use/{itemUser}', name: 'use_item', methods: ['PUT'])]
+    public function useItem(ItemUser $itemUser, Request $request,  User $user): Response
+    {
+        // $user = $this->getUser();
+        if ($itemUser) {
+            $itemUser->setUsed(true);
+            $this->em->persist($itemUser);
+            $this->em->flush();
+            return $this->json($user->getItemUser(), 200, [], ['groups' => ["User:read", "ItemUser:read", "Item:read"]]);
+        }
+        return new JsonResponse("un pb est survenu", 302);
+    }
+
     #[Route('/{user}/ready', name: 'is_ready', methods: ['PUT'])]
     public function isReady(HubInterface $hub, User $user, Request $request): Response
     {
         $data = $request->toArray();
 
         $user->setIsReady(!$user->isIsReady());
+        $this->em->persist($user);
+        $this->em->flush();
+
+        // $update = new Update(
+        //     'https://example.com/users/dunglas',
+        //     json_encode(['status' => 'OutOfStock'])
+        // );
+
+        // $hub->publish($update);
+
+        return $this->json([$user], 200, [], ['groups' => ["User:read"]]);
+    }
+
+    #[Route('/{user}/team/{team}', name: 'change_team', methods: ['PUT'])]
+    public function changeTeam(HubInterface $hub, User $user, Team $team): Response
+    {
+
+        $user->setTeam($team);
         $this->em->persist($user);
         $this->em->flush();
 

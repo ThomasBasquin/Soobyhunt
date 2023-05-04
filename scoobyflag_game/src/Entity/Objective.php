@@ -37,6 +37,9 @@ class Objective
     #[Groups(['Objective:read'])]
     private ?float $latitude = null;
 
+    #[ORM\ManyToOne(inversedBy: 'objectives')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -110,6 +113,18 @@ class Objective
     public function setLatitude(float $latitude): self
     {
         $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

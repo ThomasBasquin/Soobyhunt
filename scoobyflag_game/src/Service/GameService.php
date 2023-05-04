@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Entity\User;
 use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
+use App\Repository\TeamRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GameService
@@ -22,13 +23,15 @@ class GameService
     private UserRepository $userRepository;
     private ItemRepository $itemRepository;
     private ObjectiveRepository $objectiveRepository;
+    private TeamRepository $teamRepository;
 
-    public function __construct(ObjectiveRepository $objectiveRepository, ItemRepository $itemRepository, EntityManagerInterface $em, UserRepository $userRepository)
+    public function __construct(TeamRepository $teamRepository, ObjectiveRepository $objectiveRepository, ItemRepository $itemRepository, EntityManagerInterface $em, UserRepository $userRepository)
     {
         $this->em = $em;
         $this->userRepository = $userRepository;
         $this->itemRepository = $itemRepository;
         $this->objectiveRepository = $objectiveRepository;
+        $this->teamRepository = $teamRepository;
     }
 
     public function importGameSetting($data)
@@ -94,6 +97,30 @@ class GameService
         }
         $this->em->flush();
         return $game;
+    }
+
+    public function stat()
+    {
+
+        $teams = $this->teamRepository->findAll();
+
+        $data = [];
+
+        foreach ($teams as $team) {
+            $players = $team->getPlayers();
+            $nbObjectives = 0;
+            $playersScore = [];
+            foreach ($players as $player) {
+                $nbObjectives += count($player->getObjectives());
+                $playersScore[] = ['pseudo' => $player->getPseudo(),'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
+            }
+            $data[] = [
+                'team' => $team->getName(),
+                'nbObjectives' => $nbObjectives,
+                'playersScore' => $playersScore
+            ];
+        }
+        return $data;
     }
 
     public function save($entity)
