@@ -10,6 +10,8 @@ MERCURE_PUBLISHER_JWT_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 |
 MERCURE_SUBSCRIBER_JWT_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 APP_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 MERCURE_JWT_SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+MERCURE_SUBSCRIBER_JWT_ALG="HS256"
+MERCURE_PUBLISHER_JWT_ALG="HS256"
 
 
 generate_mercure_port() {
@@ -36,6 +38,9 @@ echo "MERCURE_SUBSCRIBER_JWT_KEY=${MERCURE_SUBSCRIBER_JWT_KEY}" >> .env
 echo "MERCURE_PORT=${MERCURE_PORT}" >> .env
 echo "APP_SECRET=${APP_SECRET}" >> .env
 echo "MERCURE_JWT_SECRET=${MERCURE_JWT_SECRET}" >> .env
+echo "MERCURE_SUBSCRIBER_JWT_ALG=${MERCURE_SUBSCRIBER_JWT_ALG}" >> .env
+echo "MERCURE_PUBLISHER_JWT_ALG=${MERCURE_PUBLISHER_JWT_ALG}" >> .env
+
 
 # Lancer l'instance avec le fichier .env généré
 docker-compose -p $PROJECT_NAME  up --build
