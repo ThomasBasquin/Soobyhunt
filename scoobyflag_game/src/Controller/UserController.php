@@ -126,7 +126,7 @@ class UserController extends AbstractController
         $this->em->persist($user);
         $this->em->flush();
 
-        $users = $this->userService->findby(["id" => !$user]);
+        $users = $this->userService->findAllWithoutUser($user);
 
         $this->mercureService->publish($users, $user, $this->serializer->serialize($user, "json", ["groups" => ["User:read"]]), false);
 
@@ -139,7 +139,8 @@ class UserController extends AbstractController
         $user->setIsReady(!$user->isIsReady());
         $this->em->persist($user);
         $this->em->flush();
-        $users = $this->userService->findby(["id" => !$user]);
+
+        $users = $this->userService->findAllWithoutUser($user);
 
         $this->mercureService->publish($users, $user, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
 
@@ -155,7 +156,7 @@ class UserController extends AbstractController
             $this->em->persist($user);
             $this->em->flush();
 
-            $users = $this->userService->findby(["id" => !$user]);
+            $users = $this->userService->findAllWithoutUser($user);
 
             $this->mercureService->publish($users, $users, $this->serializer->serialize($users, "json", ["groups" => ["User:read"]]), false);
         }

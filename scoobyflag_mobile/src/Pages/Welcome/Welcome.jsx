@@ -21,7 +21,7 @@ function Welcome({navigation}) {
 
   function getConfig() {
     setIsLoading(true);
-    fetch('https://' + ipParty.trim() + '/user/join', {
+    fetch(ipParty.trim() + '/user/join', {
       method: 'POST',
       headers: {
         'Content-type': 'Application/json',
