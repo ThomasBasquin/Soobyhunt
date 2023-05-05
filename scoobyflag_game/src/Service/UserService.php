@@ -9,6 +9,8 @@ use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use function PHPSTORM_META\type;
+
 class UserService
 {
     public EntityManagerInterface $em;
@@ -24,9 +26,30 @@ class UserService
         $this->objectiveRepository = $objectiveRepository;
     }
 
-    public function findAll(){
+    public function findAll()
+    {
         return $this->userRepository->findAll();
     }
+
+    public function findby($criteria, $orderBy = null, $limit = null, $offset = null)
+    {
+        return $this->userRepository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findAllWithoutUser(User $withoutUser){
+        $users = $this->findAll() ?? [];
+
+        $returnedUsers=[];
+        
+        foreach ($users as $user) {
+            if($withoutUser->getId() != $user->getId()){
+                $returnedUsers[]=$user;
+            }
+        }
+
+        return $returnedUsers;
+    }
+
 
 
     public function getEventUserAndAllShitbyDistance(User $user, $distanceViewRadius)
@@ -44,7 +67,7 @@ class UserService
 
 
 
-        $users = $this->userRepository->findByTeam($user,$latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
+        $users = $this->userRepository->findByTeam($user, $latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
         $items = $this->itemRepository->findByLocation($latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
         $objectives = $this->objectiveRepository->findByLocation($latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
 

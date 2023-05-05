@@ -14,6 +14,7 @@ RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
 
 COPY . /var/www/
 
+RUN mkdir -p /var/www/var /var/www/var/log 
 RUN chown -R www-data:www-data /var/www/var && \
     chmod -R 775 /var/www/var && \
     chown -R www-data:www-data /var/www/var/log && \
@@ -22,6 +23,16 @@ RUN chown -R www-data:www-data /var/www/var && \
 COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
+
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update
+
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    unzip \
+    zip
 
 RUN cd /var/www && \
     composer install
