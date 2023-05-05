@@ -43,5 +43,5 @@ echo "MERCURE_PUBLISHER_JWT_ALG=${MERCURE_PUBLISHER_JWT_ALG}" >> .env
 
 
 # Lancer l'instance avec le fichier .env généré
-# docker-compose -p $PROJECT_NAME  up --build
-docker-compose -p $PROJECT_NAME  up
+docker-compose -p $PROJECT_NAME  up --build
+# docker-compose -p $PROJECT_NAME  up
