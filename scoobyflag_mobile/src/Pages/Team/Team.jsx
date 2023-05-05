@@ -22,7 +22,7 @@ function Team({navigation}) {
   }, []);
 
   useEffect(() => {
-    if(!server.idUser) return ;
+    if (!server.idUser) return;
     const topic = encodeURIComponent(
       'https://scoobyflag/user/' + server.idUser,
     );
@@ -36,7 +36,59 @@ function Team({navigation}) {
     });
 
     eventSource.addEventListener('message', event => {
-      console.log(JSON.parse(JSON.parse(event.data)));
+      const user = JSON.parse(JSON.parse(event.data));
+      console.log(event);
+      if (!user.id || !user.isReady || !user.team || !user.pseudo) return;
+      if (!teams.length) return;
+      const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
+      if (teamUser) {
+        if (teamUser.id == user.team.id) {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == teamUser.id
+                ? {
+                    ...t,
+                    players: t.players.map(p =>
+                      p.id == user.id ? {...p, isReady: user.isReady} : p,
+                    ),
+                  }
+                : t,
+            ),
+          );
+        } else {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == user.team.id
+                ? {
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {pseudo: user.pseudo, id: user.id, isReady: user.isReady},
+                    ],
+                  }
+                : t.id == teamUser.id
+                ? {...t, players: t.players.filter(p => p.id !== user.id)}
+                : t,
+            ),
+          );
+        }
+      } else {
+        if (user.team) {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == user.team.id
+                ? {
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {pseudo: user.pseudo, id: user.id, isReady: user.isReady},
+                    ],
+                  }
+                : t,
+            ),
+          );
+        }
+      }
     });
 
     eventSource.addEventListener('error', event => {
@@ -68,8 +120,8 @@ function Team({navigation}) {
   function changeTeam(newTeam) {
     setReady(false);
     const team = teams.find(t => t.id == newTeam.id);
-    setTeams(
-      teams.map(t =>
+    setTeams(cur =>
+      cur.map(t =>
         t.id == team.id
           ? {
               ...t,
@@ -190,8 +242,16 @@ function Team({navigation}) {
               team.nbPlayer > team.players.length ? (
                 <Pressable
                   onPress={() => changeTeam(team)}
-                  style={{alignItems: 'center', padding:10,backgroundColor:COLORS.secondary, marginHorizontal:"20%", borderRadius:15}}>
-                  <Text style={{fontWeight:"600"}}>Rejoindre cette équipe</Text>
+                  style={{
+                    alignItems: 'center',
+                    padding: 10,
+                    backgroundColor: COLORS.secondary,
+                    marginHorizontal: '20%',
+                    borderRadius: 15,
+                  }}>
+                  <Text style={{fontWeight: '600'}}>
+                    Rejoindre cette équipe
+                  </Text>
                 </Pressable>
               ) : null}
             </View>
