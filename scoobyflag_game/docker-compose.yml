@@ -3,7 +3,7 @@ version: "3"
 services:
   app:
     build: .
-    image: totomadne/game-server:latest
+    image: game-server
     env_file: .env
     ports:
       - "${HOST_PORT}:80"

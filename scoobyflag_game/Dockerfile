@@ -24,6 +24,12 @@ COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    unzip \
+    zip
+
 RUN cd /var/www && \
     composer install
     # npm install --force && \
