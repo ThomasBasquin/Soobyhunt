@@ -12,6 +12,8 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
     command: /bin/bash docker.sh
+    networks:
+      - app-network
 
   database:
     image: mysql:5.7
@@ -24,6 +26,8 @@ services:
       - "${DB_PORT}:3306"
     volumes:
       - database_data:/var/lib/mysql
+    networks:
+      - app-network
 
   mercure:
     image: dunglas/mercure
@@ -46,7 +50,14 @@ services:
     volumes:
       - mercure_data:/data
       - mercure_config:/config
+    networks:
+      - app-network
+
 ###< symfony/mercure-bundle ###
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   ###> doctrine/doctrine-bundle ###
