@@ -16,12 +16,15 @@ function ChoiceTeam() {
       nom: "CBONPOURVOUS",
       nbPlace: Array.from({ length: 5 }, (v, i) => i),
     },
-    { id: 3, 
-      nom: "OuaisCGreg", 
-      nbPlace: Array.from({ length: 5 }, (v, i) => i) },
+    {
+      id: 3,
+      nom: "OuaisCGreg",
+      nbPlace: Array.from({ length: 5 }, (v, i) => i),
+    },
   ];
 
-  const selected = useState("");
+  const [selected, setSelected] = useState(null);
+
   return (
     <div
       style={{
@@ -34,13 +37,19 @@ function ChoiceTeam() {
         flexDirection: "row",
       }}
     >
-      <ListeJoueurs selected={selected}/>
-      <ChoixEquipe nomPartie={nomPartie} nomsEquipe={nomsEquipe} selected={selected}/>
+      <ListeJoueurs selected={selected} setSelected={setSelected} />
+      <ChoixEquipe
+        nomPartie={nomPartie}
+        nomsEquipe={nomsEquipe}
+        selected={selected}
+        setSelected={setSelected}
+      />
     </div>
   );
 }
 
-const ChoixEquipe = ({ nomPartie, nomsEquipe, selected }) => {
+const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected }) => {
+  console.log(selected);
   return (
     <div className="boxBlanche">
       <h1 style={{ textAlign: "center", textDecoration: "underline" }}>
@@ -51,12 +60,21 @@ const ChoixEquipe = ({ nomPartie, nomsEquipe, selected }) => {
           return (
             <div className="equipe" key={noms.id}>
               <div>
-              <p className="titreEquipe">{noms.nom}</p>
-              {noms.nbPlace.map((nb) => {
-                return (
-                  
-                <div key={nb} className="itemRejoindre"><p>{nb + 1}</p></div>);
-              })}
+                <p className="titreEquipe">{noms.nom}</p>
+                {noms.nbPlace.map((nb) => {
+                  return (
+                    <div key={nb} className="itemRejoindre">
+                      <p>{nb + 1}</p>
+                      {!selected ? (
+                        <div style={{marginLeft:20}}>
+                          <p>...</p>{" "}
+                        </div>
+                      ) : (
+                        <div></div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
@@ -66,7 +84,7 @@ const ChoixEquipe = ({ nomPartie, nomsEquipe, selected }) => {
   );
 };
 
-const ListeJoueurs = ({selected}) => {
+const ListeJoueurs = ({ selected, setSelected }) => {
   const joueursConnectes = [
     { id: 1, nom: "Hugo" },
     { id: 2, nom: "Roméo" },
@@ -92,34 +110,23 @@ const ListeJoueurs = ({selected}) => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          
-         
-          
         }}
       >
         {joueursConnectes.map((j) => (
-          <ItemJoueurs key={j.id} nom={j} />
+          <ItemJoueurs key={j.id} nom={j} selected={selected} setSelected={setSelected}/>
         ))}
       </div>
     </div>
   );
 };
 
-const ItemJoueurs = ({ nom }) => {
+const ItemJoueurs = ({ nom, selected, setSelected }) => {
+ 
   return (
     <div
-      style={{
-        width: "90%",
-        background: "linear-gradient(45deg, #3d3d3d, #545454)",
-        color: "white",
-        margin: 10,
-        borderRadius: 15,
-        margin : "auto",
-        marginBottom: 15,
-        
-      }}
+    onClick={() =>{setSelected(nom.id)}}
+      className={selected === nom.id ? 'selected itemJoueur' : 'itemJoueur'}
     >
-      
       <p style={{ marginLeft: 10, fontSize: 20 }}>{nom.nom}</p>
     </div>
   );
