@@ -4,6 +4,7 @@ import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 import {getRandomColor} from '../../Constantes/utils';
+import EventSource from 'react-native-sse';
 
 function Team({navigation}) {
   const [isLoading, setIsLoading] = useState(true);
@@ -18,6 +19,42 @@ function Team({navigation}) {
       .then(res => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if(!server.idUser) return ;
+    const topic = encodeURIComponent(
+      'https://scoobyflag/user/' + server.idUser,
+    );
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+    );
+
+    eventSource.addEventListener('open', event => {
+      // console.debug("Open SSE connection.");
+    });
+
+    eventSource.addEventListener('message', event => {
+      console.log(JSON.parse(JSON.parse(event.data)));
+    });
+
+    eventSource.addEventListener('error', event => {
+      if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
+      }
+    });
+
+    eventSource.addEventListener('close', event => {
+      // console.debug("Close SSE connection.");
+    });
+
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
   }, []);
 
   function loadMap() {
@@ -177,7 +214,7 @@ function Team({navigation}) {
             alignItems: 'center',
           }}
           disabled={isLoadingMap}
-          onPress={setReady}>
+          onPress={() => setReady()}>
           {isLoadingMap ? (
             <ActivityIndicator size="small" color={COLORS.secondary} />
           ) : (
