@@ -9,6 +9,8 @@ use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use function PHPSTORM_META\type;
+
 class UserService
 {
     public EntityManagerInterface $em;
@@ -32,6 +34,20 @@ class UserService
     public function findby($criteria, $orderBy = null, $limit = null, $offset = null)
     {
         return $this->userRepository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findAllWithoutUser(User $withoutUser){
+        $users = $this->findAll() ?? [];
+
+        $returnedUsers=[];
+        
+        foreach ($users as $user) {
+            if($withoutUser->getId() != $user->getId()){
+                $returnedUsers[]=$user;
+            }
+        }
+
+        return $returnedUsers;
     }
 
 

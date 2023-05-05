@@ -19,7 +19,7 @@ export function UrlProvider({children}:IProps){
     }
     
     const API_DOMAIN=DEFAULT_API_DOMAINS.LOCAL;
-    const GAME_DOMAIN="https://"+server;
+    const GAME_DOMAIN=server;
     
     const GAME={
         joinGame: GAME_DOMAIN+"/user/join",

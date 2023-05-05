@@ -32,7 +32,7 @@ function Team({navigation}) {
     );
 
     eventSource.addEventListener('open', event => {
-      // console.debug("Open SSE connection.");
+      console.debug("Open SSE connection.");
     });
 
     eventSource.addEventListener('message', event => {
