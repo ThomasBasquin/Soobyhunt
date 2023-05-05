@@ -18,6 +18,6 @@ wait_for_db() {
   echo "Database connection established"
 }
 
-exec apache2-foreground
-
 wait_for_db
+
+exec apache2-foreground
