@@ -14,7 +14,7 @@ services:
     command: /bin/bash docker.sh
 
   database:
-    image: jsurf/rpi-mariadb
+    image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ${DB_NAME}
