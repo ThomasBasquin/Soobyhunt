@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -15,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SecurityController extends AbstractController
 {
+    
     private SerializerInterface $serializer;
     private UserPasswordHasherInterface $passwordHasher;
     private UserRepository $userRepository;
@@ -25,30 +25,21 @@ class SecurityController extends AbstractController
         $this->passwordHasher=$passwordHasher;
         $this->userRepository=$userRepository;
     }
-
-
-    // #[Route(path: "/login", name: "app_login")]
+    // #[Route(path: '/login', name: 'app_login')]
     // public function login(AuthenticationUtils $authenticationUtils): Response
     // {
-    //     if ($this->getUser()) {
-    //         return $this->redirectToRoute('app_home');
-    //     }
+    //     // if ($this->getUser()) {
+    //     //     return $this->redirectToRoute('target_path');
+    //     // }
 
     //     // get the login error if there is one
     //     $error = $authenticationUtils->getLastAuthenticationError();
     //     // last username entered by the user
     //     $lastUsername = $authenticationUtils->getLastUsername();
-    
-    //     if ($error) {
-    //         $this->addFlash(
-        //             'error',
-        //             $error->getMessage()
-        //         );
-    //     }
 
-    //     return $this->json($lastUsername);
+    //     return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     // }
-    
+
     #[Route(path: "/login", name: "app_login")]
     public function login(Request $request): Response
     {
@@ -79,23 +70,23 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route('/create', name: 'create', methods: ['POST'])]
-    public function create(Request $request): Response
-    {
-        $pseudo=$request->toArray()["pseudo"] ?? "";
-        $alreadyRegistred=$this->userRepository->findOneBy(["pseudo"=>$pseudo]);
-        if($alreadyRegistred){
-            throw new HttpException(409,"Ce psuedo à déjà un compte");
-        }
-        $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user,
-            $request->toArray()["password"]
-        );
-        $user->setPassword($hashedPassword);
-        $this->userRepository->save($user,true);
-        return $this->json($user,201,[],["groups" => ["User:read"]]);
-    }
+    // #[Route('/create', name: 'create', methods: ['POST'])]
+    // public function create(Request $request): Response
+    // {
+    //     $pseudo=$request->toArray()["pseudo"] ?? "";
+    //     $alreadyRegistred=$this->userRepository->findOneBy(["pseudo"=>$pseudo]);
+    //     if($alreadyRegistred){
+    //         throw new HttpException(409,"Ce psuedo à déjà un compte");
+    //     }
+    //     $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
+    //     $hashedPassword = $this->passwordHasher->hashPassword(
+    //         $user,
+    //         $request->toArray()["password"]
+    //     );
+    //     $user->setPassword($hashedPassword);
+    //     $this->userRepository->save($user,true);
+    //     return $this->json($user,201,[],["groups" => ["User:read"]]);
+    // }
     
     //  /**
     //  * Création d'un utilisateur
@@ -141,5 +132,6 @@ class SecurityController extends AbstractController
     //  * @OA\Tag(name="Auth")
     //  * @Security()
     //  */
+
 
 }
