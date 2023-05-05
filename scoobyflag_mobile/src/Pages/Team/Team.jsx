@@ -4,6 +4,7 @@ import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 import {getRandomColor} from '../../Constantes/utils';
+import EventSource from 'react-native-sse';
 
 function Team({navigation}) {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +21,94 @@ function Team({navigation}) {
       .finally(() => setIsLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!server.idUser) return;
+    const topic = encodeURIComponent(
+      'https://scoobyflag/user/' + server.idUser,
+    );
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+    );
+
+    eventSource.addEventListener('open', event => {
+      // console.debug("Open SSE connection.");
+    });
+
+    eventSource.addEventListener('message', event => {
+      const user = JSON.parse(JSON.parse(event.data));
+      console.log(event);
+      if (!user.id || !user.isReady || !user.team || !user.pseudo) return;
+      if (!teams.length) return;
+      const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
+      if (teamUser) {
+        if (teamUser.id == user.team.id) {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == teamUser.id
+                ? {
+                    ...t,
+                    players: t.players.map(p =>
+                      p.id == user.id ? {...p, isReady: user.isReady} : p,
+                    ),
+                  }
+                : t,
+            ),
+          );
+        } else {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == user.team.id
+                ? {
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {pseudo: user.pseudo, id: user.id, isReady: user.isReady},
+                    ],
+                  }
+                : t.id == teamUser.id
+                ? {...t, players: t.players.filter(p => p.id !== user.id)}
+                : t,
+            ),
+          );
+        }
+      } else {
+        if (user.team) {
+          setTeams(cur =>
+            cur.map(t =>
+              t.id == user.team.id
+                ? {
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {pseudo: user.pseudo, id: user.id, isReady: user.isReady},
+                    ],
+                  }
+                : t,
+            ),
+          );
+        }
+      }
+    });
+
+    eventSource.addEventListener('error', event => {
+      if (event.type === 'error') {
+        console.error('Connection error:', event.message);
+      } else if (event.type === 'exception') {
+        console.error('Error:', event.message, event.error);
+      }
+    });
+
+    eventSource.addEventListener('close', event => {
+      // console.debug("Close SSE connection.");
+    });
+
+    return () => {
+      eventSource.removeAllEventListeners();
+      eventSource.close();
+    };
+  }, []);
+
   function loadMap() {
     setIsLoading(true);
     fetch(API.getTemplate.replace('{game}', 4))
@@ -31,8 +120,8 @@ function Team({navigation}) {
   function changeTeam(newTeam) {
     setReady(false);
     const team = teams.find(t => t.id == newTeam.id);
-    setTeams(
-      teams.map(t =>
+    setTeams(cur =>
+      cur.map(t =>
         t.id == team.id
           ? {
               ...t,
@@ -153,8 +242,16 @@ function Team({navigation}) {
               team.nbPlayer > team.players.length ? (
                 <Pressable
                   onPress={() => changeTeam(team)}
-                  style={{alignItems: 'center', padding:10,backgroundColor:COLORS.secondary, marginHorizontal:"20%", borderRadius:15}}>
-                  <Text style={{fontWeight:"600"}}>Rejoindre cette équipe</Text>
+                  style={{
+                    alignItems: 'center',
+                    padding: 10,
+                    backgroundColor: COLORS.secondary,
+                    marginHorizontal: '20%',
+                    borderRadius: 15,
+                  }}>
+                  <Text style={{fontWeight: '600'}}>
+                    Rejoindre cette équipe
+                  </Text>
                 </Pressable>
               ) : null}
             </View>
@@ -177,7 +274,7 @@ function Team({navigation}) {
             alignItems: 'center',
           }}
           disabled={isLoadingMap}
-          onPress={setReady}>
+          onPress={() => setReady()}>
           {isLoadingMap ? (
             <ActivityIndicator size="small" color={COLORS.secondary} />
           ) : (
