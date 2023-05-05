@@ -17,6 +17,7 @@ class MercureService
     }
 
     public function publish($users,$currentUser, $content, $isPosition=true){
+	dump($users);
         foreach ($users as $user) {
             if (!$isPosition || !$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
                 $update = new Update(
