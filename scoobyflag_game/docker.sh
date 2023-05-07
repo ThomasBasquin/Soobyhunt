@@ -17,7 +17,7 @@ wait_for_db() {
 
 wait_for_db
 
-php bin/console doctrine:database:create --no-interaction 
-php bin/console doctrine:schema:update --force --no-interaction 
+php bin/console doctrine:database:create --no-interaction --if-not-exists
+php bin/console doctrine:schema:update --force --no-interaction --complete
 
 exec apache2-foreground

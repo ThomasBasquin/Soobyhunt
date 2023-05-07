@@ -41,6 +41,7 @@ echo "APP_SECRET=${APP_SECRET}" >> .env
 echo "MERCURE_JWT_SECRET=${MERCURE_JWT_SECRET}" >> .env
 echo "MERCURE_SUBSCRIBER_JWT_ALG=${MERCURE_SUBSCRIBER_JWT_ALG}" >> .env
 echo "MERCURE_PUBLISHER_JWT_ALG=${MERCURE_PUBLISHER_JWT_ALG}" >> .env
+echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env
 
 
 # Lancer l'instance avec le fichier .env généré
