@@ -1,0 +1,60 @@
+.boxBlanche {
+    background: white;
+    height: 90%;
+    width: 70%;
+    border-radius: 25px;
+}
+
+.listeJoueurs {
+    width: 20%;
+    height: 90%;
+    background: var(--gris);
+    display: flex;
+    flex-direction: column;
+    border-radius: 25px;
+}
+
+.listeEquipe {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    margin-top: 3%;
+    height: 90%;
+}
+
+.equipe {
+    height: 80%;
+    width: 28%;
+    background: #9993de;
+    opacity: 0.8;
+    border-radius: 25px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    overflow-y: scroll;
+}
+
+.titreEquipe {
+    font-size: 1em;
+    color: #ee9158;
+    background: #6b2b94;
+    padding: 10px;
+    border-radius: 25px;
+    margin-top: 5px;
+}
+
+.itemRejoindre {
+    background: black;
+    margin: 10px;
+    height: 30px;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.equipe::-webkit-scrollbar {
+    display: none;
+}

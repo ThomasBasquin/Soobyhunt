@@ -4,7 +4,12 @@
 	{{parent()}}
 	| Jeu
 {% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('css/carte.css') }}" type="text/css"> 
+<link rel="stylesheet" href="{{ asset('css/main.css') }}" type="text/css"> 
+{% endblock %}
 
 {% block body %}
-	<div id='GameRoot' style='width:100%'></div>
+	<div id='GameRoot' style='width:100%; height:100vh;'></div>
+	
 {% endblock %}
