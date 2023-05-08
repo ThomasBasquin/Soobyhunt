@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {
   Image,
   Text,
@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import COLORS from '../../Constantes/colors';
-import URLS from '../../Constantes/URLS';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 
@@ -21,7 +20,7 @@ function Welcome({navigation}) {
 
   function getConfig() {
     setIsLoading(true);
-    fetch('https://' + ipParty.trim() + '/user/join', {
+    fetch(ipParty.trim() + '/user/join', {
       method: 'POST',
       headers: {
         'Content-type': 'Application/json',
