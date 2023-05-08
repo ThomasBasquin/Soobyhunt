@@ -36,9 +36,9 @@ function Team({navigation}) {
 
     eventSource.addEventListener('message', event => {
       const user = JSON.parse(JSON.parse(event.data));
-      console.log(user);
       if (!user.id || !user.isReady || !user.team || !user.pseudo) return;
       if (!teams.length) return;
+      console.log(user);
       const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
       if (teamUser) {
         if (teamUser.id == user.team.id) {
