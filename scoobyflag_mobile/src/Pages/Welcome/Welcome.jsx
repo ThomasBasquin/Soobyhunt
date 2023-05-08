@@ -61,6 +61,7 @@ function Welcome({navigation}) {
         value={ipParty}
         placeholder="ID de la partie"
         keyboardType="default"
+        secureTextEntry={true}
       />
       <TouchableOpacity
         style={{

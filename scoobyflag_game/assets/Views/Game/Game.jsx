@@ -35,36 +35,36 @@ export default function Game() {
     getLocation();
   }, []);
 
-  // useEffect(() => {
-  //   const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
-  //   url.searchParams.append(
-  //     "topic",
-  //     "https://scoobyflag/user/{userId}".replace(
-  //       "{userId}",
-  //       0 /*userId.toString()*/
-  //     )
-  //   );
+  useEffect(() => {
+    const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
+    url.searchParams.append(
+      "topic",
+      "https://scoobyflag/user/{userId}".replace(
+        "{userId}",
+        0 /*userId.toString()*/
+      )
+    );
 
-  //   const eventSource = new EventSource(url);
+    const eventSource = new EventSource(url);
 
-  //   eventSource.onmessage = ({ data }) => {
-  //     console.log(data);
-  //     const user = JSON.parse(JSON.parse(data));
-  //     const alreadyExist = joueurs.find((u) => u.id == user.id);
+    eventSource.onmessage = ({ data }) => {
+      console.log(data);
+      const user = JSON.parse(JSON.parse(data));
+      const alreadyExist = joueurs.find((u) => u.id == user.id);
 
-  //     if (!alreadyExist) {
-  //       ajouterJoueur(user.id, [user.latitude, user.longitude]);
-  //     } else {
-  //       deplacerJoueur(user.id, [user.latitude, user.longitude]);
-  //     }
+      if (!alreadyExist) {
+        ajouterJoueur(user.id, [user.latitude, user.longitude]);
+      } else {
+        deplacerJoueur(user.id, [user.latitude, user.longitude]);
+      }
 
-  //     // else if (data.includes("deplacer")) {
-  //     //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
-  //     // }
-  //   };
+      // else if (data.includes("deplacer")) {
+      //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
+      // }
+    };
 
-  //   return () => eventSource.close();
-  // }, [joueurs]);
+    return () => eventSource.close();
+  }, [joueurs]);
 
   const getLocation = () => {
     if (!navigator.geolocation) {

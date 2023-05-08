@@ -22,7 +22,6 @@ function Team({navigation}) {
 
   const onMessageListen = useCallback(
     user => {
-      console.log(teams.map(t => (t.players)));
       const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
       if (teamUser) {
         if (teamUser.id == user.team.id) {
