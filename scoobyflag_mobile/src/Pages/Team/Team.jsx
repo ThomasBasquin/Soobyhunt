@@ -3,7 +3,6 @@ import {Pressable, ActivityIndicator, Text, View} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
-import {getRandomColor} from '../../Constantes/utils';
 import EventSource from 'react-native-sse';
 
 function Team({navigation}) {
@@ -37,7 +36,7 @@ function Team({navigation}) {
 
     eventSource.addEventListener('message', event => {
       const user = JSON.parse(JSON.parse(event.data));
-      console.log(event);
+      console.log(user);
       if (!user.id || !user.isReady || !user.team || !user.pseudo) return;
       if (!teams.length) return;
       const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
