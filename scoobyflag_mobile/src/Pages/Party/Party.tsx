@@ -30,7 +30,7 @@ function Party({route, navigation}: any) {
           borderRadius: 10,
           backgroundColor: COLORS.secondary,
         }}>
-        <Text style={{textAlign:"center", fontWeight:"700"}}>Quitter la party</Text>
+        <Text style={{textAlign:"center", fontWeight:"700"}}>Quitter la partie en cours</Text>
       </Pressable>
     </View>
   );
