@@ -20,7 +20,7 @@ class MercureService
         foreach ($users as $user) {
             if (!$isPosition || !$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
                 $update = new Update(
-                    "https://scoobyflag/user/" . $publishUser->getId(),
+                    "https://scoobyflag/user/" . $user->getId(),
                     json_encode($content)
                 );
                 $this->hub->publish($update);
