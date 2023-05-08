@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {Pressable, ActivityIndicator, Text, View} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
@@ -20,25 +20,9 @@ function Team({navigation}) {
       .finally(() => setIsLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (!server.idUser) return;
-    const topic = encodeURIComponent(
-      'https://scoobyflag/user/' + server.idUser,
-    );
-
-    const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
-    );
-
-    eventSource.addEventListener('open', event => {
-      console.debug("Open SSE connection.");
-    });
-
-    eventSource.addEventListener('message', event => {
-      const user = JSON.parse(JSON.parse(event.data));
-      if (!user.id || !user.isReady || !user.team || !user.pseudo) return;
-      if (!teams.length) return;
-      console.log(user);
+  const onMessageListen = useCallback(
+    user => {
+      console.log(teams.map(t => (t.players)));
       const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
       if (teamUser) {
         if (teamUser.id == user.team.id) {
@@ -88,6 +72,30 @@ function Team({navigation}) {
           );
         }
       }
+    },
+    [teams],
+  );
+
+  useEffect(() => {
+    if (!server.idUser) return;
+    const topic = encodeURIComponent(
+      'https://scoobyflag/user/' + server.idUser,
+    );
+
+    const eventSource = new EventSource(
+      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+    );
+
+    eventSource.addEventListener('open', event => {
+      console.debug('Open SSE connection.');
+    });
+
+    eventSource.addEventListener('message', event => {
+      const user = JSON.parse(JSON.parse(event.data));
+      if (!user.id || user.isReady == null || !user.team || !user.pseudo)
+        return;
+      if (!teams.length) return;
+      onMessageListen(user);
     });
 
     eventSource.addEventListener('error', event => {
@@ -106,7 +114,7 @@ function Team({navigation}) {
       eventSource.removeAllEventListeners();
       eventSource.close();
     };
-  }, []);
+  }, [teams]);
 
   function loadMap() {
     setIsLoading(true);
