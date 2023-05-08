@@ -17,9 +17,8 @@ class MercureService
     }
 
     public function publish($users,$currentUser, $content, $isPosition=true){
-        dump($content);
-        foreach ($users as $publishUser) {
-            if (!$isPosition || $currentUser->getId() !== $publishUser->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+        foreach ($users as $user) {
+            if (!$isPosition || !$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
                 $update = new Update(
                     "https://scoobyflag/user/" . $publishUser->getId(),
                     json_encode($content)
