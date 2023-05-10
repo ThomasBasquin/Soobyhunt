@@ -5,13 +5,13 @@ import { FLUSH, PAUSE, PERSIST, persistReducer, persistStore, PURGE, REGISTER, R
 import userSlice from "./reducers/userSlice";
 import vilainSlice from "./reducers/vilainSlice";
 import itemSlice from "./reducers/itemSlice";
-import playerSlice from "./reducers/playerSlice";
+import serverSlice from "./reducers/serverSlice";
 
 const reducers = combineReducers({
+  serverSlice,
   userSlice,
   vilainSlice,
   itemSlice,
-  playerSlice,
 });
 
 const persistConfig = {

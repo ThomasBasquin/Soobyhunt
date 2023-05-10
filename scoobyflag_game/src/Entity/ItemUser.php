@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ItemUserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ItemUserRepository::class)]
 class ItemUser
@@ -20,6 +21,7 @@ class ItemUser
     private ?User $getBy = null;
 
     #[ORM\Column]
+    #[Groups(['User:read'])]
     private ?bool $used = null;
 
     public function getId(): ?int

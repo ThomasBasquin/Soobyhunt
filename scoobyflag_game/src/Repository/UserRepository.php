@@ -39,13 +39,18 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-   public function findByTeam(User $user)
+   public function findByTeam(User $user, $latMin, $latMax, $lngMin, $lngMax)
    {
        return $this->createQueryBuilder('u')
            ->andWhere('u.team = :team')
+           ->orWhere('u.latitude > :latMin and u.latitude < :latMax and u.longitude > :lngMin and u.longitude < :lngMax')
+           ->setParameter('latMin', $latMin)
+           ->setParameter('latMax', $latMax)
+           ->setParameter('lngMin', $lngMin)
+           ->setParameter('lngMax', $lngMax)
            ->setParameter('team', $user->getTeam())
            ->getQuery()
-           ->getOneOrNullResult()
+           ->getResult()
        ;
    }
 

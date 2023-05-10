@@ -13,9 +13,9 @@ export default function Auth() {
 
     useEffect(() => {
         console.log(localStorage.getItem("user"));
-        if (localStorage.getItem("user") != null && localStorage.getItem("user") != "undefined") {
+        /*if (localStorage.getItem("user") != null && localStorage.getItem("user") != "undefined") {
             navigate("/dashboard");
-        }
+        }*/
     })
 
 

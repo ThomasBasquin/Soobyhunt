@@ -38,6 +38,17 @@ class TeamRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    
+   public function findStatByTeam()
+   {
+       return $this->createQueryBuilder('t')
+       ->select('t.name AS name, sum(u.objectives)')
+           ->leftJoin('t.players', 'u')
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
+
 
 //    /**
 //     * @return Team[] Returns an array of Team objects
