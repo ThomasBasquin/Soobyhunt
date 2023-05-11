@@ -27,15 +27,20 @@ export default function Index() {
       <div className="" style={{ marginLeft: 80 }}>
         <div className="titre">Scooby-Dooby-Dooooo !</div>
         <div className="presentation">
-          Venez jouer sur le meilleur jeu de capture the Flag grandeur nature
-          sur le thème Scooby-Doo
+          Plongez dans l'univers effrayant de Scooby-Doo et capturez les
+          méchants dans le monde réel, à la recherche d'indices et de frissons !
         </div>
-        <div style={{display: 'flex', justifyContent : 'center', alignItems : 'center', width: '800px', height: 100}}>
-          <Link className="createGame" to="/login" style={{marginRight:40}}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "800px",
+            height: 100,
+          }}
+        >
+          <Link className="createGame" to="/login" style={{ marginRight: 40 }}>
             Se connecter
-          </Link>
-          <Link className="createGame" to="/dashboard">
-            Continuer en invité
           </Link>
         </div>
       </div>
