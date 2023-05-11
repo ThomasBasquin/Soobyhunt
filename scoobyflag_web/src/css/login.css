@@ -56,7 +56,8 @@
 }
 
 #formLogin input[type=password],
-input[type=text] {
+input[type=text],
+input[type=email] {
     font-size: 24px;
     width: 100%;
     max-width: 500px;
@@ -68,9 +69,12 @@ input[type=text] {
     border-radius: 8px;
 }
 
-.div-form {
-    display: flex;
-    flex-direction: column;
+.feedback {
+    display: none;
+    margin-top: 15px;
+    color: #C60B46;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .custom-button {
@@ -96,6 +100,12 @@ input[type=text] {
     margin: 25px;
 
     display: flex;
+}
+
+.txt-auth {
+    margin: 25px;
+    display: flex;
+    font-size: 20px;
 }
 
 .change-auth {

@@ -1,6 +1,11 @@
-export default function User() {
-    function logout() {
+import { useNavigate } from "react-router-dom";
 
+export default function User() {
+    const navigate = useNavigate();
+
+    function logout() {
+        localStorage.clear("user");
+        navigate("/");
     }
 
     return <div className="fond-degrade">
