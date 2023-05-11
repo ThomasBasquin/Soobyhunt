@@ -70,7 +70,6 @@ input[type=email] {
 }
 
 .feedback {
-    display: none;
     margin-top: 15px;
     color: #C60B46;
     font-size: 18px;
