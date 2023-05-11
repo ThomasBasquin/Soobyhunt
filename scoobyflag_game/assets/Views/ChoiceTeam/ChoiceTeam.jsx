@@ -64,13 +64,13 @@ const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected }) => {
                 {noms.nbPlace.map((nb) => {
                   return (
                     <div key={nb} className="itemRejoindre">
-                      <p>{nb + 1}</p>
+                      <p>{nb + 1} -</p>
                       {!selected ? (
-                        <div style={{marginLeft:20}}>
+                        <div style={{ marginLeft: 20 }}>
                           <p>...</p>{" "}
                         </div>
                       ) : (
-                        <div></div>
+                        <div><p style={{marginLeft:5}}>Rejoindre l'équipe</p><div className="buttonRejoindre">Rejoindre</div></div>
                       )}
                     </div>
                   );
@@ -113,7 +113,12 @@ const ListeJoueurs = ({ selected, setSelected }) => {
         }}
       >
         {joueursConnectes.map((j) => (
-          <ItemJoueurs key={j.id} nom={j} selected={selected} setSelected={setSelected}/>
+          <ItemJoueurs
+            key={j.id}
+            nom={j}
+            selected={selected}
+            setSelected={setSelected}
+          />
         ))}
       </div>
     </div>
@@ -121,14 +126,19 @@ const ListeJoueurs = ({ selected, setSelected }) => {
 };
 
 const ItemJoueurs = ({ nom, selected, setSelected }) => {
- 
   return (
     <div
-    onClick={() =>{setSelected(nom.id)}}
-      className={selected === nom.id ? 'selected itemJoueur' : 'itemJoueur'}
+      onClick={() => {
+        if (selected == nom.id) {
+          setSelected("");
+        } else {
+          setSelected(nom.id);
+        }
+      }}
+      className={selected === nom.id ? "selected itemJoueur" : "itemJoueur"}
     >
       <p style={{ marginLeft: 10, fontSize: 20 }}>{nom.nom}</p>
     </div>
   );
 };
-renderOnDomLoaded(<ChoiceTeam />, "ChoiceTeamRoot");
+renderOnDomLoaded(<ChoiceTeam />, "HomeRoot");
