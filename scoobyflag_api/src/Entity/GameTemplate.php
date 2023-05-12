@@ -27,11 +27,12 @@ class GameTemplate
     #[ORM\Column]
     #[Groups(['GameTemplate:read'])]
     private array $json = [];
-
+    
     #[ORM\Column]
     private ?bool $isActive = null;
-
+    
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['GameTemplate:read'])]
     private ?\DateTimeInterface $createdAt = null;
     
     public function __construct()
