@@ -12,7 +12,7 @@ function ChoiceTeam() {
     { id: 4, nom: "Thomas" },
     { id: 5, nom: "Gaëtan" },
   ]);
-  const nomsEquipe = [
+  const [nomsEquipe, setNomsEquipe] = useState([
     {
       id: 1,
       nom: "Les Foufous",
@@ -30,8 +30,8 @@ function ChoiceTeam() {
       nom: "OuaisCGreg",
       nbPlace: 5,
       listeDesJoueurs: [],
-    },
-  ];
+    }
+  ]);
 
   const [selected, setSelected] = useState(null);
 
@@ -59,16 +59,22 @@ function ChoiceTeam() {
         setSelected={setSelected}
         joueursConnectes={joueursConnectes}
         setjoueursConnectes={setjoueursConnectes}
+        setNomsEquipe={setNomsEquipe}
       />
     </div>
   );
 }
 
-const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected, joueursConnectes, setjoueursConnectes }) => {
+const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected, joueursConnectes, setjoueursConnectes, setNomsEquipe }) => {
   useEffect(() => {
    
-  }, [joueursConnectes]);
-  const placerJoueur = () => {
+  }, [joueursConnectes, nomsEquipe]);
+  const placerJoueur = (id) => {
+    console.log(nomsEquipe[id].listeDesJoueurs)
+    const newListeEquipe = nomsEquipe;
+    console.log(newListeEquipe[id].listeDesJoueurs.push({"cc" : "cc"}))
+    // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
+    // setNomsEquipe(newListeEquipe);
     const newList = joueursConnectes.filter(person=>person.id !== selected);
     setjoueursConnectes(newList);
     
@@ -84,12 +90,12 @@ const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected, joueursConn
       </h1>
       <div className="listeEquipe">
         {nomsEquipe.map((noms) => {
-          console.log(nomsEquipe[noms.id - 1]);
+          
           return (
             <div className="equipe" key={noms.id}>
               <p className="titreEquipe">{noms.nom}</p>
               {selected ? (
-                <div className="buttonRejoindre" onClick={()=> placerJoueur()}>Rejoindre</div>
+                <div className="buttonRejoindre" onClick={()=> placerJoueur(noms.id-1)}>Rejoindre</div>
               ) : (
                 <div></div>
               )}
