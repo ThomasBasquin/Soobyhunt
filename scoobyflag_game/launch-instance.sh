@@ -45,5 +45,5 @@ echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env
 
 
 # Lancer l'instance avec le fichier .env généré
-docker-compose -p $PROJECT_NAME  up --build
-# docker-compose -p $PROJECT_NAME  up
+# docker-compose -p $PROJECT_NAME  up --build
+docker-compose -p $PROJECT_NAME  up
