@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\GameTemplate;
 use App\Service\GameService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +78,7 @@ class GameController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $gameTemplate->setJson($data);
+        $gameTemplate->setCreatedAt(new DateTime());
         $this->gameService->save($gameTemplate);
         return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
