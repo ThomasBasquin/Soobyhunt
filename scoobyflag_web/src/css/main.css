@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
 :root {
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
     color: rgba(60, 60, 60, 0.87);
@@ -76,14 +79,6 @@ body {
 
 .infoAccueil {
     padding-left: 100px;
-}
-
-.fond-degrade {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgb(107, 43, 148), rgb(238, 145, 88));
-    display: flex;
-    justify-content: center;
 }
 
 h1 {
