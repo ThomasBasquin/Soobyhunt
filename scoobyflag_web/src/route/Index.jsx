@@ -20,15 +20,29 @@ export default function Index() {
 
   return (
     <div className="fondSamy">
-      <div className="" style={{marginLeft : 80}}>
-      <div className="titre">CTF Grandeur nature !</div>
-      <div className="presentation">
-        Venez jouer sur le meilleur jeu de capture the Flag grandeur nature sur
-        le thème Scooby-Doo
-      </div>
-      <Link className="createGame" to="/carte">
-        Créer une partie
-      </Link>
+      <img
+        src="logo.png"
+        style={{ width: 200, paddingBottom: 100, marginLeft: 80 }}
+      />
+      <div className="" style={{ marginLeft: 80 }}>
+        <div className="titre">Scooby-Dooby-Dooooo !</div>
+        <div className="presentation">
+          Plongez dans l'univers effrayant de Scooby-Doo et capturez les
+          méchants dans le monde réel, à la recherche d'indices et de frissons !
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "800px",
+            height: 100,
+          }}
+        >
+          <Link className="createGame" to="/login" style={{ marginRight: 40 }}>
+            Se connecter
+          </Link>
+        </div>
       </div>
     </div>
   );
