@@ -8,6 +8,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState("");
+    const [feedback, setFeedback] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,7 +21,7 @@ export default function Login() {
     function submitLogin(e) {
         e.preventDefault();
 
-        document.getElementById("feedbackLogin").style.display = "none";
+        setFeedback("");
 
         return fetch("https://scoobyhunt.fr/login", {
             method: "POST",
@@ -37,7 +38,7 @@ export default function Login() {
                     return res.json();
                 }
                 else {
-                    document.getElementById("feedbackLogin").style.display = "block";
+                    setFeedback("L'identifiant ou le mot de passe est incorrect")
                     throw new Error("Erreur de connexion");
                 }
             })
@@ -50,7 +51,7 @@ export default function Login() {
     function submitCreate(e) {
         e.preventDefault();
 
-        document.getElementById("feedbackCreate").style.display = "none";
+        setFeedback("");
 
         //On controle si les 2 mdp sont identiques
         if (password == confirmPassword) {
@@ -71,19 +72,17 @@ export default function Login() {
                         return res.json();
                     }
                     else {
-                        document.getElementById("feedbackCreate").style.display = "block";
-                        document.getElementById("feedbackCreate").innerHTML = "Identifiant ou email déjà utilisé";
+                        setFeedback("Identifiant ou email déjà utilisé");
                         throw new Error("Erreur de création de compte");
                     }
                 })
                 .then(json => {
-                    localStorage.setItem("user", json);
-                    navigate('/dashboard');
+                    changeAuthMode();
+                    setFeedback("Votre compte a été créé avec succès !");
                 })
         }
         else {
-            document.getElementById("feedbackCreate").innerHTML = "Les mots de passe ne correspondent pas";
-            document.getElementById("feedbackCreate").style.display = "block";
+            setFeedback("Les mots de passe ne correspondent pas");
         }
     }
 
@@ -93,6 +92,7 @@ export default function Login() {
         setPassword("");
         setEmail("");
         setConfirmPassword("");
+        setFeedback("");
     }
 
     return <div className="fond-degrade">
@@ -107,7 +107,7 @@ export default function Login() {
                     <input type="text" id='pseudo' value={pseudo} onChange={(e) => setPseudo(e.target.value)} required />
                     <label htmlFor="mdp">Mot de passe</label>
                     <input type="password" id='mdp' value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    <div className='feedback' id='feedbackLogin'>L'identifiant ou le mot de passe est incorrect</div>
+                    <div className='feedback'>{feedback}</div>
                     <input type="submit" value="Se connecter" className='custom-button' />
                 </form>
 
@@ -130,7 +130,7 @@ export default function Login() {
                     <input type="password" id='mdp' value={password} onChange={(e) => setPassword(e.target.value)} required />
                     <label htmlFor="mdp">Confirmer le mot de passe</label>
                     <input type="password" id='confirm-mdp' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                    <div className='feedback' id='feedbackCreate'></div>
+                    <div className='feedback'>{feedback}</div>
                     <input type="submit" value="Créer un compte" className='custom-button' />
                 </form>
 
