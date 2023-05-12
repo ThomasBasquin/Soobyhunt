@@ -20,8 +20,9 @@ class GameTemplate
     #[ORM\ManyToOne(inversedBy: 'gameTemplates')]
     #[Groups(['GameTemplate:read'])]
     private ?User $gameMaster = null;
-
+    
     #[ORM\Column]
+    #[Groups(['GameTemplate:read'])]
     private array $json = [];
 
     #[ORM\Column]

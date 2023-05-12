@@ -68,9 +68,8 @@ class GameController extends AbstractController
     public function create(Request $request)
     {
         $data = json_decode($request->getContent(), true);
-        dump($data);
         $gameTemplate = $this->gameService->createTemplate($data);
-        return $this->json(['gameTemplate' => $gameTemplate]);
+        return $this->json(['gameTemplate' => $gameTemplate], 201,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
     
     #[Route('/modify/template/{gameTemplate}', name: 'modify_template', methods: 'PUT')]
@@ -79,7 +78,7 @@ class GameController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $gameTemplate->setJson($data);
         $this->gameService->save($gameTemplate);
-        return $this->json(['gameTemplate' => $gameTemplate]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
 
     #[Route('/delete/template/{gameTemplate}', name: 'delete_template', methods: 'DELETE')]

@@ -13,16 +13,17 @@ use App\Entity\Location;
 use App\Entity\Objective;
 use App\Entity\Team;
 use App\Repository\ItemTypeRepository;
+use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\GamePasswordHasherInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GameService
 {
     public EntityManagerInterface $em;
-    private GameRepository $userRepository;
+    private UserRepository $userRepository;
     private SerializerInterface $serializer;
 
-    public function __construct(EntityManagerInterface $em, GameRepository $userRepository, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $em, UserRepository $userRepository, SerializerInterface $serializer)
     {
         $this->em = $em;
         $this->userRepository = $userRepository;
@@ -38,11 +39,12 @@ class GameService
     {
         $gameTemplate = new GameTemplate();
         $gameTemplate->setJson($data);
-
+dump($this->userRepository->find(1));
         // à terme mettre $data['idCreator'] dans le set gameTemplate
-        $gameTemplate->setGameMaster($this->userRepository->findOneBy(['id' => 1]));
+        $gameTemplate->setGameMaster($this->userRepository->find( $data['idCreator']));
 
         $this->em->persist($gameTemplate);
+
         $this->em->flush();
         return $gameTemplate;
     }
