@@ -22,13 +22,13 @@ export default function Index() {
     <div className="fondSamy">
       <img
         src="logo.png"
-        style={{ width: 200, paddingBottom: 100, marginLeft: 80 }}
+        style={{ width: 200, paddingBottom: 40, marginLeft: 80 }}
       />
       <div className="" style={{ marginLeft: 80 }}>
         <div className="titre">Scooby-Dooby-Dooooo !</div>
         <div className="presentation">
-          Plongez dans l'univers effrayant de Scooby-Doo et capturez les
-          méchants dans le monde réel, à la recherche d'indices et de frissons !
+       <p>Plongez dans l'univers de Scooby-Doo avec l'application mobile ScoobyHunt : une aventure de capture de méchants en équipe.</p>
+        <p>Venez jouer à  ScoobyHunt, le jeu  qui vous transporte dans l'univers captivant de Scooby-Doo. Préparez-vous à vivre une aventure palpitante de chasse aux méchants en équipe, directement depuis votre téléphone portable.</p>
         </div>
         <div
           style={{

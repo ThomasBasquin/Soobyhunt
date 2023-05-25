@@ -69,17 +69,16 @@ const ChoixEquipe = ({ nomPartie, nomsEquipe, selected, setSelected, joueursConn
   useEffect(() => {
    
   }, [joueursConnectes, nomsEquipe]);
+
   const placerJoueur = (id) => {
     console.log(nomsEquipe[id].listeDesJoueurs)
     const newListeEquipe = nomsEquipe;
-    console.log(newListeEquipe[id].listeDesJoueurs.push({"cc" : "cc"}))
+    const newJoueur = {id: 6, nom: "Cédric" };
+    console.log(newListeEquipe[id].listeDesJoueurs.push())
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
     // setNomsEquipe(newListeEquipe);
     const newList = joueursConnectes.filter(person=>person.id !== selected);
     setjoueursConnectes(newList);
-    
-    
-
     setSelected(null);
   }
   
