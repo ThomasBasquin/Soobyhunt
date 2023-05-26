@@ -23,6 +23,7 @@ generate_mercure_port() {
 generate_mercure_port
 
 # Write values to .env file
+echo "ID=${ID}" >> .env
 echo "DB_NAME=${DB_NAME}" > .env
 echo "DB_USER=${DB_USER}" >> .env
 echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
