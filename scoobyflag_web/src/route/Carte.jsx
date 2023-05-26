@@ -7,7 +7,7 @@ import {
 } from "react-leaflet";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import L from "leaflet";
+import L, { popup } from "leaflet";
 import "../css/carte.css";
 import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
@@ -152,7 +152,15 @@ export default function Carte() {
         tabTemp[0] = e.layer.getLatLngs()[0];
         setZoneJeu(tabTemp);
       }
+      e.layer._path.addEventListener("click", () => {
+        clickEdit();
+      })
     } else {
+      e.layer.bindPopup("salut").openPopup();
+      /*e.layer._icon.addEventListener("click", () => {
+        clickEdit();
+      })*/
+
       var ok = true;
       var tabZone = [];
 
@@ -225,16 +233,10 @@ export default function Carte() {
   }
 
   const clickZoneJeu = (e) => {
-    if (zoneJeu.length > 0) {
-      alert(
-        "La zone de jeu est déjà présente, modifiez la ou supprimez la pour en créer une nouvelle."
-      );
-    } else {
-      var e = document.createEvent("Event");
-      e.initEvent("click", true, true);
-      var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
-      return !cb[0].dispatchEvent(e);
-    }
+    var e = document.createEvent("Event");
+    e.initEvent("click", true, true);
+    var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
+    return !cb[0].dispatchEvent(e);
   };
 
   const clickZoneInterdite = (e) => {
@@ -271,7 +273,7 @@ export default function Carte() {
   };
 
   const clickEdit = (e) => {
-    document.getElementById("detailsEdit").setAttribute("style", "visibility:visible");
+    //document.getElementById("detailsEdit").setAttribute("style", "visibility:visible");
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-edit-edit");
@@ -435,19 +437,6 @@ export default function Carte() {
       });
   }
 
-  const test = () => {
-    if (aa == 0) {
-      ajouterJoueur([48.530437, 7.735647777777776]);
-      ajouterJoueur([48.531437, 7.735]);
-      setAa(1);
-    } else {
-      deplacerJoueur(0, [
-        Math.random() * (48.54 - 48.53) + 48.53,
-        Math.random() * (7.74 - 7.73) + 7.73,
-      ]);
-    }
-  };
-
   return status == null ? (
     <>
       <MapContainer center={[latitude, longitude]} zoom={16}>
@@ -465,6 +454,7 @@ export default function Carte() {
               circle: false,
               marker: {
                 icon: mechant1Icon,
+                popup: "test"
               },
               polygon: true,
             }}
@@ -582,7 +572,6 @@ export default function Carte() {
           <></>
         )}
       </MapContainer>
-      <img src="profile.png" alt="" className="btnUser" onClick={clickUser} />
       {!partieLancee ? (
         <>
           <div className="sideBar">
@@ -656,43 +645,7 @@ export default function Carte() {
                 </div>
               </div>
             </div>
-            <div className="divBtnSideBar">
-              <div
-                id="btnZone"
-                onClick={(e) => clickEdit(e)}
-                className="btnSideBar"
-              >
-                <img src="edit.png" alt="" className="iconBar" />
-                Editer
-              </div>
-
-              <div className="detail" id="detailsEdit">
-                <div className="btnDetail" onClick={(e) => clickSaveEdit(e)}>Confirmer</div>
-                <div className="btnDetail" onClick={(e) => clickCancelEdit(e)}>Annuler</div>
-              </div>
-            </div>
-            <div className="divBtnSideBar">
-              <div
-                id="btnZone"
-                onClick={(e) => clickSupprimer(e)}
-                className="btnSideBar"
-              >
-                <img src="bin.png" alt="" className="iconBar" />
-                Supprimer
-              </div>
-
-              <div className="detail" id="detailsSuppr">
-                <div className="btnDetail" onClick={(e) => clickSaveSupprimer(e)}>Confirmer</div>
-                <div className="btnDetail" onClick={(e) => clickCancelSupprimer(e)}>Annuler</div>
-              </div>
-            </div>
           </div>
-          <img
-            onClick={() => openConfig()}
-            className="btnConfig"
-            src="settings.svg"
-            alt=""
-          />
           <Config createGame={createGame} />{" "}
         </>
       ) : (

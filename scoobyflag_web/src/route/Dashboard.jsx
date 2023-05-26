@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+    MapContainer,
+    TileLayer,
+    useMap
+} from "react-leaflet";
 
 export default function Dashboard() {
     const templates = [
@@ -88,8 +93,8 @@ export default function Dashboard() {
                 "modeDeJeu": "",
                 "authorizedZone": [
                     {
-                        "lat": 48.53013391358619,
-                        "lng": 7.727572917938233
+                        "lat": 5.53013391358619,
+                        "lng": 45.727572917938233
                     },
                     {
                         "lat": 48.53411250954362,
@@ -214,8 +219,8 @@ export default function Dashboard() {
                 "modeDeJeu": "",
                 "authorizedZone": [
                     {
-                        "lat": 48.53013391358619,
-                        "lng": 7.727572917938233
+                        "lat": 25.53013391358619,
+                        "lng": 24.727572917938233
                     },
                     {
                         "lat": 48.53411250954362,
@@ -266,7 +271,7 @@ export default function Dashboard() {
                 "pseudo": "user"
             },
             "json": {
-                "name": "Sprint 1",
+                "name": "Sprint 3",
                 "items": [
                     {
                         "name": "loupe",
@@ -386,6 +391,9 @@ export default function Dashboard() {
     ]
 
     const [selectedConfig, setSelectedConfig] = useState("");
+    const [indexSelected, setIndexSelected] = useState(-1);
+    const [latitude, setLatitude] = useState(0);
+    const [longitude, setLongitude] = useState(0);
     const navigate = useNavigate();
 
     function clickUser() {
@@ -396,8 +404,21 @@ export default function Dashboard() {
         navigate("/carte");
     }
 
-    function selectConfig(config) {
+    function selectConfig(config, index) {
         setSelectedConfig(config);
+        setIndexSelected(index);
+        setLatitude(config.json.authorizedZone[0].lat);
+        setLongitude(config.json.authorizedZone[0].lng);
+    }
+
+    function creerPartie() {
+        console.log(selectedConfig.id);
+    }
+
+    function ChangeView({ latitude, longitude }) {
+        const map = useMap();
+        map.setView([latitude, longitude], 10);
+        return null;
     }
 
     return <div className="fond-degrade-dashboard">
@@ -413,13 +434,9 @@ export default function Dashboard() {
                 <div className="titre-zone">Liste de mes configurations</div>
 
                 <div className="liste-config">
-                    <ItemConfig config={templates[0]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
-                    <ItemConfig config={templates[1]} selectConfig={selectConfig} />
+                    {templates.map((template, index) => {
+                        return <ItemConfig config={template} key={index} selectConfig={selectConfig} index={index} selected={index == indexSelected} />
+                    })}
                 </div>
 
                 <div className="dashboard-button" onClick={addConfig}>Ajouter une configuration</div>
@@ -436,11 +453,17 @@ export default function Dashboard() {
                             <div>12/05/2023</div>
                             <div>Time</div>
                         </div>
-                        <div className="map-config"></div>
+                        <MapContainer className="map-config" center={[latitude, longitude]} zoom={16} dragging={false} scrollWheelZoom={false}>
+                            <ChangeView latitude={latitude} longitude={longitude} />
+                            <TileLayer
+                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                        </MapContainer>
                     </div>}
                 </div>
 
-                <div className="dashboard-button">Créer la partie</div>
+                <div className="dashboard-button" onClick={creerPartie}>Créer la partie</div>
             </div>
         </div>
     </div>
