@@ -12,7 +12,7 @@ import {
 import { EditControl } from "react-leaflet-draw";
 import mechant1 from "../../assets/mechant1.png";
 import loupe from "../../assets/loupe.png";
-import player from "../../assets/points.png";
+// import player from "../../assets/points.png";
 
 import style from "./Game.module.scss";
 
@@ -97,11 +97,11 @@ export default function Game() {
     iconAnchor: [25, 25],
   });
 
-  const playerIcon = new L.icon({
-    iconUrl: player,
-    iconSize: [25, 25],
-    iconAnchor: [12.5, 12.5],
-  });
+  // const playerIcon = new L.icon({
+  //   iconUrl: player,
+  //   iconSize: [25, 25],
+  //   iconAnchor: [12.5, 12.5],
+  // });
 
   const clickBtnConfig = () => {
     if (menuConfig) {
