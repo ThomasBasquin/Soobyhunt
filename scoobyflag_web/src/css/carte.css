@@ -15,25 +15,17 @@
 .detail {
   position: absolute;
   left: 9rem;
-  height: 16.66%;
+  height: 25%;
   display: flex;
   visibility: hidden;
 }
 
 #detailsMechants {
-  top: 33.33%;
-}
-
-#detailsItems {
   top: 50%;
 }
 
-#detailsEdit {
-  top: 66.66%;
-}
-
-#detailsSuppr {
-  top: 83.33%;
+#detailsItems {
+  top: 75%;
 }
 
 .btnDetail {
@@ -115,6 +107,96 @@
   height: 55%;
   object-fit: contain;
   padding-bottom: 0.3rem;
+}
+
+.divEquipes {
+  position: absolute;
+  z-index: 2;
+  width: 20rem;
+  height: 35%;
+  left: 1rem;
+  bottom: 1rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+  background: rgba(255, 255, 255, 0.59);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divTopEquipes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  padding-right: 10px;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.titreEquipe {
+  font-size: 24px;
+  margin: 10px;
+}
+
+.btnAddEquipe {
+  height: 80%;
+}
+
+.listeEquipes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  overflow-y: scroll;
+  margin: 10px;
+}
+
+.itemEquipe {
+  margin: 5px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  background-color: #999;
+  border-radius: 5px;
+  font-size: 20px;
+}
+
+.btnDeleteEquipe {
+  width: 20px;
+}
+
+.btnCreate {
+  z-index: 2;
+  position: absolute;
+  right: 25px;
+  top: 30px;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+
+  background-color: #6B2B94;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 24px;
+  border: #6B2B94 solid 1px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.btnCreate:hover {
+  color: #6B2B94;
+  background: white;
 }
 
 .btnUser {

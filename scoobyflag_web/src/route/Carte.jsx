@@ -20,6 +20,7 @@ import player from "../assets/points.png";
 import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
 import pointInPolygon from "point-in-polygon";
+import ItemEquipe from "../components/ItemEquipe";
 
 export default function Carte() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ export default function Carte() {
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
   const [joueurs, setJoueurs] = useState([]);
-  const [aa, setAa] = useState(0);
+  const [equipes, setEquipes] = useState([{ id: 0, nom: "equipe", nbJoueur: 5 }]);
 
   useEffect(() => {
     getLocation();
@@ -247,28 +248,20 @@ export default function Carte() {
   };
 
   const clickMechant = (e) => {
-    if (zoneJeu.length == 0) {
-      alert("Créer d'abord une zone de jeu.");
-    } else {
-      if (document.getElementById("detailsMechants").style.visibility == "visible") {
-        document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
-      }
-      else {
-        document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
-      }
+    if (document.getElementById("detailsMechants").style.visibility == "visible") {
+      document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
+    }
+    else {
+      document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
     }
   };
 
   const clickObjet = (e) => {
-    if (zoneJeu.length == 0) {
-      alert("Créer d'abord une zone de jeu.");
-    } else {
-      if (document.getElementById("detailsItems").style.visibility == "visible") {
-        document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
-      }
-      else {
-        document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
-      }
+    if (document.getElementById("detailsItems").style.visibility == "visible") {
+      document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
+    }
+    else {
+      document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
     }
   };
 
@@ -356,6 +349,19 @@ export default function Carte() {
     );
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
+
+  function createTemplate() {
+    navigate("/dashboard");
+  }
+
+  function addEquipe() {
+    setEquipes([...equipes, { id: equipes.length, nom: "equipe 1", nbJoueur: 4 }]);
+  }
+
+  function deleteEquipe(index) {
+    console.log(equipes);
+    setEquipes(equipes.filter(a => a.id !== index));
+  }
 
   async function createGame(modeJeu, listeEquipe) {
     /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
@@ -646,7 +652,20 @@ export default function Carte() {
               </div>
             </div>
           </div>
-          <Config createGame={createGame} />{" "}
+          <div className="divEquipes">
+            <div className="divTopEquipes">
+              <div className="titreEquipe">Équipes</div>
+              <img src="scooby.png" className="btnAddEquipe" onClick={addEquipe}></img>
+            </div>
+            <div className="listeEquipes">
+              {equipes.map((equipe, index) => {
+                return <ItemEquipe equipe={equipe} key={index} deleteEquipe={() => deleteEquipe(equipe.id)} />
+              })}
+            </div>
+          </div>
+          <div className="btnCreate" onClick={createTemplate}>
+            Sauvegarder la configuration
+          </div>
         </>
       ) : (
         <></>
