@@ -1,3 +1,5 @@
+ID="$1"
+
 # Generate dynamic values
 PROJECT_NAME=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 8 | head -n 1)
 DB_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
@@ -22,8 +24,11 @@ generate_mercure_port() {
 }
 generate_mercure_port
 
+echo "ID: $ID"
+
 # Write values to .env file
-echo "ID=${ID}" >> .env
+
+
 echo "DB_NAME=${DB_NAME}" > .env
 echo "DB_USER=${DB_USER}" >> .env
 echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
@@ -43,6 +48,7 @@ echo "MERCURE_JWT_SECRET=${MERCURE_JWT_SECRET}" >> .env
 echo "MERCURE_SUBSCRIBER_JWT_ALG=${MERCURE_SUBSCRIBER_JWT_ALG}" >> .env
 echo "MERCURE_PUBLISHER_JWT_ALG=${MERCURE_PUBLISHER_JWT_ALG}" >> .env
 echo "MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0" >> .env
+echo "ID=${ID}" >> .env
 
 
 # Lancer l'instance avec le fichier .env généré

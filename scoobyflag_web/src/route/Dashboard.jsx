@@ -411,15 +411,13 @@ export default function Dashboard() {
   }
 
   function creerPartie() {
-    console.log(selectedConfig.id);
-
-    fetch("http://207.154.194.125:1234/create", {
+    const requestOptions = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: selectedConfig.id }),
-    })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ID: selectedConfig.id }),
+    };
+
+    fetch("http://207.154.194.125:1234/create", requestOptions)
       .then((response) => response.json())
       .then((data) => console.log(data))
       .catch((error) => {
