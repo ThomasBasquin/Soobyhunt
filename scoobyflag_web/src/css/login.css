@@ -64,8 +64,8 @@
 }
 
 #formLogin input[type=password],
-input[type=text],
-input[type=email] {
+#formLogin input[type=text],
+#formLogin input[type=email] {
     font-size: 24px;
     width: 100%;
     max-width: 500px;
