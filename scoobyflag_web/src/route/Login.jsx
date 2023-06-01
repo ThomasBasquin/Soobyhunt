@@ -43,7 +43,7 @@ export default function Login() {
                 }
             })
             .then(json => {
-                localStorage.setItem("user", json);
+                localStorage.setItem("user", JSON.stringify(json));
                 navigate('/dashboard');
             })
     }
@@ -95,7 +95,7 @@ export default function Login() {
         setFeedback("");
     }
 
-    return <div className="fond-degrade">
+    return <div className="fond-degrade-login">
         {authMode == "signin" ? <div className='div-login'>
             <img src="scooby.png" alt="" className='scooby' />
 
