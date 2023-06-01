@@ -16,6 +16,7 @@ class GameController extends AbstractController
     {
         $this->gameService = $gameService;
     }
+    
     #[Route('/game/import', name: 'import_game', methods: ['POST'])]
     public function import(Request $request)
     {
@@ -28,6 +29,7 @@ class GameController extends AbstractController
     {
         return $this->json($game, 200, [], ['groups' => ["Game:read", 'Item:read', 'Team:read', 'Objective:read']]);
     }
+
     #[Route('/game/stat', name: 'get_game', methods: ['GET'])]
     public function stat()
     {

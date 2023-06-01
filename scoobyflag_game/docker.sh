@@ -1,6 +1,3 @@
-php bin/console doctrine:database:create --no-interaction
-php bin/console doctrine:schema:update --force --no-interaction
-
 # DB_NAME="scoobyflag_$(date +%s)"
 # DATABASE_URL="${DATABASE_URL/\/scoobyflag/\/$DB_NAME}"
 
@@ -18,6 +15,9 @@ wait_for_db() {
   echo "Database connection established"
 }
 
-exec apache2-foreground
-
 wait_for_db
+
+php bin/console doctrine:database:create --no-interaction --if-not-exists
+php bin/console doctrine:schema:update --force --no-interaction --complete
+
+exec apache2-foreground

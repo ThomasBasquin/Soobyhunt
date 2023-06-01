@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import {
   Image,
   Text,
@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import COLORS from '../../Constantes/colors';
-import URLS from '../../Constantes/URLS';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 
@@ -62,6 +61,7 @@ function Welcome({navigation}) {
         value={ipParty}
         placeholder="ID de la partie"
         keyboardType="default"
+        secureTextEntry={true}
       />
       <TouchableOpacity
         style={{

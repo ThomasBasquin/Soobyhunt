@@ -1,9 +1,10 @@
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
-import React from "react";
+import React, { useEffect } from "react";
 import style from "./Home.module.scss";
 
 export default function Home(){
-
+   
+    
     return <>
     <p className={style.title}>Accueil</p>
     <button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
@@ -11,4 +12,4 @@ export default function Home(){
     </>
 }
 
-renderOnDomLoaded(<Home />,"HomeRoot");
+renderOnDomLoaded(<Home />,"ChooseTeamRoot");

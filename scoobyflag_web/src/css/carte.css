@@ -15,25 +15,17 @@
 .detail {
   position: absolute;
   left: 9rem;
-  height: 16.66%;
+  height: 25%;
   display: flex;
   visibility: hidden;
 }
 
 #detailsMechants {
-  top: 33.33%;
-}
-
-#detailsItems {
   top: 50%;
 }
 
-#detailsEdit {
-  top: 66.66%;
-}
-
-#detailsSuppr {
-  top: 83.33%;
+#detailsItems {
+  top: 75%;
 }
 
 .btnDetail {
@@ -62,6 +54,7 @@
   z-index: 2;
   width: 9rem;
   left: 1rem;
+  top: 1rem;
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -69,7 +62,7 @@
   font-weight: bold;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-  height: 90%;
+  height: 60%;
 
   background: rgba(255, 255, 255, 0.59);
   border-radius: 16px;
@@ -80,7 +73,7 @@
 }
 
 .divBtnSideBar {
-  height: 16.66%;
+  height: 25%;
   width: 100%;
 }
 
@@ -116,81 +109,132 @@
   padding-bottom: 0.3rem;
 }
 
-.btnUser {
+.divEquipes {
+  position: absolute;
   z-index: 2;
-  position: absolute;
-  right: 25px;
-  top: 30px;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-  transition: transform 0.4s ease;
-}
-
-.btnUser:hover {
-  transform: scale(1.2);
-}
-
-.btnConfig {
-  z-index: 2;
-  position: absolute;
-  right: 25px;
-  bottom: 30px;
-  width: 60px;
-  height: 60px;
-  cursor: pointer;
-  transition: transform 0.4s ease;
-}
-
-.btnConfig:hover {
-  transform: scale(1.2) rotate(100deg);
-}
-
-.btnTest {
-  position: absolute;
-  z-index: 10000;
-  background-color: var(--orange);
-  width: 120px;
-  height: 100px;
-  left: 20px;
-  top: 20px;
-  border: black 2px solid;
+  width: 20rem;
+  height: 35%;
+  left: 1rem;
+  bottom: 1rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   font-weight: bold;
   border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+  background: rgba(255, 255, 255, 0.59);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.divTopEquipes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  height: 50px;
+  margin-top: 10px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.titreEquipe {
+  font-size: 24px;
+  margin: 10px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.btnAddEquipe {
+  height: 70%;
+  cursor: pointer;
+}
+
+.listeEquipes {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  width: 100%;
+  overflow-y: scroll;
+  margin: 10px;
+}
+
+.itemEquipe {
+  margin: 5px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  height: 35px;
+  background-color: #999;
+  border-radius: 5px;
+  font-size: 20px;
+}
+
+.itemEquipe input[type=text] {
+  font-size: 18px;
+  width: 60%;
+  border: none;
+  background: #ebebeb;
+  opacity: 0.85;
+  border-radius: 8px;
+}
+
+.itemEquipe input[type=number] {
+  width: 20%;
+  font-size: 18px;
+  text-align: center;
+  border: none;
+  background: #ebebeb;
+  opacity: 0.85;
+  border-radius: 8px;
+}
+
+.btnDeleteEquipe {
+  height: 70%;
+  margin: auto 0;
+  cursor: pointer;
+}
+
+.btnCarte {
+  z-index: 2;
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+  padding: 10px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: black;
+  font-size: 24px;
+  width: fit-content;
+
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.59);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btnCarte:hover {
+  background-color: var(--orange);
+  transform: scale(1.04);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+#btnSave {
+  right: 1rem;
+  top: 1rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+#btnConfirmer {
+  right: 1rem;
+  top: 1rem;
+  display: none;
+}
 
-  to {
-    transform: rotate(360deg);
-  }
+#btnAnnuler {
+  right: 1rem;
+  top: 5rem;
+  display: none;
 }

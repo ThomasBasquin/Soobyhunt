@@ -20,15 +20,29 @@ export default function Index() {
 
   return (
     <div className="fondSamy">
-      <div className="" style={{marginLeft : 80}}>
-      <div className="titre">CTF Grandeur nature !</div>
-      <div className="presentation">
-        Venez jouer sur le meilleur jeu de capture the Flag grandeur nature sur
-        le thème Scooby-Doo
-      </div>
-      <Link className="createGame" to="/carte">
-        Créer une partie
-      </Link>
+      <img
+        src="logo.png"
+        style={{ width: 200, paddingBottom: 40, marginLeft: 80 }}
+      />
+      <div className="" style={{ marginLeft: 80 }}>
+        <div className="titre">Scooby-Dooby-Dooooo !</div>
+        <div className="presentation">
+       <p>Plongez dans l'univers de Scooby-Doo avec l'application mobile ScoobyHunt : une aventure de capture de méchants en équipe.</p>
+        <p>Venez jouer à  ScoobyHunt, le jeu  qui vous transporte dans l'univers captivant de Scooby-Doo. Préparez-vous à vivre une aventure palpitante de chasse aux méchants en équipe, directement depuis votre téléphone portable.</p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "800px",
+            height: 100,
+          }}
+        >
+          <Link className="createGame" to="/login" style={{ marginRight: 40 }}>
+            Se connecter
+          </Link>
+        </div>
       </div>
     </div>
   );
