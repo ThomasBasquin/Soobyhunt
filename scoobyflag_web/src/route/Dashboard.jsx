@@ -5,395 +5,27 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 
 export default function Dashboard() {
-  const templates = [
-    {
-      id: 34,
-      gameMaster: {
-        id: 1,
-        email: "user@user.fr",
-        password:
-          "$2y$13$Z0WXItgEa9exI8mlU6HtNe3ANzAmv0yeBRoa99/.TuuNUpkfbm4kO",
-        pseudo: "user",
-      },
-      json: {
-        name: "Sprint 1",
-        items: [
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.526737650441,
-              lng: 7.734074592590333,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52903974489115,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52922447632966,
-              lng: 7.731606960296631,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.53235059847265,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.527476605743104,
-              lng: 7.745447158813477,
-            },
-          },
-        ],
-        teams: [
-          {
-            id: 1,
-            nom: "equipe1",
-            nbJoueur: 4,
-          },
-          {
-            id: 2,
-            nom: "equipe2",
-            nbJoueur: 8,
-          },
-        ],
-        private: true,
-        mechants: [
-          {
-            lat: 48.53071651324544,
-            lng: 7.733323574066163,
-          },
-          {
-            lat: 48.527675553405246,
-            lng: 7.742722034454347,
-          },
-          {
-            lat: 48.531810645709584,
-            lng: 7.739932537078858,
-          },
-          {
-            lat: 48.52844291563801,
-            lng: 7.734589576721192,
-          },
-        ],
-        idCreator: 1,
-        limitTime: 600,
-        modeDeJeu: "",
-        authorizedZone: [
-          {
-            lat: 5.53013391358619,
-            lng: 45.727572917938233,
-          },
-          {
-            lat: 48.53411250954362,
-            lng: 7.739825248718263,
-          },
-          {
-            lat: 48.527007654589966,
-            lng: 7.747313976287843,
-          },
-          {
-            lat: 48.52497548274613,
-            lng: 7.737421989440919,
-          },
-          {
-            lat: 48.52761871129582,
-            lng: 7.728345394134522,
-          },
-        ],
-        unauthorizedZone: [
-          [
-            {
-              lat: 48.531810645709584,
-              lng: 7.729847431182862,
-            },
-            {
-              lat: 48.52558656397187,
-              lng: 7.732186317443848,
-            },
-            {
-              lat: 48.52794555255377,
-              lng: 7.72566318511963,
-            },
-            {
-              lat: 48.53158329545517,
-              lng: 7.726972103118897,
-            },
-          ],
-        ],
-      },
-      createdAt: "2023-05-12T15:18:52+00:00",
-    },
-    {
-      id: 35,
-      gameMaster: {
-        id: 1,
-        email: "user@user.fr",
-        password:
-          "$2y$13$Z0WXItgEa9exI8mlU6HtNe3ANzAmv0yeBRoa99/.TuuNUpkfbm4kO",
-        pseudo: "user",
-      },
-      json: {
-        name: "Sprint 2",
-        items: [
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.526737650441,
-              lng: 7.734074592590333,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52903974489115,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52922447632966,
-              lng: 7.731606960296631,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.53235059847265,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.527476605743104,
-              lng: 7.745447158813477,
-            },
-          },
-        ],
-        teams: [
-          {
-            id: 1,
-            nom: "equipe1",
-            nbJoueur: 4,
-          },
-          {
-            id: 2,
-            nom: "equipe2",
-            nbJoueur: 8,
-          },
-        ],
-        private: true,
-        mechants: [
-          {
-            lat: 48.53071651324544,
-            lng: 7.733323574066163,
-          },
-          {
-            lat: 48.527675553405246,
-            lng: 7.742722034454347,
-          },
-          {
-            lat: 48.531810645709584,
-            lng: 7.739932537078858,
-          },
-          {
-            lat: 48.52844291563801,
-            lng: 7.734589576721192,
-          },
-        ],
-        idCreator: 1,
-        limitTime: 600,
-        modeDeJeu: "",
-        authorizedZone: [
-          {
-            lat: 25.53013391358619,
-            lng: 24.727572917938233,
-          },
-          {
-            lat: 48.53411250954362,
-            lng: 7.739825248718263,
-          },
-          {
-            lat: 48.527007654589966,
-            lng: 7.747313976287843,
-          },
-          {
-            lat: 48.52497548274613,
-            lng: 7.737421989440919,
-          },
-          {
-            lat: 48.52761871129582,
-            lng: 7.728345394134522,
-          },
-        ],
-        unauthorizedZone: [
-          [
-            {
-              lat: 48.531810645709584,
-              lng: 7.729847431182862,
-            },
-            {
-              lat: 48.52558656397187,
-              lng: 7.732186317443848,
-            },
-            {
-              lat: 48.52794555255377,
-              lng: 7.72566318511963,
-            },
-            {
-              lat: 48.53158329545517,
-              lng: 7.726972103118897,
-            },
-          ],
-        ],
-      },
-      createdAt: "2023-05-12T15:18:54+00:00",
-    },
-    {
-      id: 36,
-      gameMaster: {
-        id: 1,
-        email: "user@user.fr",
-        password:
-          "$2y$13$Z0WXItgEa9exI8mlU6HtNe3ANzAmv0yeBRoa99/.TuuNUpkfbm4kO",
-        pseudo: "user",
-      },
-      json: {
-        name: "Sprint 3",
-        items: [
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.526737650441,
-              lng: 7.734074592590333,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52903974489115,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.52922447632966,
-              lng: 7.731606960296631,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.53235059847265,
-              lng: 7.737872600555421,
-            },
-          },
-          {
-            name: "loupe",
-            coordonnees: {
-              lat: 48.527476605743104,
-              lng: 7.745447158813477,
-            },
-          },
-        ],
-        teams: [
-          {
-            id: 1,
-            nom: "equipe1",
-            nbJoueur: 4,
-          },
-          {
-            id: 2,
-            nom: "equipe2",
-            nbJoueur: 8,
-          },
-        ],
-        private: true,
-        mechants: [
-          {
-            lat: 48.53071651324544,
-            lng: 7.733323574066163,
-          },
-          {
-            lat: 48.527675553405246,
-            lng: 7.742722034454347,
-          },
-          {
-            lat: 48.531810645709584,
-            lng: 7.739932537078858,
-          },
-          {
-            lat: 48.52844291563801,
-            lng: 7.734589576721192,
-          },
-        ],
-        idCreator: 1,
-        limitTime: 600,
-        modeDeJeu: "",
-        authorizedZone: [
-          {
-            lat: 48.53013391358619,
-            lng: 7.727572917938233,
-          },
-          {
-            lat: 48.53411250954362,
-            lng: 7.739825248718263,
-          },
-          {
-            lat: 48.527007654589966,
-            lng: 7.747313976287843,
-          },
-          {
-            lat: 48.52497548274613,
-            lng: 7.737421989440919,
-          },
-          {
-            lat: 48.52761871129582,
-            lng: 7.728345394134522,
-          },
-        ],
-        unauthorizedZone: [
-          [
-            {
-              lat: 48.531810645709584,
-              lng: 7.729847431182862,
-            },
-            {
-              lat: 48.52558656397187,
-              lng: 7.732186317443848,
-            },
-            {
-              lat: 48.52794555255377,
-              lng: 7.72566318511963,
-            },
-            {
-              lat: 48.53158329545517,
-              lng: 7.726972103118897,
-            },
-          ],
-        ],
-      },
-      createdAt: "2023-05-12T15:18:56+00:00",
-    },
-  ];
-
+  const [templates, setTemplates] = useState([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [indexSelected, setIndexSelected] = useState(-1);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    //Recuperer les configs du user
+    fetch("https://scoobyhunt.fr/user/" + JSON.stringify(JSON.parse(localStorage.getItem("user")).id) + "/getAllTemplate")
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+        setTemplates(json);
+      });
+  }, [])
+
 
   function clickUser() {
     navigate("/user");
@@ -406,8 +38,8 @@ export default function Dashboard() {
   function selectConfig(config, index) {
     setSelectedConfig(config);
     setIndexSelected(index);
-    setLatitude(config.json.authorizedZone[0].lat);
-    setLongitude(config.json.authorizedZone[0].lng);
+    setLatitude(config.json.authorizedZone[0].latitude);
+    setLongitude(config.json.authorizedZone[0].longitude);
   }
 
   function creerPartie() {
@@ -479,8 +111,8 @@ export default function Dashboard() {
               <div className="config-detail">
                 <div className="nom-config">{selectedConfig.json.name}</div>
                 <div className="config-line">
-                  <div>12/05/2023</div>
-                  <div>Time</div>
+                  <div>{selectedConfig.createdAt.substr(0, 10)}</div>
+                  <div>{selectedConfig.json.modeDeJeu}</div>
                 </div>
                 <MapContainer
                   className="map-config"
