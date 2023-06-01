@@ -8,7 +8,7 @@ const GAME_CONFIG={
         visibilityRangeItem: 25,
       },
       map:{
-        refreshUserLocation:5000,
+        refreshUserLocation:30000,
         minZoom:11,
         maxZoom:18,
       },

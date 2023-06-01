@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {Polygon as PolygonComponent} from 'react-native-maps';
 
-function UnauthorizedMapPolygon({mapCoordinates}) {
+const UnauthorizedMapPolygon = memo(function UnauthorizedMapPolygon({mapCoordinates}) {
   return (
     <PolygonComponent
       zIndex={3}
@@ -12,6 +12,6 @@ function UnauthorizedMapPolygon({mapCoordinates}) {
       coordinates={mapCoordinates}
     />
   );
-}
+})
 
 export default UnauthorizedMapPolygon;
