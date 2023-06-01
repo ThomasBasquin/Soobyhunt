@@ -1,9 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
-import style from "./ChoiceTeam.module.scss";
 
-function ChoiceTeam() {
+export default function ChoiceTeam() {
   const [nomPartie, setnomPartie] = useState("Hudog");
   const [joueursConnectes, setjoueursConnectes] = useState([
     { id: 1, nom: "Hugo" },

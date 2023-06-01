@@ -33,7 +33,12 @@ class UserController extends AbstractController
         $data = $request->toArray();
         $this->serializer->deserialize($request->getContent(), User::class, "json", ["groups" => ["User:read"], AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
         $this->userService->setUserPassword($user, $data['password']);
-
+        
         return $this->json($user,201,[], ["groups" => ["User:read"]] );
+    }
+    #[Route('/{user}/getAllTemplate', name: 'get_all_template', methods: ['GET'])]
+    public function getTemplate(User $user): JsonResponse
+    {
+        return $this->json($user->getGameTemplates(),200, [], ['groups' => ['GameTemplate:read', 'User:read']] );
     }
 }

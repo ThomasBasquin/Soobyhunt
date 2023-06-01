@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Team;
 use App\Service\TeamService;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,16 +16,21 @@ use Symfony\Component\Serializer\SerializerInterface;
 class TeamController extends AbstractController
 {
     private TeamService $teamService;
+    private UserService $userService;
 
-    public function __construct(TeamService $teamService)
+    public function __construct(TeamService $teamService, UserService $userService)
     {
         $this->teamService = $teamService;
+        $this->userService = $userService;
     }
 
     #[Route(path: "", name: "getAll", methods: ["GET"])]
     public function getAll(): Response
     {
-        return $this->json($this->teamService->getAll(), 200, [], ["groups" => ["Team:get"]]);
+        //"name": "equipe1", "nbPlayer": 4, "players": [[Object]]}, {"id": 2, "name": "equipe2", "nbPlayer": 8, "players": [[Object]]}
+        $anyTeam = ["id" => null,"name"=> "Sans équipe", "nbPlayer" => null, "players" => $this->userService->findby(["team" => null])];
+        $teams=$this->teamService->getAll();
+        return $this->json([...$teams, $anyTeam], 200, [], ["groups" => ["Team:get"]]);
     }
 
     #[Route(path: "", name: "createOne", methods: ["POST"])]

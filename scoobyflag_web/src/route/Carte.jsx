@@ -91,6 +91,21 @@ export default function Carte() {
   });
 
   const onCreated = (e) => {
+    //On cherche quel objet est ajouté
+    var type;
+    if (e.layerType === "polygon") {
+      if (e.layer.options.color == "red") {
+        type = "zoneInterdite";
+      }
+      else {
+        type = "zoneJeu";
+      }
+    }
+    else {
+      type = e.layer._icon.attributes.src.nodeValue.substr(12);
+      type = type.substr(0, type.length - 4);
+    }
+
     //Ajout du popUp Modifier/Supprimer
     var container = L.DomUtil.create("div");
     var btnModifier = L.DomUtil.create("button", "", container);
@@ -106,7 +121,7 @@ export default function Carte() {
       clickEdit();
     })
     L.DomEvent.addListener(btnSupprimer, "click", function (f) {
-      clickSupprimer();
+      clickSupprimer(e.layer._leaflet_id, type);
       mapRef.current.closePopup();
       var a = document.createEvent("Event");
       a.initEvent("click", true, true);
@@ -119,99 +134,100 @@ export default function Carte() {
       }
       var myHTMLCollection = docFragment.children;
       !myHTMLCollection[0].dispatchEvent(a);
-      clickCancelSupprimer();
+      clickSaveSupprimer();
     })
 
-    //Si zone de jeu ou zone interdite
-    if (e.layerType === "polygon") {
-      if (e.layer.options.color == "red") {
-        var tabTemp = zonesInterdites;
-        tabTemp.push(e.layer.getLatLngs()[0]);
-        setZonesInterdites(tabTemp);
-      } else {
-        var tabTemp = zoneJeu;
-        tabTemp[0] = e.layer.getLatLngs()[0];
-        setZoneJeu(tabTemp);
-      }
-      console.log(zonesInterdites);
+    if (type == "zoneJeu") {
+      setZoneJeu([{ id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
-    else { //Sinon marker mechant ou item
-      if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
-        var tabTemp = mechants;
-        tabTemp.push(e.layer.getLatLng());
-        setMechants(tabTemp);
-      } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
-        var tabTemp = mechants;
-        tabTemp.push(e.layer.getLatLng());
-        setMechants(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "loupe",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "lunettes",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "sac",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "ghost",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
+    else if (type == "zoneInterdite") {
+      setZonesInterdites(oldZones => [...oldZones, { id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
+    }
+    else if (type.includes("mechant")) {
+      setMechants(oldMechants => [...oldMechants, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
+    }
+    else {
+      setItems(oldItems => [...oldItems, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
+    }
 
-      /*var ok = true;
-      var tabZone = [];
+    /*else { //Sinon marker mechant ou item
+    if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
+      var tabTemp = mechants;
+      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
+      setMechants(tabTemp);
+    } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
+      var tabTemp = mechants;
+      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
+      setMechants(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "loupe",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "lunettes",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "sac",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "ghost",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }*/
 
-      for (var i = 0; i < zonesInterdites.length; i++) {
-        tabZone = [];
-        for (var j = 0; j < zonesInterdites[i].length; j++) {
-          tabZone.push(Object.values(zonesInterdites[i][j]));
-        }
-        if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-          ok = false;
-        }
-      }
-
+    /*var ok = true;
+    var tabZone = [];
+ 
+    for (var i = 0; i < zonesInterdites.length; i++) {
       tabZone = [];
-      for (var k = 0; k < zoneJeu[0].length; k++) {
-        tabZone.push(Object.values(zoneJeu[0][k]));
+      for (var j = 0; j < zonesInterdites[i].length; j++) {
+        tabZone.push(Object.values(zonesInterdites[i][j]));
       }
-      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+      if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
         ok = false;
       }
-
-      console.log(ok);*/
     }
-  };
+ 
+    tabZone = [];
+    for (var k = 0; k < zoneJeu[0].length; k++) {
+      tabZone.push(Object.values(zoneJeu[0][k]));
+    }
+    if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+      ok = false;
+    }
+ 
+    console.log(ok);*/
+  }
 
   const onDeleted = (e) => {
-    console.log(e.layers);
+    //console.log(e.layers);
   }
 
   const clickZoneJeu = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
-    return !cb[0].dispatchEvent(e);
+    if (zoneJeu.length == 0) {
+      var e = document.createEvent("Event");
+      e.initEvent("click", true, true);
+      var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
+      return !cb[0].dispatchEvent(e);
+    }
   };
 
   const clickZoneInterdite = (e) => {
@@ -250,18 +266,29 @@ export default function Carte() {
     return !cb[0].dispatchEvent(e);
   };
 
-  const clickSupprimer = (e) => {
+  const clickSupprimer = (id, type, e) => {
+    if (type == "zoneJeu") {
+      setZoneJeu([]);
+    }
+    else if (type == "zoneInterdite") {
+      setZonesInterdites(oldZones => oldZones.filter(a => a.id !== id));
+    }
+    else if (type.includes("mechant")) {
+      setMechants(oldMechants => oldMechants.filter(a => a.id !== id));
+    }
+    else {
+      setItems(oldItems => oldItems.filter(a => a.id !== id));
+    }
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-edit-remove");
     return !cb[0].dispatchEvent(e);
   };
 
-  const clickCancelSupprimer = (e) => {
-    document.getElementById("detailsSuppr").setAttribute("style", "visibility:hidden");
+  const clickSaveSupprimer = (e) => {
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-actions-bottom")[0].children[1].children[0];
+    var cb = document.getElementsByClassName("leaflet-draw-actions-bottom")[0].children[0].children[0];
     return !cb.dispatchEvent(e);
   }
 
@@ -303,25 +330,43 @@ export default function Carte() {
     return !cb[index].dispatchEvent(e);
   }
 
-  function saveConfig() {
+  async function saveConfig() {
     //Verif points dans la zone, equipes, ...
 
     //Pop up pour le nom de la config ?
 
-    console.log({
-      name: "Sprint 1", //A CHANGER
-      modeDeJeu: "", //?
-      limitTime: 600, //?
-      teams: equipes,
-      authorizedZone: zoneJeu,
-      unauthorizedZone: zonesInterdites,
-      mechants: mechants,
-      items: items,
-      private: true, //A CHANGER
-      idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
-    })
-
-    navigate("/dashboard");
+    if (zoneJeu.length > 0) {
+      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "Sprint 1", //A CHANGER
+          modeDeJeu: "Time",
+          limitTime: 600, //A CHANGER
+          teams: equipes,
+          authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
+          unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
+          mechants: mechants.map(mechant => ({ latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
+          items: items.map(item => ({ latitude: item.coords.lat, longitude: item.coords.lng })),
+          private: true,
+          idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
+        }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((json) => {
+          console.log(json);
+          navigate("/dashboard");
+        });
+    }
+    else {
+      alert("Ajoutez une zone de jeu !")
+    }
   }
 
   function addEquipe() {
@@ -481,6 +526,10 @@ export default function Carte() {
                 },
               },
             }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
           />
           <EditControl
             position="topright"
@@ -544,10 +593,6 @@ export default function Carte() {
                 icon: ghostIcon,
               },
               polygon: false,
-            }}
-            edit={{
-              remove: false,
-              edit: false,
             }}
           />
         </FeatureGroup>
