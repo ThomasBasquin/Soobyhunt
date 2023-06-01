@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
 
 export default function Dashboard() {
   const [templates, setTemplates] = useState([]);
@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   function ChangeView({ latitude, longitude }) {
     const map = useMap();
-    map.setView([latitude, longitude], 10);
+    map.setView([latitude, longitude], 12);
     return null;
   }
 
@@ -117,7 +117,7 @@ export default function Dashboard() {
                 <MapContainer
                   className="map-config"
                   center={[latitude, longitude]}
-                  zoom={16}
+                  zoom={30}
                   dragging={false}
                   scrollWheelZoom={false}
                 >
@@ -126,6 +126,8 @@ export default function Dashboard() {
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
+                  <Polygon pathOptions={{ fillColor: 'blue' }} positions={selectedConfig.json.authorizedZone.map(point => ([point.latitude, point.longitude]))} />
+                  {selectedConfig.json.unauthorizedZone.map(zone => <Polygon pathOptions={{ color: 'red' }} positions={zone.map(point => ([point.latitude, point.longitude]))} />)}
                 </MapContainer>
               </div>
             )}
