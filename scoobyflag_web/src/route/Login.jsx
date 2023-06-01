@@ -43,7 +43,7 @@ export default function Login() {
                 }
             })
             .then(json => {
-                localStorage.setItem("user", json);
+                localStorage.setItem("user", JSON.stringify(json));
                 navigate('/dashboard');
             })
     }

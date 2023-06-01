@@ -1,25 +1,21 @@
 import {
   MapContainer,
   TileLayer,
-  FeatureGroup,
-  Marker,
-  Popup,
+  FeatureGroup
 } from "react-leaflet";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import L, { popup } from "leaflet";
+import L from "leaflet";
 import "../css/carte.css";
-import "../css/config.css";
 import mechant1 from "../assets/mechant1.png";
 import mechant2 from "../assets/mechant2.png";
 import loupe from "../assets/loupe.png";
 import lunettes from "../assets/lunettes.png";
 import sac from "../assets/sac.png";
 import ghost from "../assets/ghost.png";
-import player from "../assets/points.png";
-import Config from "../components/Config";
 import { EditControl } from "react-leaflet-draw";
 import pointInPolygon from "point-in-polygon";
+import ItemEquipe from "../components/ItemEquipe";
 
 export default function Carte() {
   const navigate = useNavigate();
@@ -27,49 +23,17 @@ export default function Carte() {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
-  const [partieLancee, setPartieLancee] = useState(false);
-
   const [zoneJeu, setZoneJeu] = useState([]);
   const [zonesInterdites, setZonesInterdites] = useState([]);
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
-  const [joueurs, setJoueurs] = useState([]);
-  const [aa, setAa] = useState(0);
+  const [equipes, setEquipes] = useState([{ id: 0, nom: "", nbJoueur: 1 }, { id: 1, nom: "", nbJoueur: 1 }]);
+
+  const mapRef = useRef(null);
 
   useEffect(() => {
     getLocation();
   }, []);
-
-  useEffect(() => {
-    /*const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
-    url.searchParams.append(
-      "topic",
-      "https://scoobyflag/user/{userId}".replace(
-        "{userId}",
-        0
-      )
-    );
-
-    const eventSource = new EventSource(url);
-
-    eventSource.onmessage = ({ data }) => {
-      console.log(data);
-      const user = JSON.parse(JSON.parse(data));
-      const alreadyExist = joueurs.find((u) => u.id == user.id);
-
-      if (!alreadyExist) {
-        ajouterJoueur(user.id, [user.latitude, user.longitude]);
-      } else {
-        deplacerJoueur(user.id, [user.latitude, user.longitude]);
-      }
-
-      // else if (data.includes("deplacer")) {
-      //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
-      // }
-    };
-
-    return () => eventSource.close();*/
-  }, [joueurs]);
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -80,13 +44,13 @@ export default function Carte() {
       setLongitude(7.735647777777776);
       setStatus(null);
       /*navigator.geolocation.getCurrentPosition((position) => {
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
-                console.log(position.coords);
-                setStatus(null);
-            }, () => {
-                setStatus("Impossible de récupérer votre position");
-            });*/
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+        console.log(position.coords);
+        setStatus(null);
+      }, () => {
+        setStatus("Impossible de récupérer votre position");
+      });*/
     }
   };
 
@@ -126,117 +90,144 @@ export default function Carte() {
     iconAnchor: [25, 25],
   });
 
-  const playerIcon = new L.icon({
-    iconUrl: player,
-    iconSize: [25, 25],
-    iconAnchor: [12.5, 12.5],
-  });
-
-  const openConfig = () => {
-    document.querySelector(".menuConfig").classList.add("slideIn");
-    document.querySelector(".menuConfig").classList.remove("slideOut");
-  };
-
-  const clickUser = () => {
-    navigate("/user");
-  }
-
   const onCreated = (e) => {
+    //On cherche quel objet est ajouté
+    var type;
     if (e.layerType === "polygon") {
       if (e.layer.options.color == "red") {
-        var tabTemp = zonesInterdites;
-        tabTemp.push(e.layer.getLatLngs()[0]);
-        setZonesInterdites(tabTemp);
-      } else {
-        var tabTemp = zoneJeu;
-        tabTemp[0] = e.layer.getLatLngs()[0];
-        setZoneJeu(tabTemp);
+        type = "zoneInterdite";
       }
-      e.layer._path.addEventListener("click", () => {
-        clickEdit();
-      })
-    } else {
-      e.layer.bindPopup("salut").openPopup();
-      /*e.layer._icon.addEventListener("click", () => {
-        clickEdit();
-      })*/
-
-      var ok = true;
-      var tabZone = [];
-
-      for (var i = 0; i < zonesInterdites.length; i++) {
-        tabZone = [];
-        for (var j = 0; j < zonesInterdites[i].length; j++) {
-          tabZone.push(Object.values(zonesInterdites[i][j]));
-        }
-        if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-          ok = false;
-        }
-      }
-
-      tabZone = [];
-      for (var k = 0; k < zoneJeu[0].length; k++) {
-        tabZone.push(Object.values(zoneJeu[0][k]));
-      }
-      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-        ok = false;
-      }
-
-      console.log(ok);
-
-      if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
-        var tabTemp = mechants;
-        tabTemp.push(e.layer.getLatLng());
-        setMechants(tabTemp);
-      } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
-        var tabTemp = mechants;
-        tabTemp.push(e.layer.getLatLng());
-        setMechants(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "loupe",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "lunettes",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "sac",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-      else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "ghost",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
+      else {
+        type = "zoneJeu";
       }
     }
-  };
+    else {
+      type = e.layer._icon.attributes.src.nodeValue.substr(12);
+      type = type.substr(0, type.length - 4);
+    }
+
+    //Ajout du popUp Modifier/Supprimer
+    var container = L.DomUtil.create("div");
+    var btnModifier = L.DomUtil.create("button", "", container);
+    btnModifier.innerHTML = "Modifier";
+    var btnSupprimer = L.DomUtil.create("button", "", container);
+    btnSupprimer.innerHTML = "Supprimer";
+    e.layer.bindPopup(L.popup({
+      content: container,
+      offset: L.point(0, -25)
+    }));
+    L.DomEvent.addListener(btnModifier, "click", function () {
+      mapRef.current.closePopup();
+      clickEdit();
+    })
+    L.DomEvent.addListener(btnSupprimer, "click", function (f) {
+      clickSupprimer(e.layer._leaflet_id, type);
+      mapRef.current.closePopup();
+      var a = document.createEvent("Event");
+      a.initEvent("click", true, true);
+      var docFragment = document.createDocumentFragment();
+      if (e.layerType === "polygon") {
+        docFragment.appendChild(e.layer._path);
+      }
+      else {
+        docFragment.appendChild(e.layer._icon);
+      }
+      var myHTMLCollection = docFragment.children;
+      !myHTMLCollection[0].dispatchEvent(a);
+      clickSaveSupprimer();
+    })
+
+    if (type == "zoneJeu") {
+      setZoneJeu([{ id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
+    }
+    else if (type == "zoneInterdite") {
+      setZonesInterdites(oldZones => [...oldZones, { id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
+    }
+    else if (type.includes("mechant")) {
+      setMechants(oldMechants => [...oldMechants, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
+    }
+    else {
+      setItems(oldItems => [...oldItems, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
+    }
+
+    /*else { //Sinon marker mechant ou item
+    if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
+      var tabTemp = mechants;
+      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
+      setMechants(tabTemp);
+    } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
+      var tabTemp = mechants;
+      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
+      setMechants(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "loupe",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "lunettes",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "sac",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }
+    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
+      var tabTemp = items;
+      tabTemp.push({
+        name: "ghost",
+        coordonnees: e.layer.getLatLng(),
+      });
+      setItems(tabTemp);
+    }*/
+
+    /*var ok = true;
+    var tabZone = [];
+ 
+    for (var i = 0; i < zonesInterdites.length; i++) {
+      tabZone = [];
+      for (var j = 0; j < zonesInterdites[i].length; j++) {
+        tabZone.push(Object.values(zonesInterdites[i][j]));
+      }
+      if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+        ok = false;
+      }
+    }
+ 
+    tabZone = [];
+    for (var k = 0; k < zoneJeu[0].length; k++) {
+      tabZone.push(Object.values(zoneJeu[0][k]));
+    }
+    if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+      ok = false;
+    }
+ 
+    console.log(ok);*/
+  }
 
   const onDeleted = (e) => {
-    console.log(e.layers);
+    //console.log(e.layers);
   }
 
   const clickZoneJeu = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
-    return !cb[0].dispatchEvent(e);
+    if (zoneJeu.length == 0) {
+      var e = document.createEvent("Event");
+      e.initEvent("click", true, true);
+      var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
+      return !cb[0].dispatchEvent(e);
+    }
   };
 
   const clickZoneInterdite = (e) => {
@@ -247,57 +238,54 @@ export default function Carte() {
   };
 
   const clickMechant = (e) => {
-    if (zoneJeu.length == 0) {
-      alert("Créer d'abord une zone de jeu.");
-    } else {
-      if (document.getElementById("detailsMechants").style.visibility == "visible") {
-        document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
-      }
-      else {
-        document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
-      }
+    if (document.getElementById("detailsMechants").style.visibility == "visible") {
+      document.getElementById("detailsMechants").setAttribute("style", "visibility:hidden");
+    }
+    else {
+      document.getElementById("detailsMechants").setAttribute("style", "visibility:visible");
     }
   };
 
   const clickObjet = (e) => {
-    if (zoneJeu.length == 0) {
-      alert("Créer d'abord une zone de jeu.");
-    } else {
-      if (document.getElementById("detailsItems").style.visibility == "visible") {
-        document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
-      }
-      else {
-        document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
-      }
+    if (document.getElementById("detailsItems").style.visibility == "visible") {
+      document.getElementById("detailsItems").setAttribute("style", "visibility:hidden");
+    }
+    else {
+      document.getElementById("detailsItems").setAttribute("style", "visibility:visible");
     }
   };
 
   const clickEdit = (e) => {
-    //document.getElementById("detailsEdit").setAttribute("style", "visibility:visible");
+    document.getElementById("btnSave").style.display = "none";
+    document.getElementById("btnConfirmer").style.display = "block";
+    document.getElementById("btnAnnuler").style.display = "block";
+
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-edit-edit");
     return !cb[0].dispatchEvent(e);
   };
 
-  const clickSupprimer = (e) => {
-    document.getElementById("detailsSuppr").setAttribute("style", "visibility:visible");
+  const clickSupprimer = (id, type, e) => {
+    if (type == "zoneJeu") {
+      setZoneJeu([]);
+    }
+    else if (type == "zoneInterdite") {
+      setZonesInterdites(oldZones => oldZones.filter(a => a.id !== id));
+    }
+    else if (type.includes("mechant")) {
+      setMechants(oldMechants => oldMechants.filter(a => a.id !== id));
+    }
+    else {
+      setItems(oldItems => oldItems.filter(a => a.id !== id));
+    }
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-edit-remove");
     return !cb[0].dispatchEvent(e);
   };
 
-  const clickCancelSupprimer = (e) => {
-    document.getElementById("detailsSuppr").setAttribute("style", "visibility:hidden");
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-actions-bottom")[0].children[1].children[0];
-    return !cb.dispatchEvent(e);
-  }
-
   const clickSaveSupprimer = (e) => {
-    document.getElementById("detailsSuppr").setAttribute("style", "visibility:hidden");
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-actions-bottom")[0].children[0].children[0];
@@ -305,7 +293,10 @@ export default function Carte() {
   }
 
   const clickCancelEdit = (e) => {
-    document.getElementById("detailsEdit").setAttribute("style", "visibility:hidden");
+    document.getElementById("btnSave").style.display = "block";
+    document.getElementById("btnConfirmer").style.display = "none";
+    document.getElementById("btnAnnuler").style.display = "none";
+
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-actions-top")[0].children[1].children[0];
@@ -313,7 +304,10 @@ export default function Carte() {
   }
 
   const clickSaveEdit = (e) => {
-    document.getElementById("detailsEdit").setAttribute("style", "visibility:hidden");
+    document.getElementById("btnSave").style.display = "block";
+    document.getElementById("btnConfirmer").style.display = "none";
+    document.getElementById("btnAnnuler").style.display = "none";
+
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
     var cb = document.getElementsByClassName("leaflet-draw-actions-top")[0].children[0].children[0];
@@ -336,26 +330,71 @@ export default function Carte() {
     return !cb[index].dispatchEvent(e);
   }
 
-  const ajouterJoueur = (id, coordonnees) => {
-    //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
-    setJoueurs((oldJoueurs) => [
-      ...oldJoueurs,
-      { id: id, coordonnees: coordonnees },
-    ]);
-  };
+  async function saveConfig() {
+    //Verif points dans la zone, equipes, ...
 
-  const deplacerJoueur = (idJoueur, coordonnees) => {
-    setJoueurs((cur) =>
-      cur.map((joueur, i) => {
-        if (joueur.id === idJoueur) {
-          return { id: joueur.id, coordonnees: coordonnees };
-        } else {
-          return joueur;
-        }
+    //Pop up pour le nom de la config ?
+
+    if (zoneJeu.length > 0) {
+      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "Sprint 1", //A CHANGER
+          modeDeJeu: "Time",
+          limitTime: 600, //A CHANGER
+          teams: equipes,
+          authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
+          unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
+          mechants: mechants.map(mechant => ({ latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
+          items: items.map(item => ({ latitude: item.coords.lat, longitude: item.coords.lng })),
+          private: true,
+          idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
+        }),
       })
-    );
-    //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
-  };
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((json) => {
+          console.log(json);
+          navigate("/dashboard");
+        });
+    }
+    else {
+      alert("Ajoutez une zone de jeu !")
+    }
+  }
+
+  function addEquipe() {
+    setEquipes([...equipes, { id: equipes.length, nom: "", nbJoueur: 1 }]);
+
+    setTimeout(() => {
+      document.querySelector(".listeEquipes").scrollTop = document.querySelector(".listeEquipes").scrollHeight;
+    }, 50);
+  }
+
+  function deleteEquipe(index) {
+    setEquipes(equipes.filter(a => a.id !== index));
+  }
+
+  function updateEquipe(index, nom, nbJoueur) {
+    setEquipes(equipes.map((equipe, i) => {
+      if (i == index) {
+        return {
+          id: index,
+          nom: nom,
+          nbJoueur: nbJoueur
+        }
+      }
+      else {
+        return equipe;
+      }
+    }))
+  }
 
   async function createGame(modeJeu, listeEquipe) {
     /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
@@ -439,7 +478,11 @@ export default function Carte() {
 
   return status == null ? (
     <>
-      <MapContainer center={[latitude, longitude]} zoom={16}>
+      <MapContainer
+        center={[latitude, longitude]}
+        zoom={16}
+        ref={mapRef}
+      >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -482,6 +525,10 @@ export default function Carte() {
                   weight: 3,
                 },
               },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
             }}
           />
           <EditControl
@@ -547,110 +594,101 @@ export default function Carte() {
               },
               polygon: false,
             }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
           />
         </FeatureGroup>
-        {partieLancee ? (
-          <>
-            {joueurs.map((joueur, id) => {
-              return (
-                <Marker
-                  key={id}
-                  position={joueur.coordonnees}
-                  icon={playerIcon}
-                >
-                  <Popup>ID Joueur : {joueur.id}</Popup>
-                </Marker>
-              );
-            })}
-            <div onClick={test} className="btnTest"></div>
-          </>
-        ) : (
-          <></>
-        )}
       </MapContainer>
-      {!partieLancee ? (
-        <>
-          <div className="sideBar">
-            <div className="divBtnSideBar">
-              <div
-                id="btnZone"
-                onClick={(e) => clickZoneJeu(e)}
-                className="btnSideBar"
-              >
-                <img src="gaming-zone.png" alt="" className="iconBar" />
-                Zone de jeu
-              </div>
-            </div>
-            <div className="divBtnSideBar">
-              <div
-                id="btnZoneInterdite"
-                onClick={(e) => clickZoneInterdite(e)}
-                className="btnSideBar"
-              >
-                <img src="forbidden.png" alt="" className="iconBar" />
-                Zone interdite
-              </div>
-            </div>
-            <div className="divBtnSideBar">
-              <div
-                id="btnFlag"
-                onClick={(e) => clickMechant(e)}
-                className="btnSideBar"
-              >
-                <img src="villain.png" alt="" className="iconBar" />
-                Méchants
-              </div>
+      <div className="sideBar">
+        <div className="divBtnSideBar">
+          <div
+            id="btnZone"
+            onClick={(e) => clickZoneJeu(e)}
+            className="btnSideBar"
+          >
+            <img src="gaming-zone.png" alt="" className="iconBar" />
+            Zone de jeu
+          </div>
+        </div>
+        <div className="divBtnSideBar">
+          <div
+            id="btnZoneInterdite"
+            onClick={(e) => clickZoneInterdite(e)}
+            className="btnSideBar"
+          >
+            <img src="forbidden.png" alt="" className="iconBar" />
+            Zone interdite
+          </div>
+        </div>
+        <div className="divBtnSideBar">
+          <div
+            id="btnFlag"
+            onClick={(e) => clickMechant(e)}
+            className="btnSideBar"
+          >
+            <img src="villain.png" alt="" className="iconBar" />
+            Méchants
+          </div>
 
-              <div className="detail" id="detailsMechants">
-                <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
-                  <img src="mechant1.png" alt="" className="iconBar" />
-                  Méchant 1
-                </div>
-                <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
-                  <img src="mechant2.png" alt="" className="iconBar" />
-                  Méchant 2
-                </div>
-              </div>
+          <div className="detail" id="detailsMechants">
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
+              <img src="mechant1.png" alt="" className="iconBar" />
+              Méchant 1
             </div>
-            <div className="divBtnSideBar">
-              <div
-                id="btnItems"
-                onClick={(e) => clickObjet(e)}
-                className="btnSideBar"
-              >
-                <img src="object.png" alt="" className="iconBar" />
-                Objets
-              </div>
-
-              <div className="detail" id="detailsItems">
-                <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
-                  <img src="loupe.png" alt="" className="iconBar" />
-                  Item 1
-                </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
-                  <img src="lunettes.png" alt="" className="iconBar" />
-                  Item 2
-                </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
-                  <img src="sac.png" alt="" className="iconBar" />
-                  Item 3
-                </div>
-                <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
-                  <img src="ghost.png" alt="" className="iconBar" />
-                  Item 4
-                </div>
-              </div>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
+              <img src="mechant2.png" alt="" className="iconBar" />
+              Méchant 2
             </div>
           </div>
-          <Config createGame={createGame} />{" "}
-        </>
-      ) : (
-        <></>
-      )}
+        </div>
+        <div className="divBtnSideBar">
+          <div
+            id="btnItems"
+            onClick={(e) => clickObjet(e)}
+            className="btnSideBar"
+          >
+            <img src="object.png" alt="" className="iconBar" />
+            Objets
+          </div>
+
+          <div className="detail" id="detailsItems">
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
+              <img src="loupe.png" alt="" className="iconBar" />
+              Item 1
+            </div>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+              <img src="lunettes.png" alt="" className="iconBar" />
+              Item 2
+            </div>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
+              <img src="sac.png" alt="" className="iconBar" />
+              Item 3
+            </div>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
+              <img src="ghost.png" alt="" className="iconBar" />
+              Item 4
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="divEquipes">
+        <div className="divTopEquipes">
+          <div className="titreEquipe">Équipes</div>
+          <img src="add.png" className="btnAddEquipe" onClick={addEquipe}></img>
+        </div>
+        <div className="listeEquipes">
+          {equipes.map((equipe, index) => {
+            return <ItemEquipe equipe={equipe} key={index} deleteEquipe={() => deleteEquipe(equipe.id)} updateEquipe={updateEquipe} />
+          })}
+        </div>
+      </div>
+      <div className="btnCarte" id="btnSave" onClick={saveConfig}>
+        Sauvegarder la configuration
+      </div>
+      <div className="btnCarte" id="btnConfirmer" onClick={clickSaveEdit}>
+        Confirmer les modifications
+      </div>
+      <div className="btnCarte" id="btnAnnuler" onClick={clickCancelEdit}>
+        Annuler les modifications
+      </div>
     </>
   ) : (
     <h1>{status}</h1>
