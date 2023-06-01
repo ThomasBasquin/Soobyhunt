@@ -1,5 +1,5 @@
 import {useState, useEffect, useCallback} from 'react';
-import {Pressable, ActivityIndicator, Text, View} from 'react-native';
+import {Pressable, ActivityIndicator, Text, View, ScrollView} from 'react-native';
 import COLORS from '../../Constantes/colors';
 import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
@@ -11,17 +11,24 @@ function Team({navigation}) {
   const [server, setServer] = useServer();
   const [isReady, setIsReady] = useState(false);
   const [teams, setTeams] = useState([]);
+  const [anyTeamPlayers, setAnyTeamPlayers] = useState([]);
   const {API, GAME} = useUrl();
 
   useEffect(() => {
     fetch(GAME.team)
       .then(res => res.json())
-      .then(setTeams)
+      .then(teams => {
+        setTeams(teams.filter(team => team.id));
+        setAnyTeamPlayers(teams.find(team => !team.id).players);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
   const onMessageListen = useCallback(
     user => {
+      if (!user.team) {
+        setAnyTeamPlayers([...anyTeamPlayers, user]);
+      }
       const teamUser = teams.find(t => t.players.find(p => p.id == user.id));
       if (teamUser) {
         if (teamUser.id == user.team.id) {
@@ -56,6 +63,9 @@ function Team({navigation}) {
         }
       } else {
         if (user.team) {
+          setAnyTeamPlayers(
+            anyTeamPlayers.filter(person => person.id !== user.id),
+          );
           setTeams(cur =>
             cur.map(t =>
               t.id == user.team.id
@@ -72,7 +82,7 @@ function Team({navigation}) {
         }
       }
     },
-    [teams],
+    [teams, anyTeamPlayers],
   );
 
   useEffect(() => {
@@ -91,8 +101,7 @@ function Team({navigation}) {
 
     eventSource.addEventListener('message', event => {
       const user = JSON.parse(JSON.parse(event.data));
-      if (!user.id || user.isReady == null || !user.team || !user.pseudo)
-        return;
+      if (!user.id || user.isReady == null || !user.pseudo) return;
       if (!teams.length) return;
       onMessageListen(user);
     });
@@ -113,7 +122,7 @@ function Team({navigation}) {
       eventSource.removeAllEventListeners();
       eventSource.close();
     };
-  }, [teams]);
+  }, [teams, anyTeamPlayers]);
 
   function loadMap() {
     setIsLoading(true);
@@ -197,7 +206,30 @@ function Team({navigation}) {
           <Text>Commencer</Text>
         </Pressable>
       ) : null}
-      <View style={{flex: 1}}>
+
+      <ScrollView style={{flex: 1}}>
+        <View>
+          <Text
+            style={{
+              fontSize: 20,
+              color: COLORS.black,
+              marginHorizontal: 5,
+            }}>
+            Joueurs sans équipe :
+          </Text>
+          <View style={{marginLeft: 25}}>
+            {anyTeamPlayers.map(player => (
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: '#a0a0a0',
+                  fontWeight: player.id == server.idUser ? '700' : '400',
+                }}>
+                {player.pseudo + (player.id == server.idUser ? ' (moi)' : '')}
+              </Text>
+            ))}
+          </View>
+        </View>
         {teams.map(team => {
           return (
             <View key={team.id} style={{marginVertical: 20}}>
@@ -251,6 +283,7 @@ function Team({navigation}) {
                   style={{
                     alignItems: 'center',
                     padding: 10,
+                    marginVertical: 10,
                     backgroundColor: COLORS.secondary,
                     marginHorizontal: '20%',
                     borderRadius: 15,
@@ -263,7 +296,7 @@ function Team({navigation}) {
             </View>
           );
         })}
-      </View>
+      </ScrollView>
       {server.team ? (
         <Pressable
           style={{

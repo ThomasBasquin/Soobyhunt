@@ -14,8 +14,6 @@ import mechant1 from "../../assets/mechant1.png";
 import loupe from "../../assets/loupe.png";
 // import player from "../../assets/points.png";
 
-import style from "./Game.module.scss";
-
 export default function Game() {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
