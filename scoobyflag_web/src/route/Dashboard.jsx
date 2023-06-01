@@ -418,8 +418,16 @@ export default function Dashboard() {
     };
 
     fetch("http://207.154.194.125:1234/create", requestOptions)
-      .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur lors de la requête.");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data); // Les données renvoyées par le serveur
+        // Faites ce que vous voulez avec les données
+      })
       .catch((error) => {
         console.error("Erreur:", error);
       });
