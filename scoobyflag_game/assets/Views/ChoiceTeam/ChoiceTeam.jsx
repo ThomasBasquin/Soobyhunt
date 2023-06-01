@@ -175,7 +175,18 @@ const ChoixEquipe = ({
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
     // setNomsEquipe(newListeEquipe);
+    console.log(id);
+    console.log(joueursConnectes);
+    console.log();
 
+    fetch("http://127.0.0.1:8000/user/"+selected+"/team/"+id,
+{
+    method: "PUT",
+  
+})
+  setjoueursConnectes(
+  joueursConnectes.filter((person) => person.id !== selected)
+  );
     setSelected(null);
   };
 
@@ -200,7 +211,7 @@ const ChoixEquipe = ({
                 {selected ? (
                   <div
                     className="buttonRejoindre"
-                    onClick={() => placerJoueur(noms.id - 1)}
+                    onClick={() => placerJoueur(noms.id)}
                   >
                     Rejoindre
                   </div>
@@ -276,6 +287,7 @@ const ListeJoueurs = ({ selected, setSelected, joueursConnectes }) => {
           flexDirection: "column",
           justifyContent: "center",
         }}
+        className="scrollJoueurs"
       >
         {joueursConnectes.map((j) => (
           <ItemJoueurs
