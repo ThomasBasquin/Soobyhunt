@@ -17,8 +17,8 @@ wait_for_db() {
 
 wait_for_db
 
-php bin/console doctrine:database:create --no-interaction --if-not-exists
-php bin/console doctrine:schema:update --force --no-interaction --complete
+php bin/console doctrine:database:create --if-not-exists
+php bin/console doctrine:schema:update --force --complete
 php bin/console import:game
 
-exec apache2-foreground
+exec apache2-foreground 
