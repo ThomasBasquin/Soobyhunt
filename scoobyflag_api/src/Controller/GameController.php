@@ -62,7 +62,7 @@ class GameController extends AbstractController
     #[Route('/gameTemplate/{gameTemplate}', name: 'get_template', methods: 'GET')]
     public function get(GameTemplate $gameTemplate)
     {
-        return $this->json(['gameTemplate' => $gameTemplate], 200, [],['groups'=> ['GameTemplate:read']]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200, [],['groups'=> ['GameTemplate:read', 'User:read']]);
     }
 
     #[Route('/create/template', name: 'create_template', methods: 'POST')]
