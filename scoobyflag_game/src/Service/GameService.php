@@ -15,6 +15,7 @@ use App\Entity\User;
 use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use App\Repository\TeamRepository;
+use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GameService
@@ -34,6 +35,15 @@ class GameService
         $this->teamRepository = $teamRepository;
     }
 
+    public function importGame()
+    {
+
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__ . '/../../.env');
+
+        $id = $_ENV['ID'];
+        dump($id);
+    }
     public function importGameSetting($data)
     {
         $game = new Game();
@@ -112,7 +122,7 @@ class GameService
             $playersScore = [];
             foreach ($players as $player) {
                 $nbObjectives += count($player->getObjectives());
-                $playersScore[] = ['pseudo' => $player->getPseudo(),'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
+                $playersScore[] = ['pseudo' => $player->getPseudo(), 'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
             }
             $data[] = [
                 'team' => $team->getName(),
