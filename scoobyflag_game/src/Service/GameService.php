@@ -43,9 +43,7 @@ class GameService
         $dotenv->load(__DIR__ . '/../../.env');
     
         $id = $_ENV['ID'];
-        $url = 'https://scoobyhunt.fr/game/gameTemplate/9';
-    
-        // $url = 'https://scoobyhunt.fr/game/gameTemplate/' . $id;
+        $url = 'https://scoobyhunt.fr/game/gameTemplate/' . $id;
 
         $client = HttpClient::create();
         $response = $client->request('GET', $url);
