@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import {Polygon as PolygonComponent} from 'react-native-maps';
 
-function GameMapPolygon({mapCoordinates}){
+const GameMapPolygon= memo(function GameMapPolygon({mapCoordinates}){
 
     return (
         <PolygonComponent
@@ -13,6 +13,6 @@ function GameMapPolygon({mapCoordinates}){
         coordinates={mapCoordinates}
       />
     )
-}
+});
 
 export default GameMapPolygon;
