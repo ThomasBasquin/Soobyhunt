@@ -14,7 +14,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     //Recuperer les configs du user
-    fetch("https://scoobyhunt.fr/user/" + JSON.stringify(JSON.parse(localStorage.getItem("user")).id) + "/getAllTemplate")
+    fetch(
+      "https://scoobyhunt.fr/user/" +
+        JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+        "/getAllTemplate"
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -24,8 +28,7 @@ export default function Dashboard() {
         console.log(json);
         setTemplates(json);
       });
-  }, [])
-
+  }, []);
 
   function clickUser() {
     navigate("/user");
@@ -134,8 +137,21 @@ export default function Dashboard() {
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <Polygon pathOptions={{ fillColor: 'blue' }} positions={selectedConfig.json.authorizedZone.map(point => ([point.latitude, point.longitude]))} />
-                  {selectedConfig.json.unauthorizedZone.map(zone => <Polygon pathOptions={{ color: 'red' }} positions={zone.map(point => ([point.latitude, point.longitude]))} />)}
+                  <Polygon
+                    pathOptions={{ fillColor: "blue" }}
+                    positions={selectedConfig.json.authorizedZone.map(
+                      (point) => [point.latitude, point.longitude]
+                    )}
+                  />
+                  {selectedConfig.json.unauthorizedZone.map((zone) => (
+                    <Polygon
+                      pathOptions={{ color: "red" }}
+                      positions={zone.map((point) => [
+                        point.latitude,
+                        point.longitude,
+                      ])}
+                    />
+                  ))}
                 </MapContainer>
               </div>
             )}
