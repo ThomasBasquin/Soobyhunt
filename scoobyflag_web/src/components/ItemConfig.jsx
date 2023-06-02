@@ -8,7 +8,7 @@ export default function ItemConfig({ config, selectConfig, selected, index }) {
             <div><b>{config.json.name}</b></div>
             <div>{config.createdAt.substr(0, 10)}</div>
         </div>
-        <div className="btn-edit-config" onClick={() => navigate("/carte")}>
+        <div className="btn-edit-config" onClick={() => navigate("/carte", { state: { config: config } })}>
             <img src="edit.svg" alt="" className="img-btn-edit-config" />
         </div>
     </div>

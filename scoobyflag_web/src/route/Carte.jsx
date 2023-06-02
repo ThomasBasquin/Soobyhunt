@@ -1,10 +1,11 @@
 import {
   MapContainer,
   TileLayer,
-  FeatureGroup
+  FeatureGroup,
+  GeoJSON
 } from "react-leaflet";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "../css/carte.css";
 import mechant1 from "../assets/mechant1.png";
@@ -28,10 +29,46 @@ export default function Carte() {
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
   const [equipes, setEquipes] = useState([{ id: 0, nom: "", nbJoueur: 1 }, { id: 1, nom: "", nbJoueur: 1 }]);
+  const [configLoaded, setConfigLoaded] = useState(null);
+  const [geoJSON, setGeoJSON] = useState(null);
 
   const mapRef = useRef(null);
 
+  const { state } = useLocation();
+
   useEffect(() => {
+    if (state != null) {
+      const { config } = state;
+      console.log(config);
+      setConfigLoaded(config);
+
+      setGeoJSON({
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: { color: "blue" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                config.json.authorizedZone.map(point =>
+                  [point.longitude, point.latitude]
+                )
+              ]
+            }
+          },
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "Point",
+              coordinates: [82.69, 205.25],
+            },
+          }
+        ]
+      })
+    }
+
     getLocation();
   }, []);
 
@@ -149,49 +186,6 @@ export default function Carte() {
     else {
       setItems(oldItems => [...oldItems, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
     }
-
-    /*else { //Sinon marker mechant ou item
-    if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png") {
-      var tabTemp = mechants;
-      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
-      setMechants(tabTemp);
-    } else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant2.png") {
-      var tabTemp = mechants;
-      tabTemp.push({ id: e.layer._leaflet_id, coords: e.layer.getLatLng() });
-      setMechants(tabTemp);
-    }
-    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/loupe.png") {
-      var tabTemp = items;
-      tabTemp.push({
-        name: "loupe",
-        coordonnees: e.layer.getLatLng(),
-      });
-      setItems(tabTemp);
-    }
-    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/lunettes.png") {
-      var tabTemp = items;
-      tabTemp.push({
-        name: "lunettes",
-        coordonnees: e.layer.getLatLng(),
-      });
-      setItems(tabTemp);
-    }
-    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/sac.png") {
-      var tabTemp = items;
-      tabTemp.push({
-        name: "sac",
-        coordonnees: e.layer.getLatLng(),
-      });
-      setItems(tabTemp);
-    }
-    else if (e.layer._icon.attributes.src.nodeValue == "/src/assets/ghost.png") {
-      var tabTemp = items;
-      tabTemp.push({
-        name: "ghost",
-        coordonnees: e.layer.getLatLng(),
-      });
-      setItems(tabTemp);
-    }*/
 
     /*var ok = true;
     var tabZone = [];
@@ -348,8 +342,8 @@ export default function Carte() {
           teams: equipes,
           authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
           unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
-          mechants: mechants.map(mechant => ({ latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
-          items: items.map(item => ({ latitude: item.coords.lat, longitude: item.coords.lng })),
+          mechants: mechants.map(mechant => ({ name: mechant.name, latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
+          items: items.map(item => ({ name: item.name, latitude: item.coords.lat, longitude: item.coords.lng })),
           private: true,
           idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
         }),
@@ -396,86 +390,6 @@ export default function Carte() {
     }))
   }
 
-  async function createGame(modeJeu, listeEquipe) {
-    /*const response = await fetch("http://127.0.0.1:8000/game/create/template", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: modeJeu,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu.map(zone => ({ latitude: zone.lat, longitude: zone.lng })),
-        unauthorizedZone: zonesInterdites.map(zone => zone.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
-        mechants: mechants.map(mechant => ({ latitude: mechant.lat, longitude: mechant.lng })),
-        items: items.map(item => ({ latitude: item.lat, longitude: item.lng })),
-        private: true, //A CHANGER
-        idCreator: 3, //
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        const id = json.gameTemplate.id;
-        launchGame(id);
-      });*/
-
-    /*console.log(
-      JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: modeJeu,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu,
-        unauthorizedZone: zonesInterdites,
-        mechants: mechants,
-        items: items,
-        private: true, //A CHANGER
-        idCreator: 3,
-      })
-    );*/
-
-    console.log({
-      name: "Sprint 1", //A CHANGER
-      modeDeJeu: modeJeu,
-      limitTime: 600, //A CHANGER
-      teams: listeEquipe,
-      authorizedZone: zoneJeu,
-      unauthorizedZone: zonesInterdites,
-      mechants: mechants,
-      items: items,
-      private: true, //A CHANGER
-      idCreator: 3,
-    });
-
-    //setPartieLancee(true);
-  }
-
-  async function launchGame(id) {
-    fetch("https://scoobyhunt.fr/game/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: id,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        console.log(json);
-      });
-  }
-
   return status == null ? (
     <>
       <MapContainer
@@ -487,6 +401,7 @@ export default function Carte() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        {configLoaded != null ? <GeoJSON data={geoJSON} color="blue" opacity="1" /> : <></>}
         <FeatureGroup>
           <EditControl
             position="topright"
