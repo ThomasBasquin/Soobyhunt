@@ -16,6 +16,7 @@ use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use App\Repository\TeamRepository;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GameService
@@ -40,12 +41,22 @@ class GameService
 
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
-
+    
         $id = $_ENV['ID'];
-        dump($id);
+        $url = 'https://scoobyhunt.fr/game/gameTemplate/9';
+    
+        // $url = 'https://scoobyhunt.fr/game/gameTemplate/' . $id;
+
+        $client = HttpClient::create();
+        $response = $client->request('GET', $url);
+    
+        $content = $response->toArray();
+    
+        $this->importGameSetting($content['gameTemplate']['json']);
     }
     public function importGameSetting($data)
     {
+        dump($data);
         $game = new Game();
         $game->setLimitTime($data['limitTime']);
         $game->setName($data['name']);
@@ -106,6 +117,7 @@ class GameService
             $this->em->persist($newTeam);
         }
         $this->em->flush();
+        dump($game);
         return $game;
     }
 
