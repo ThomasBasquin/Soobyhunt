@@ -85,7 +85,7 @@ class UserController extends AbstractController
         schema: new OA\Schema(type: 'string')
     )]
     #[OA\Tag(name: 'user_update_position')]
-    public function updatePosition(HubInterface $hub, User $currentUser, Request $request): Response
+    public function updatePosition(User $currentUser, Request $request): Response
     {
         $data = $request->toArray();
         $currentUser->setLatitude($data['latitude']);
@@ -94,23 +94,8 @@ class UserController extends AbstractController
         $this->em->flush();
         $data = $this->userService->getEventUserAndAllShitbyDistance($currentUser,/* $data['viewDistance']*/ 30);
 
+        $this->mercureService->publish($data['users'], $currentUser, $this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]), false);
 
-        foreach ($data['users'] as $user) {
-            if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-                $update = new Update(
-                    "https://scoobyflag/user/" . $user->getId(),
-                    json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
-                );
-                $hub->publish($update);
-            }
-        }
-        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-            $update = new Update(
-                "https://scoobyflag/user/0",
-                json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
-            );
-            $hub->publish($update);
-        }
         return $this->json($data, 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
     }
 
@@ -137,8 +122,7 @@ class UserController extends AbstractController
     public function isReady(User $user): Response
     {
         $user->setIsReady(!$user->isIsReady());
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->userService->save($user);
 
         $users = $this->userService->findAllWithoutUser($user);
 

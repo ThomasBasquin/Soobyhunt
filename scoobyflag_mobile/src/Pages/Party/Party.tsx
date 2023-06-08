@@ -71,13 +71,13 @@ function Party({route, navigation}: any) {
             borderRadius: 10,
             backgroundColor: COLORS.primary,
           }}>
-          <Text style={{fontWeight: '600', fontSize: 20, color: 'white'}}>
+          <Text style={{fontWeight: '600', fontSize: 20, color: '#fff'}}>
             Carte
           </Text>
         </Pressable>
       </View>
       {/* TODO : nom de la partie */}
-      <Text style={{fontSize: 30, fontWeight: '800', color: 'white'}}>
+      <Text style={{fontSize: 30, fontWeight: '800', color: '#fff'}}>
         Partie de Roméo
       </Text>
       <View style={{margin: '2.5%'}}>
@@ -87,7 +87,7 @@ function Party({route, navigation}: any) {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderBottomColor: 'grey',
+              borderBottomColor: '#e0e0e0',
               borderBottomWidth: 1,
               padding: 5,
             }}>
@@ -106,7 +106,7 @@ function Party({route, navigation}: any) {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderBottomColor: 'grey',
+              borderBottomColor: '#e0e0e0',
               borderBottomWidth: 1,
               padding: 5,
             }}>
@@ -125,7 +125,7 @@ function Party({route, navigation}: any) {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderBottomColor: 'grey',
+              borderBottomColor: '#e0e0e0',
               borderBottomWidth: 1,
               padding: 5,
             }}>
@@ -144,7 +144,7 @@ function Party({route, navigation}: any) {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderBottomColor: 'grey',
+              borderBottomColor: '#e0e0e0',
               borderBottomWidth: 1,
               padding: 5,
             }}>
@@ -163,7 +163,7 @@ function Party({route, navigation}: any) {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderBottomColor: 'grey',
+              borderBottomColor: '#e0e0e0',
               borderBottomWidth: 1,
               padding: 5,
             }}>
@@ -201,7 +201,7 @@ function Party({route, navigation}: any) {
         </Text>
       </View>
       <View style={{margin: '2.5%'}}>
-        <Text style={{color: 'white'}}>MON EQUIPE</Text>
+        <Text style={{color: '#fff'}}>MON EQUIPE</Text>
         <View style={style.card}>
           <View
             style={{
@@ -236,7 +236,7 @@ function Party({route, navigation}: any) {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  borderBottomColor: 'grey',
+                  borderBottomColor: '#e0e0e0',
                   borderBottomWidth: 1,
                   padding: 5,
                 }}>
@@ -263,7 +263,7 @@ function Party({route, navigation}: any) {
         </View>
       </View>
       <View style={{margin: '2.5%'}}>
-        <Text style={{color: 'white'}}>CLASSEMENT</Text>
+        <Text style={{color: '#fff'}}>CLASSEMENT</Text>
         <View style={style.card}>
           {teams.sort((a,b) => a.players.reduce((acc, val) => val.point + acc, 0) < b.players.reduce((acc, val) => val.point + acc, 0) ? 1 : -1).map((t, i) => (
             <View
@@ -288,7 +288,7 @@ function Party({route, navigation}: any) {
                         ? '#bfbfbf'
                         : i == 2
                         ? '#CD7F32'
-                        : 'white',
+                        : '#fff',
                     marginRight: 10,
                   }}>
                   {i + 1} |
@@ -297,7 +297,7 @@ function Party({route, navigation}: any) {
                   style={{
                     fontSize: i == 0 ? 30 : 25,
                     fontWeight: '700',
-                    color: i == 0 ? 'white' : 'default',
+                    color: i == 0 ? '#fff' : "#fff",
                   }}>
                   {t.name}
                 </Text>
@@ -309,7 +309,7 @@ function Party({route, navigation}: any) {
                     flex: 1,
                     textAlign: 'right',
                     fontWeight: '700',
-                    color: i == 0 ? 'white' : 'default',
+                    color: i == 0 ? '#fff' : "#fff",//TODO : hey
                     fontSize: i == 0 ? 30 : 25,
                     marginRight: 5,
                   }}>
@@ -333,7 +333,7 @@ function Party({route, navigation}: any) {
           borderRadius: 10,
           backgroundColor: COLORS.primary,
         }}>
-        <Text style={{textAlign: 'center', fontWeight: '700', color: 'white'}}>
+        <Text style={{textAlign: 'center', fontWeight: '700', color: '#fff'}}>
           Quitter la partie en cours
         </Text>
       </Pressable>
@@ -343,7 +343,7 @@ function Party({route, navigation}: any) {
 
 const style = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 15,
     padding: 10,
     shadowColor: '#000',

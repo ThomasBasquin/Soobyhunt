@@ -3,7 +3,6 @@
 
 # export DATABASE_URL
 
-
 echo "Creating database ${DB_NAME}..."
 
 wait_for_db() {
@@ -19,6 +18,9 @@ wait_for_db
 
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:schema:update --force --complete
-php bin/console import:game
+
+sleep 5
+
+php bin/console import
 
 exec apache2-foreground 
