@@ -16,8 +16,8 @@ export default function Dashboard() {
     //Recuperer les configs du user
     fetch(
       "https://scoobyhunt.fr/user/" +
-        JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
-        "/getAllTemplate"
+      JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+      "/getAllTemplate"
     )
       .then((res) => {
         if (res.ok) {
@@ -78,7 +78,7 @@ export default function Dashboard() {
     <div className="fond-degrade-dashboard">
       <div className="header">
         <div className="header-gauche">
-          <img src="logo.png" alt="" className="logo-header" />
+          <img src="logo.png" alt="" className="logo-header" onClick={() => navigate("/")} />
           <div className="titre-header">ScoobyHunt</div>
         </div>
         <img

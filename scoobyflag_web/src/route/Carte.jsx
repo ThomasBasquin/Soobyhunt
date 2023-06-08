@@ -2,7 +2,10 @@ import {
   MapContainer,
   TileLayer,
   FeatureGroup,
-  GeoJSON
+  GeoJSON,
+  Marker,
+  Polygon,
+  Popup
 } from "react-leaflet";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -41,32 +44,6 @@ export default function Carte() {
       const { config } = state;
       console.log(config);
       setConfigLoaded(config);
-
-      setGeoJSON({
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: { color: "blue" },
-            geometry: {
-              type: "Polygon",
-              coordinates: [
-                config.json.authorizedZone.map(point =>
-                  [point.longitude, point.latitude]
-                )
-              ]
-            }
-          },
-          {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "Point",
-              coordinates: [82.69, 205.25],
-            },
-          }
-        ]
-      })
     }
 
     getLocation();
@@ -401,8 +378,54 @@ export default function Carte() {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {configLoaded != null ? <GeoJSON data={geoJSON} color="blue" opacity="1" /> : <></>}
         <FeatureGroup>
+          {configLoaded != null ? <>
+            <Polygon pathOptions={{ color: '#6b2b94' }} positions={configLoaded.json.authorizedZone.map(point =>
+              [point.latitude, point.longitude])
+            } >
+              <Popup>
+                <button onClick={() => {
+                  mapRef.current.closePopup();
+                  clickEdit();
+                }}>Modifier</button>
+                <button>Supprimer</button>
+              </Popup>
+            </Polygon>
+            {configLoaded.json.unauthorizedZone.map(zones => <Polygon pathOptions={{ color: '#ee9158' }} positions={zones.map(point =>
+              [point.latitude, point.longitude])
+            } >
+              <Popup>
+                <button onClick={() => {
+                  mapRef.current.closePopup();
+                  clickEdit();
+                }}>Modifier</button>
+                <button>Supprimer</button>
+              </Popup>
+            </Polygon>
+            )}
+            {configLoaded.json.items.map(item =>
+              <Marker position={[item.latitude, item.longitude]} icon={item.name == "loupe" ? loupeIcon : item.name == "sac" ? sacIcon : item.name == "lunettes" ? lunettesIcon : ghostIcon}>
+                <Popup>
+                  <button onClick={() => {
+                    mapRef.current.closePopup();
+                    clickEdit();
+                  }}>Modifier</button>
+                  <button>Supprimer</button>
+                </Popup>
+              </Marker>
+            )}
+            {configLoaded.json.mechants.map(mechant =>
+              <Marker position={[mechant.latitude, mechant.longitude]} icon={mechant.name == "mechant1" ? mechant1Icon : mechant2Icon}>
+                <Popup>
+                  <button onClick={() => {
+                    mapRef.current.closePopup();
+                    clickEdit();
+                  }}>Modifier</button>
+                  <button>Supprimer</button>
+                </Popup>
+              </Marker>
+            )}
+          </> : <></>}
           <EditControl
             position="topright"
             draw={{
@@ -511,7 +534,7 @@ export default function Carte() {
             }}
           />
         </FeatureGroup>
-      </MapContainer>
+      </MapContainer >
       <div className="sideBar">
         <div className="divBtnSideBar">
           <div
