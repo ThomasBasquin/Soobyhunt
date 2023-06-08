@@ -14,8 +14,6 @@ class ItemUser
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Item $item = null;
 
     #[ORM\ManyToOne(inversedBy: 'used')]
     private ?User $getBy = null;
@@ -24,22 +22,19 @@ class ItemUser
     #[Groups(['User:read'])]
     private ?bool $used = null;
 
+    #[ORM\ManyToOne(inversedBy: 'itemUsers')]
+    private ?Item $item = null;
+
+    public function __construct()
+    {
+        $this->used = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getItem(): ?Item
-    {
-        return $this->item;
-    }
-
-    public function setItem(?Item $item): self
-    {
-        $this->item = $item;
-
-        return $this;
-    }
 
     public function getGetBy(): ?User
     {
@@ -61,6 +56,18 @@ class ItemUser
     public function setUsed(bool $used): self
     {
         $this->used = $used;
+
+        return $this;
+    }
+
+    public function getItem(): ?Item
+    {
+        return $this->item;
+    }
+
+    public function setItem(?Item $item): self
+    {
+        $this->item = $item;
 
         return $this;
     }

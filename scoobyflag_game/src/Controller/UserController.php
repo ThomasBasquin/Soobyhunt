@@ -183,18 +183,39 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
-    public function itemGet(Item $item, Request $request, User $user): Response
+    public function itemGet(HubInterface $hub, Item $item, Request $request, User $currentUser): Response
     {
-        // $user = $this->getUser();
         if ($item->getQuantity()) {
             $item->setQuantity($item->getQuantity() - 1);
             $itemUser = new ItemUser();
-            $itemUser->setGetBy($user);
+            $itemUser->setGetBy($currentUser);
             $itemUser->setItem($item);
             $this->em->persist($itemUser);
             $this->em->persist($item);
             $this->em->flush();
-            return $this->json([$user], 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+
+            $users = $this->userService->getUsersByItemView( $item->getLongitude(),$item->getLatitude(),300);
+
+
+            // mercure
+            foreach ($users as $user) {
+                if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+                    $update = new Update(
+                        "https://scoobyflag/user/" . $user->getId(),
+                        json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+                    );
+                    $hub->publish($update);
+                }
+            }
+            if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+                $update = new Update(
+                    "https://scoobyflag/user/0",
+                    json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+                );
+                $hub->publish($update);
+            }
+
+            return $this->json($users, 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
         }
         return new JsonResponse("Il n'y a plus d'item dispo", 302);
     }
