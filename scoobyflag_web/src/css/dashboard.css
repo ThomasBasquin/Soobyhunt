@@ -1,210 +1,211 @@
 .fond-degrade-dashboard {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgb(107, 43, 148), rgb(238, 145, 88));
-    display: flex;
-    flex-direction: column;
-    font-family: 'Montserrat', sans-serif;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgb(107, 43, 148), rgb(238, 145, 88));
+  display: flex;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
 }
 
 .header {
-    height: 10%;
-    width: 95%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px 2.5%;
+  height: 10%;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 2.5%;
 }
 
 .header-gauche {
-    height: 100%;
-    display: flex;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .logo-header {
     height: 100%;
+    cursor: pointer;
 }
 
 .titre-header {
-    color: white;
-    font-size: 50px;
-    margin: 0 30px;
+  color: white;
+  font-size: 50px;
+  margin: 0 30px;
 }
 
 .btn-user {
-    display: flex;
-    height: 80%;
-    cursor: pointer;
-    transition: transform 0.4s ease;
+  display: flex;
+  height: 80%;
+  cursor: pointer;
+  transition: transform 0.4s ease;
 }
 
 .btn-user:hover {
-    transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 .main-dashboard {
-    height: 80%;
-    display: flex;
-    justify-content: space-around;
+  height: 80%;
+  display: flex;
+  justify-content: space-around;
 }
 
 .zone-grise {
-    height: 100%;
-    width: 45%;
-    background-color: #D9D9D9;
-    border-radius: 25px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
+  height: 100%;
+  width: 45%;
+  background-color: #d9d9d9;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
 }
 
 .titre-zone {
-    margin-top: 20px;
-    font-size: 40px;
-    font-weight: bold;
+  margin-top: 20px;
+  font-size: 40px;
+  font-weight: bold;
 }
 
 .liste-config {
-    height: 70%;
-    width: 80%;
-    overflow-y: auto;
+  height: 70%;
+  width: 80%;
+  overflow-y: auto;
 }
 
 .liste-config::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: #F5F5F5;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
 }
 
 .liste-config::-webkit-scrollbar {
-    width: 7px;
-    background-color: #F5F5F5;
+  width: 7px;
+  background-color: #f5f5f5;
 }
 
 .liste-config::-webkit-scrollbar-thumb {
-    background-color: #000000;
-    border: 2px solid #555555;
+  background-color: #000000;
+  border: 2px solid #555555;
 }
 
 .detail-config {
-    height: 70%;
-    width: 90%;
-    background-color: white;
-    border-radius: 20px;
+  height: 70%;
+  width: 90%;
+  background-color: white;
+  border-radius: 20px;
 }
 
 .config-empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 34px;
-    height: 100%;
-    width: 80%;
-    margin: 0 auto;
-    text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 34px;
+  height: 100%;
+  width: 80%;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .config-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    width: 90%;
-    margin: 0 auto;
-    text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 90%;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .config-line {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
 }
 
 .nom-config {
-    font-size: 34px;
-    font-weight: bold;
-    width: 100%;
-    margin: 20px 20px 0 20px;
+  font-size: 34px;
+  font-weight: bold;
+  width: 100%;
+  margin: 20px 20px 0 20px;
 }
 
 .map-config {
-    width: 100%;
-    margin-bottom: 30px;
-    background-color: #D9D9D9;
+  width: 100%;
+  margin-bottom: 30px;
+  background-color: #d9d9d9;
 }
 
 .dashboard-button {
-    background-color: #6B2B94;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 15px;
-    text-decoration: none;
-    color: white;
-    font-size: 28px;
-    border: #6B2B94 solid 1px;
-    cursor: pointer;
-    width: fit-content;
+  background-color: #6b2b94;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  font-size: 28px;
+  border: #6b2b94 solid 1px;
+  cursor: pointer;
+  width: fit-content;
 }
 
 .dashboard-button:hover {
-    color: #6B2B94;
-    background: white;
+  color: #6b2b94;
+  background: white;
 }
 
 /***ItemConfig***/
 .item-config {
-    width: 100%;
-    height: 115px;
-    background-color: white;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
+  width: 100%;
+  height: 115px;
+  background-color: white;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
 .item-selected {
-    background-color: #FCFCD6;
+  background-color: #fcfcd6;
 }
 
 .div-text-config {
-    font-size: 30px;
-    margin: 15px;
+  font-size: 30px;
+  margin: 15px;
 }
 
 .btn-edit-config {
-    height: 70px;
-    width: 70px;
-    background-color: #EE9158;
-    border-radius: 20px;
-    margin: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+  height: 70px;
+  width: 70px;
+  background-color: #ee9158;
+  border-radius: 20px;
+  margin: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .img-btn-edit-config {
-    height: 65%;
+  height: 65%;
 }
 
 .btn-select-config {
-    height: 70px;
-    width: 70px;
-    background-color: #6B2B94;
-    border-radius: 20px;
-    margin: 10px 20px 10px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+  height: 70px;
+  width: 70px;
+  background-color: #6b2b94;
+  border-radius: 20px;
+  margin: 10px 20px 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .img-btn-select-config {
-    width: 60%;
+  width: 60%;
 }
