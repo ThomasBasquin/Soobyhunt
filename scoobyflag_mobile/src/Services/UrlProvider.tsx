@@ -27,10 +27,11 @@ export function UrlProvider({children}:IProps){
         putPosition: GAME_DOMAIN+"/user/{userId}/position",
         team: GAME_DOMAIN+"/team",
         changeTeam:GAME_DOMAIN+"/user/{user}/team/{team}",
+        getMap: GAME_DOMAIN + "/game/{game}"
     };
     
     const API={
-        getTemplate: API_DOMAIN+"/game/{game}",
+        getTemplate: API_DOMAIN+"/game/gameTemplate/{gameTemplate}",
     };
 
     return (

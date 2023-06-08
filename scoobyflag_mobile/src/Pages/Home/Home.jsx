@@ -61,7 +61,7 @@ export default function Home({route, navigation}) {
     isOpen: false,
     item: null,
   });
-  const [{idUser, map}] = useServer();
+  const [{idUser, map, team},setServer] = useServer();
 
   useEffect(() => {
     if (!idUser) return;
@@ -83,6 +83,7 @@ export default function Home({route, navigation}) {
       const alreadyInParty = userMarkers.find(u => {
         return u.id == user.id;
       });
+      console.log(alreadyInParty);
       setUserMarkers(cur =>
         alreadyInParty
           ? cur.map(u => (u.id == user.id ? user : u))
@@ -133,6 +134,8 @@ export default function Home({route, navigation}) {
     }
   }, [vilainMarkers, itemMarkers, currentPosition]);
 
+  // setServer({});
+
   useEffect(() => {
     if (!map) {
       Alert.alert('Une configuration est requise');
@@ -142,26 +145,10 @@ export default function Home({route, navigation}) {
 
     refreshActualEffect();
     // reset();
-    setMapCoordinates(
-      map.authorizedZone.map(zone => ({
-        latitude: zone.latitude,
-        longitude: zone.longitude,
-      })),
-    );
+    setMapCoordinates(map.authorizedZone);
     setUnauthorizedZone(map.unauthorizedZone);
-    setVilainMarkers(
-      map.mechants.map(mechant => ({
-        ...mechant,
-        coordonnees: {latitude: mechant.latitude, longitude: mechant.longitude},
-      })),
-    );
-    setItemMarkers(
-      map.items.map(zone => ({
-        ...zone,
-        quantite: 5,
-        coordonnees: {latitude: zone.latitude, longitude: zone.longitude},
-      })),
-    );
+    setVilainMarkers(map.mechants);
+    setItemMarkers(map.items);
     getCurrentPosition(true);
   }, []);
 
@@ -235,7 +222,7 @@ export default function Home({route, navigation}) {
   }
 
   const renderUserMarkers = useCallback(() => {
-    return userMarkers.filter(user => user.id!==idUser).map((user, i) => <UserMarker key={i} user={user} />);
+    return userMarkers.filter(user => user.id!==idUser).map((user, i) => <UserMarker key={i} user={user} team={team} />);
   }, [userMarkers]);
 
   const renderVilainMarkers = useCallback(() => {
