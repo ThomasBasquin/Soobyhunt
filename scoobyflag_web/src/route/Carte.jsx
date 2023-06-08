@@ -33,7 +33,8 @@ export default function Carte() {
   const [items, setItems] = useState([]);
   const [equipes, setEquipes] = useState([{ id: 0, nom: "", nbJoueur: 1 }, { id: 1, nom: "", nbJoueur: 1 }]);
   const [configLoaded, setConfigLoaded] = useState(null);
-  const [geoJSON, setGeoJSON] = useState(null);
+  const [modifs, setModifs] = useState(false);
+  const [configId, setConfigId] = useState(null);
 
   const mapRef = useRef(null);
 
@@ -44,6 +45,7 @@ export default function Carte() {
       const { config } = state;
       console.log(config);
       setConfigLoaded(config);
+      setConfigId(config.id);
     }
 
     getLocation();
@@ -108,7 +110,7 @@ export default function Carte() {
     //On cherche quel objet est ajouté
     var type;
     if (e.layerType === "polygon") {
-      if (e.layer.options.color == "red") {
+      if (e.layer.options.color == "#ee9158") {
         type = "zoneInterdite";
       }
       else {
@@ -155,6 +157,7 @@ export default function Carte() {
       setZoneJeu([{ id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type == "zoneInterdite") {
+      console.log("ouais");
       setZonesInterdites(oldZones => [...oldZones, { id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type.includes("mechant")) {
@@ -301,42 +304,71 @@ export default function Carte() {
     return !cb[index].dispatchEvent(e);
   }
 
+  function quitter() {
+    //Verif modifs pour sauvegarde ?
+    navigate("/dashboard");
+  }
+
   async function saveConfig() {
+    var bodyConfig = JSON.stringify({
+      name: "Sprint 1", //A CHANGER
+      modeDeJeu: "Time",
+      limitTime: 600, //A CHANGER
+      teams: equipes,
+      authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
+      unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
+      mechants: mechants.map(mechant => ({ name: mechant.name, latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
+      items: items.map(item => ({ name: item.name, latitude: item.coords.lat, longitude: item.coords.lng })),
+      private: true,
+      idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
+    });
+
+    var configOk = true;
+
     //Verif points dans la zone, equipes, ...
 
     //Pop up pour le nom de la config ?
 
-    if (zoneJeu.length > 0) {
-      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "Sprint 1", //A CHANGER
-          modeDeJeu: "Time",
-          limitTime: 600, //A CHANGER
-          teams: equipes,
-          authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
-          unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
-          mechants: mechants.map(mechant => ({ name: mechant.name, latitude: mechant.coords.lat, longitude: mechant.coords.lng })),
-          items: items.map(item => ({ name: item.name, latitude: item.coords.lat, longitude: item.coords.lng })),
-          private: true,
-          idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
-        }),
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-        })
-        .then((json) => {
-          console.log(json);
-          navigate("/dashboard");
-        });
+    if (zoneJeu.length < 1) {
+      configOk == false;
     }
-    else {
-      alert("Ajoutez une zone de jeu !")
+
+    if (configOk) {
+      if (configId == null) {
+        const response = await fetch("https://scoobyhunt.fr/game/create/template", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: bodyConfig,
+        })
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then((json) => {
+            console.log(json);
+            setConfigId(json.gameTemplate.id)
+          });
+      }
+      else {
+        const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: bodyConfig,
+        })
+          .then((res) => {
+            if (res.ok) {
+              return res.json();
+            }
+          })
+          .then((json) => {
+            console.log(json);
+          });
+      }
     }
   }
 
@@ -373,6 +405,7 @@ export default function Carte() {
         center={[latitude, longitude]}
         zoom={16}
         ref={mapRef}
+        id="map-config"
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -437,7 +470,11 @@ export default function Carte() {
                 icon: mechant1Icon,
                 popup: "test"
               },
-              polygon: true,
+              polygon: {
+                shapeOptions: {
+                  color: "#6b2b94"
+                },
+              },
             }}
             edit={{
               remove: false,
@@ -458,9 +495,7 @@ export default function Carte() {
               },
               polygon: {
                 shapeOptions: {
-                  guidelineDistance: 10,
-                  color: "red",
-                  weight: 3,
+                  color: "#ee9158"
                 },
               },
             }}
@@ -619,7 +654,10 @@ export default function Carte() {
         </div>
       </div>
       <div className="btnCarte" id="btnSave" onClick={saveConfig}>
-        Sauvegarder la configuration
+        Sauvegarder
+      </div>
+      <div className="btnCarte" id="btnQuit" onClick={quitter}>
+        Quitter
       </div>
       <div className="btnCarte" id="btnConfirmer" onClick={clickSaveEdit}>
         Confirmer les modifications

@@ -8,8 +8,6 @@ export default function Dashboard() {
   const [templates, setTemplates] = useState([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [indexSelected, setIndexSelected] = useState(-1);
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,8 +23,7 @@ export default function Dashboard() {
         }
       })
       .then((json) => {
-        console.log(json);
-        setTemplates(json);
+        setTemplates(json.filter(a => a.isActive == 1));
       });
   }, []);
 
@@ -41,8 +38,23 @@ export default function Dashboard() {
   function selectConfig(config, index) {
     setSelectedConfig(config);
     setIndexSelected(index);
-    setLatitude(config.json.authorizedZone[0].latitude);
-    setLongitude(config.json.authorizedZone[0].longitude);
+  }
+
+  function deleteConfig(idConfig) {
+    const response = fetch("https://scoobyhunt.fr/game/delete/template/" + idConfig, {
+      method: "DELETE"
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+        setSelectedConfig("");
+        setIndexSelected(-1);
+        setTemplates(templates.filter(a => a.id !== idConfig));
+      });
   }
 
   function creerPartie() {
@@ -68,9 +80,17 @@ export default function Dashboard() {
       });
   }
 
-  function ChangeView({ latitude, longitude }) {
+  function ChangeView() {
+    var totalLat = 0;
+    var totalLng = 0;
+    var nbPoint = 0;
+    selectedConfig.json.authorizedZone.map(point => {
+      totalLat += point.latitude;
+      totalLng += point.longitude;
+      nbPoint++;
+    })
     const map = useMap();
-    map.setView([latitude, longitude], 12);
+    map.setView([totalLat / nbPoint, totalLng / nbPoint], 14);
     return null;
   }
 
@@ -101,6 +121,7 @@ export default function Dashboard() {
                   selectConfig={selectConfig}
                   index={index}
                   selected={index == indexSelected}
+                  deleteConfig={deleteConfig}
                 />
               );
             })}
@@ -127,25 +148,23 @@ export default function Dashboard() {
                 </div>
                 <MapContainer
                   className="map-config"
-                  center={[latitude, longitude]}
-                  zoom={30}
                   dragging={false}
                   scrollWheelZoom={false}
                 >
-                  <ChangeView latitude={latitude} longitude={longitude} />
+                  <ChangeView />
                   <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
                   <Polygon
-                    pathOptions={{ fillColor: "blue" }}
+                    pathOptions={{ color: "#6b2b94" }}
                     positions={selectedConfig.json.authorizedZone.map(
                       (point) => [point.latitude, point.longitude]
                     )}
                   />
                   {selectedConfig.json.unauthorizedZone.map((zone) => (
                     <Polygon
-                      pathOptions={{ color: "red" }}
+                      pathOptions={{ color: "#ee9158" }}
                       positions={zone.map((point) => [
                         point.latitude,
                         point.longitude,

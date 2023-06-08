@@ -8,7 +8,7 @@
   z-index: 1;
 }
 
-.leaflet-control-container {
+#map-config .leaflet-control-container {
   display: none;
 }
 
@@ -225,6 +225,11 @@
 #btnSave {
   right: 1rem;
   top: 1rem;
+}
+
+#btnQuit {
+  right: 1rem;
+  top: 5rem;
 }
 
 #btnConfirmer {
