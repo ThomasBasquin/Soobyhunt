@@ -78,7 +78,7 @@ export default function Dashboard() {
     <div className="fond-degrade-dashboard">
       <div className="header">
         <div className="header-gauche">
-          <img src="logo.png" alt="" className="logo-header" />
+          <img src="logo.png" alt="" className="logo-header-dashboard" />
           <div className="titre-header">ScoobyHunt</div>
         </div>
         <img
