@@ -4,7 +4,6 @@ import { findInfoItem } from '../../Constantes/utils';
 
 export default function ItemModal({onSubmit,state, onRequestClose}) {
 
-  console.log(state);
   return (
     <>
       <BasicModal

@@ -1,20 +1,17 @@
 import {createContext, Provider} from "react";
 import useServer from "../Constantes/Hooks/useServer";
 
-export const AuthContext= createContext(null);
+export const AuthContext= createContext();
 
-interface IProps{
-    children:any
-}
 
-export const UrlContext = createContext<any>(null);
 
-export function UrlProvider({children}:IProps){
-    const [{server}, setServer] = useServer();
+export const UrlContext = createContext();
+
+export function UrlProvider({children}){
+    const [server, setServer] = useServer();
 
     const DEFAULT_API_DOMAINS={
         LOCAL:"https://scoobyhunt.fr",
-        HUGO:"https://scoobyhunt.fr",
         PROD:""
     }
     
@@ -22,16 +19,15 @@ export function UrlProvider({children}:IProps){
     const GAME_DOMAIN=server;
     
     const GAME={
-        joinGame: GAME_DOMAIN+"/user/join",
-        ready: GAME_DOMAIN+"/user/{user}/ready",
-        putPosition: GAME_DOMAIN+"/user/{userId}/position",
+        // joinGame: GAME_DOMAIN+"/user/join",
+        // ready: GAME_DOMAIN+"/user/{user}/ready",
+        // putPosition: GAME_DOMAIN+"/user/{userId}/position",
         team: GAME_DOMAIN+"/team",
         changeTeam:GAME_DOMAIN+"/user/{user}/team/{team}",
-        getMap: GAME_DOMAIN + "/game/{game}"
     };
     
     const API={
-        getTemplate: API_DOMAIN+"/game/gameTemplate/{gameTemplate}",
+        getTemplate: API_DOMAIN+"/game/{game}",
     };
 
     return (

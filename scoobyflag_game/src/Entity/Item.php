@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ItemRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -34,6 +36,15 @@ class Item
     #[Groups(['Item:read'])]
     private ?string $longitude = null;
 
+    #[ORM\OneToMany(mappedBy: 'item', targetEntity: ItemUser::class)]
+    private Collection $itemUsers;
+
+    public function __construct()
+    {
+        $this->itemUsers = new ArrayCollection();
+    }
+
+  
     public function getId(): ?int
     {
         return $this->id;
@@ -95,6 +106,36 @@ class Item
     public function setLongitude(string $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ItemUser>
+     */
+    public function getItemUsers(): Collection
+    {
+        return $this->itemUsers;
+    }
+
+    public function addItemUser(ItemUser $itemUser): self
+    {
+        if (!$this->itemUsers->contains($itemUser)) {
+            $this->itemUsers->add($itemUser);
+            $itemUser->setItem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeItemUser(ItemUser $itemUser): self
+    {
+        if ($this->itemUsers->removeElement($itemUser)) {
+            // set the owning side to null (unless already changed)
+            if ($itemUser->getItem() === $this) {
+                $itemUser->setItem(null);
+            }
+        }
 
         return $this;
     }

@@ -8,11 +8,16 @@ import {
   FeatureGroup,
   Marker,
   Popup,
+  Polygon,
 } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import mechant1 from "../../assets/mechant1.png";
 import loupe from "../../assets/loupe.png";
-// import player from "../../assets/points.png";
+import player from "../../assets/points.png";
+import mechant2 from "../../assets/mechant2.png";
+import ghost from "../../assets/ghost.png";
+import lunettes from "../../assets/lunettes.png";
+import sac from "../../assets/sac.png";
 
 export default function Game() {
   const [latitude, setLatitude] = useState(0.0);
@@ -27,11 +32,6 @@ export default function Game() {
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
   const [joueurs, setJoueurs] = useState([]);
-  const [aa, setAa] = useState(0);
-
-  useEffect(() => {
-    getLocation();
-  }, []);
 
   useEffect(() => {
     const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
@@ -49,12 +49,13 @@ export default function Game() {
       console.log(data);
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
-
+      if(user.latitude || user.longitude)
+      {
       if (!alreadyExist) {
-        ajouterJoueur(user.id, [user.latitude, user.longitude]);
+        ajouterJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
       } else {
-        deplacerJoueur(user.id, [user.latitude, user.longitude]);
-      }
+        deplacerJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
+      }}
 
       // else if (data.includes("deplacer")) {
       //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
@@ -64,27 +65,14 @@ export default function Game() {
     return () => eventSource.close();
   }, [joueurs]);
 
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      setStatus("Votre navigateur ne supporte pas la géolocalisation");
-    } else {
-      setStatus("Localisation...");
-      setLatitude(48.530437);
-      setLongitude(7.735647777777776);
-      setStatus(null);
-      /*navigator.geolocation.getCurrentPosition((position) => {
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
-                console.log(position.coords);
-                setStatus(null);
-            }, () => {
-                setStatus("Impossible de récupérer votre position");
-            });*/
-    }
-  };
-
   const mechant1Icon = new L.icon({
     iconUrl: mechant1,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
+
+  const mechant2Icon = new L.icon({
+    iconUrl: mechant2,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
   });
@@ -95,122 +83,47 @@ export default function Game() {
     iconAnchor: [25, 25],
   });
 
-  // const playerIcon = new L.icon({
-  //   iconUrl: player,
-  //   iconSize: [25, 25],
-  //   iconAnchor: [12.5, 12.5],
-  // });
+  const lunettesIcon = new L.icon({
+    iconUrl: lunettes,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
 
-  const clickBtnConfig = () => {
-    if (menuConfig) {
-      setMenuConfig(false);
-      document.querySelector(".menuConfig").classList.add("slideOut");
-      document.querySelector(".menuConfig").classList.remove("slideIn");
-    } else {
-      setMenuConfig(true);
-      document.querySelector(".menuConfig").classList.add("slideIn");
-      document.querySelector(".menuConfig").classList.remove("slideOut");
-    }
-  };
+  const playerIcon = new L.icon({
+    iconUrl: player,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
 
-  const onCreated = (e) => {
-    if (e.layerType === "polygon") {
-      if (e.layer.options.color == "red") {
-        var tabTemp = zonesInterdites;
-        tabTemp.push(e.layer.getLatLngs()[0]);
-        setZonesInterdites(tabTemp);
-      } else {
-        setZoneJeu(e.layer.getLatLngs()[0]);
-      }
-    } else {
-      if (
-        e.layer._icon.attributes.src.nodeValue == "/src/assets/mechant1.png"
-      ) {
-        var tabTemp = mechants;
-        tabTemp.push(e.layer.getLatLng());
-        setMechants(tabTemp);
-      } else {
-        var tabTemp = items;
-        tabTemp.push({
-          name: "loupe",
-          coordonnees: e.layer.getLatLng(),
-        });
-        setItems(tabTemp);
-      }
-    }
-  };
+  const sacIcon = new L.icon({
+    iconUrl: sac,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });
 
-  const clickZoneJeu = (e) => {
-    if (zoneJeu.length > 0) {
-      alert(
-        "La zone de jeu est déjà présente, modifiez la ou supprimez la pour en créer une nouvelle."
-      );
-    } else {
-      var e = document.createEvent("Event");
-      e.initEvent("click", true, true);
-      var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
-      return !cb[0].dispatchEvent(e);
-    }
-  };
+  const ghostIcon = new L.icon({
+    iconUrl: ghost,
+    iconSize: [50, 50],
+    iconAnchor: [25, 25],
+  });;
 
-  const clickZoneInterdite = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-draw-polygon");
-    return !cb[1].dispatchEvent(e);
-  };
-
-  const clickMechant = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-draw-marker");
-    return !cb[0].dispatchEvent(e);
-  };
-
-  const clickObjet = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-draw-marker");
-    return !cb[1].dispatchEvent(e);
-  };
-
-  const clickEdit = (e) => {
-    var e = document.createEvent("Event");
-    e.initEvent("click", true, true);
-    var cb = document.getElementsByClassName("leaflet-draw-edit-edit");
-    return !cb[0].dispatchEvent(e);
-  };
-
-  const clickSupprimer = (e) => {
-    if (clickedSupprimer) {
-      //setClickedSupprimer(false);
-      var e = document.createEvent("Event");
-      e.initEvent("click", true, true);
-      var cb = document.getElementsByClassName("leaflet-draw-actions")[2]
-        .children[1];
-      return !cb.dispatchEvent(e);
-    } else {
-      //setClickedSupprimer(true);
-      var e = document.createEvent("Event");
-      e.initEvent("click", true, true);
-      var cb = document.getElementsByClassName("leaflet-draw-edit-remove");
-      return !cb[0].dispatchEvent(e);
-    }
-  };
-
-  const ajouterJoueur = (id, coordonnees) => {
+  const ajouterJoueur = (id, pseudo, coordonnees) => {
     //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
     setJoueurs((oldJoueurs) => [
       ...oldJoueurs,
-      { id: id, coordonnees: coordonnees },
+      { id: id, pseudo: pseudo, coordonnees: coordonnees },
     ]);
   };
 
-  const deplacerJoueur = (idJoueur, coordonnees) => {
+  const deplacerJoueur = (idJoueur, pseudo, coordonnees) => {
     setJoueurs((cur) =>
       cur.map((joueur, i) => {
         if (joueur.id === idJoueur) {
-          return { id: joueur.id, coordonnees: coordonnees };
+          return {
+            id: joueur.id,
+            pseudo: joueur.pseudo,
+            coordonnees: coordonnees,
+          };
         } else {
           return joueur;
         }
@@ -220,157 +133,141 @@ export default function Game() {
   };
 
   console.log(items);
-  async function createGame(modeJeu, listeEquipe) {
-    const response = await fetch("https://scoobyhunt.fr/game/create/template", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+
+  const jsonTemplate = {
+    name: "Sprint 1",
+    modeDeJeu: "Time",
+    limitTime: 600,
+    teams: [
+      { id: 0, nom: "", nbJoueur: 1 },
+      { id: 1, nom: "", nbJoueur: 1 },
+    ],
+    authorizedZone: [
+      { latitude: 48.531554876601575, longitude: 7.730319499969483 },
+      { latitude: 48.52597026236857, longitude: 7.733323574066163 },
+      { latitude: 48.52645343399219, longitude: 7.742335796356202 },
+      { latitude: 48.53102912493336, longitude: 7.746648788452149 },
+      { latitude: 48.53506448436637, longitude: 7.742335796356202 },
+      { latitude: 48.530105493919145, longitude: 7.735276222229005 },
+    ],
+    unauthorizedZone: [
+      [
+        { latitude: 48.53128489669709, longitude: 7.735104560852052 },
+        { latitude: 48.52442123990932, longitude: 7.73714303970337 },
+        { latitude: 48.5252028626682, longitude: 7.73115634918213 },
+        { latitude: 48.53151224829131, longitude: 7.726864814758302 },
+        { latitude: 48.533217352709855, longitude: 7.7295899391174325 },
+      ],
+    ],
+    mechants: [
+      {
+        name: "mechant1",
+        latitude: 48.52945183717502,
+        longitude: 7.739696502685548,
       },
-      body: JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: modeJeu,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu.map((zone) => ({
-          latitude: zone.lat,
-          longitude: zone.lng,
-        })),
-        unauthorizedZone: zonesInterdites.map((zone) =>
-          zone.map((pts) => ({ latitude: pts.lat, longitude: pts.lng }))
-        ),
-        mechants: mechants.map((mechant) => ({
-          latitude: mechant.lat,
-          longitude: mechant.lng,
-        })),
-        items: items.map((item) => ({
-          ...item,
-          latitude: item.coordonnees.lat,
-          longitude: item.coordonnees.lng,
-        })),
-        private: true, //A CHANGER
-        idCreator: 3, //
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        const id = json.gameTemplate.id;
-        launchGame(id);
-      });
-
-    console.log(
-      JSON.stringify({
-        name: "Sprint 1", //A CHANGER
-        modeDeJeu: modeJeu,
-        limitTime: 600, //A CHANGER
-        teams: listeEquipe,
-        authorizedZone: zoneJeu,
-        unauthorizedZone: zonesInterdites,
-        mechants: mechants,
-        items: items,
-        private: true, //A CHANGER
-        idCreator: 3,
-      })
-    );
-
-    setPartieLancee(true);
-  }
-
-  async function launchGame(id) {
-    fetch("https://scoobyhunt.fr/game/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+      {
+        name: "mechant1",
+        latitude: 48.53270582741343,
+        longitude: 7.74263620376587,
       },
-      body: JSON.stringify({
-        id: id,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-      })
-      .then((json) => {
-        console.log(json);
-      });
-  }
-
-  const test = () => {
-    if (aa == 0) {
-      ajouterJoueur([48.530437, 7.735647777777776]);
-      ajouterJoueur([48.531437, 7.735]);
-      setAa(1);
-    } else {
-      deplacerJoueur(0, [
-        Math.random() * (48.54 - 48.53) + 48.53,
-        Math.random() * (7.74 - 7.73) + 7.73,
-      ]);
-    }
+      {
+        name: "mechant2",
+        latitude: 48.52892606367095,
+        longitude: 7.733538150787354,
+      },
+    ],
+    items: [
+      {
+        name: "lunettes",
+        latitude: 48.527576079671896,
+        longitude: 7.739160060882569,
+      },
+      {
+        name: "ghost",
+        latitude: 48.5317822269836,
+        longitude: 7.740082740783692,
+      },
+    ],
+    private: true,
+    idCreator: "1",
   };
-
-  return status == null ? (
-    <>
-      <MapContainer center={[latitude, longitude]} zoom={16}>
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  return (
+    <MapContainer center={[48.530437, 7.735647777777776]} zoom={16}>
+      <TileLayer
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Polygon
+        pathOptions={{ color: "#6b2b94" }}
+        positions={jsonTemplate.authorizedZone.map((point) => [
+          point.latitude,
+          point.longitude,
+        ])}
+      />
+      {jsonTemplate.unauthorizedZone.map((zone) => (
+        <Polygon
+          pathOptions={{ color: "#ee9158" }}
+          positions={zone.map((point) => [point.latitude, point.longitude])}
         />
-        <FeatureGroup>
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
-                icon: mechant1Icon,
-              },
-              polygon: true,
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-            onCreated={(e) => onCreated(e)}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
-                icon: loupeIcon,
-              },
-              polygon: {
-                shapeOptions: {
-                  guidelineDistance: 10,
-                  color: "red",
-                  weight: 3,
-                },
-              },
-            }}
-          />
-        </FeatureGroup>
+      ))}
+      {jsonTemplate.mechants.map((mechant, id) => {
+        console.log(mechant);
+        let mechantItem = "";
+        if(mechant.name == "mechant1")
+         {
+          mechantItem = mechant1Icon;
+         }
+         else {
+          mechantItem = mechant2Icon;
+         }
+        return (
+          <Marker
+            key={id}
+            position={[mechant.latitude, mechant.longitude]}
+            icon={mechantItem}
+          ></Marker>
+        );
+      })}
 
-        {joueurs.map((joueur, id) => {
-          return (
-            <Marker key={id} position={joueur.coordonnees} icon={playerIcon}>
-              <Popup>ID Joueur : {joueur.id}</Popup>
-            </Marker>
-          );
-        })}
+      {jsonTemplate.items.map((item, id) => {
+        console.log(item);
+        let iconItem = "";
+        if(item.name === 'ghost')
+         {
+          iconItem = ghostIcon;
+         }
+         else if(item.name === 'lunettes')
+         {
+          iconItem = lunettesIcon;
+         }
+         else if(item.name === 'sac')
+         {
+          iconItem = sacIcon;
+         }
+         else
+         {
+          iconItem = loupeIcon;
+         }
+        return (
+          
+          <Marker
+            key={id}
+            position={[item.latitude, item.longitude]}
+            icon={iconItem}
+          ></Marker>
+        );
+      })}
+      {joueurs.map((joueur, id) => {
+        console.log(joueur);
         
-      </MapContainer>
-    </>
-  ) : (
-    <h1>{status}</h1>
+        return (
+
+          <Marker key={id} position={joueur.coordonnees} icon={playerIcon}>
+            <Popup>Joueur : {joueur.pseudo}</Popup>
+          </Marker>
+        );
+      })}
+    </MapContainer>
   );
 }
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
