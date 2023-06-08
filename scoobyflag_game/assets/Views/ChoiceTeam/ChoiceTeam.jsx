@@ -1,9 +1,6 @@
 import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
-import style from "./ChoiceTeam.module.scss";
-import useUrl from "../../Constantes/Hooks/useUrl";
-import useServer from "../../Constantes/Hooks/useServer";
 import Loader from "../../Components/Loader";
 
 function ChoiceTeam() {
@@ -20,8 +17,18 @@ function ChoiceTeam() {
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
-  }, []);
 
+      
+      
+  }, []);
+ useEffect(()=> {
+  teams.map(
+    (t)=> {
+      {!t.id ? setjoueursConnectes(t.players) : ""}
+    }
+  )
+  
+ })
   const onMessageListen = useCallback(
     (user) => {
       if (!user.team) {
@@ -150,7 +157,7 @@ function ChoiceTeam() {
 
       <ChoixEquipe
         nomPartie={nomPartie}
-        nomsEquipe={teams}
+        teams={teams}
         selected={selected}
         setSelected={setSelected}
         joueursConnectes={joueursConnectes}
@@ -163,14 +170,14 @@ function ChoiceTeam() {
 
 const ChoixEquipe = ({
   nomPartie,
-  nomsEquipe,
+  teams,
   selected,
   setSelected,
   joueursConnectes,
   setjoueursConnectes,
   setNomsEquipe,
 }) => {
-  useEffect(() => {}, [joueursConnectes, nomsEquipe]);
+  useEffect(() => {}, [joueursConnectes, teams]);
 
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
@@ -227,9 +234,10 @@ const ChoixEquipe = ({
       </span>
       <div style={{ height: "83%", width: "100%", marginBottom: 20 }}>
         <div className="listeEquipe">
-          {nomsEquipe.map((noms) => {
+          {teams.map((noms) => {
             console.log(noms);
-            return (
+       
+            return noms.id ? (
               <div className="equipe" key={noms.id}>
                 <p className="titreEquipe">{noms.name}</p>
                 {selected ? (
@@ -280,8 +288,7 @@ const ChoixEquipe = ({
                     </div>
                   )}
                 </div>
-              </div>
-            );
+              </div>) : (<></>);
           })}
         </div>
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
