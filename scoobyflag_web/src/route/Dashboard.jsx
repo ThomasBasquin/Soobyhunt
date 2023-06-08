@@ -3,8 +3,10 @@ import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
+import Loader from "../components/Loader";
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [indexSelected, setIndexSelected] = useState(-1);
@@ -23,6 +25,7 @@ export default function Dashboard() {
         }
       })
       .then((json) => {
+        setIsLoading(false);
         setTemplates(json.filter(a => a.isActive == 1));
       });
   }, []);
@@ -113,7 +116,7 @@ export default function Dashboard() {
           <div className="titre-zone">Liste de mes configurations</div>
 
           <div className="liste-config">
-            {templates.map((template, index) => {
+            {isLoading ? <Loader /> : templates.length == 0 ? <div className="texte-config">Aucune configuration</div> : templates.map((template, index) => {
               return (
                 <ItemConfig
                   config={template}

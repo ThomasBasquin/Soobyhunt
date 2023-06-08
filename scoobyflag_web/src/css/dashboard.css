@@ -89,6 +89,14 @@
     border: 2px solid #555555;
 }
 
+.texte-config {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 40px;
+}
+
 .detail-config {
     height: 70%;
     width: 90%;
