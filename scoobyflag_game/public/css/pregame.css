@@ -39,7 +39,7 @@
     justify-content: space-around;
     flex-direction: row;
     margin-top: 3%;
-    height: 90%;
+    height: 86%;
 }
 
 .equipe {
@@ -93,6 +93,13 @@
     border-radius: 15px;
     margin-right: 0px;
     font-size: 30px;
+}
+
+.lancerPartie {
+    cursor: pointer;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .rejoindreEquipe {

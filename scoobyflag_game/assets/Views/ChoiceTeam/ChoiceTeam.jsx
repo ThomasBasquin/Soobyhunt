@@ -179,28 +179,52 @@ const ChoixEquipe = ({
     console.log(joueursConnectes);
     console.log();
 
-    fetch("http://127.0.0.1:8000/user/"+selected+"/team/"+id,
-{
-    method: "PUT",
-  
-})
-  setjoueursConnectes(
-  joueursConnectes.filter((person) => person.id !== selected)
-  );
+    fetch("http://127.0.0.1:8000/user/" + selected + "/team/" + id, {
+      method: "PUT",
+    });
+    setjoueursConnectes(
+      joueursConnectes.filter((person) => person.id !== selected)
+    );
     setSelected(null);
   };
 
   return (
     <div className="boxBlanche">
-      <h1
+      <span
         style={{
-          textAlign: "center",
-          textDecoration: "underline",
-          fontSize: 40,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
         }}
       >
-        Partie de {nomPartie}
-      </h1>
+        <h1
+          style={{
+            textAlign: "center",
+            textDecoration: "underline",
+            fontSize: 40,
+          }}
+        >
+          Partie de {nomPartie}
+        </h1>
+        <div
+          style={{
+            background: "#6b2b94",
+            position: "fixed",
+            right: 70,
+            top: 60,
+            padding: 10,
+            fontSize: 30,
+            color: "white",
+            marginTop : 10,
+            
+          }}
+          className="lancerPartie"
+
+          onClick={()=> document.location.href="/game"}
+        >
+          Lancer la partie
+        </div>
+      </span>
       <div style={{ height: "83%", width: "100%", marginBottom: 20 }}>
         <div className="listeEquipe">
           {nomsEquipe.map((noms) => {
@@ -235,17 +259,20 @@ const ChoixEquipe = ({
                               display: "flex",
                               justifyContent: "space-between",
                               marginBottom: 10,
-                              marginLeft :10,
+                              marginLeft: 10,
                               color: "white",
-                              textAlign : 'center',
-                              fontSize : 20, 
-                              borderRadius : 15
+                              textAlign: "center",
+                              fontSize: 20,
+                              borderRadius: 15,
                             }}
                           >
                             <p>{player.pseudo}</p>
-                            <span style={{marginRight : 5}}>
-                              {player.isReady ? <p style={{color :'green'}}>Prêt</p>: <p style={{color :'red'}}>Pas prêt</p>}
-                            
+                            <span style={{ marginRight: 5 }}>
+                              {player.isReady ? (
+                                <p style={{ color: "green" }}>Prêt</p>
+                              ) : (
+                                <p style={{ color: "red" }}>Pas prêt</p>
+                              )}
                             </span>
                           </div>
                         );
@@ -260,7 +287,7 @@ const ChoixEquipe = ({
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
           Rejoindre :{" "}
           <span style={{ fontSize: 50, color: "red" }}>
-            {window.location.href}
+            {window.location.href.substring(0, window.location.href.length - 1)}
           </span>
         </h1>
       </div>
