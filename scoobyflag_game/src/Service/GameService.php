@@ -15,6 +15,8 @@ use App\Entity\User;
 use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use App\Repository\TeamRepository;
+use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class GameService
@@ -34,8 +36,25 @@ class GameService
         $this->teamRepository = $teamRepository;
     }
 
+    public function importGame()
+    {
+
+        $dotenv = new Dotenv();
+        $dotenv->load(__DIR__ . '/../../.env');
+    
+        $id = $_ENV['ID'];
+        $url = 'https://scoobyhunt.fr/game/gameTemplate/' . $id;
+
+        $client = HttpClient::create();
+        $response = $client->request('GET', $url);
+    
+        $content = $response->toArray();
+    
+        $this->importGameSetting($content['gameTemplate']['json']);
+    }
     public function importGameSetting($data)
     {
+        dump($data);
         $game = new Game();
         $game->setLimitTime($data['limitTime']);
         $game->setName($data['name']);
@@ -96,6 +115,7 @@ class GameService
             $this->em->persist($newTeam);
         }
         $this->em->flush();
+        dump($game);
         return $game;
     }
 
@@ -112,7 +132,7 @@ class GameService
             $playersScore = [];
             foreach ($players as $player) {
                 $nbObjectives += count($player->getObjectives());
-                $playersScore[] = ['pseudo' => $player->getPseudo(),'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
+                $playersScore[] = ['pseudo' => $player->getPseudo(), 'id' => $player->getId(), 'score' => count($player->getObjectives()) ?? 0];
             }
             $data[] = [
                 'team' => $team->getName(),

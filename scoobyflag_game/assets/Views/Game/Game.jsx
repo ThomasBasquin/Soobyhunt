@@ -19,8 +19,6 @@ import ghost from "../../assets/ghost.png";
 import lunettes from "../../assets/lunettes.png";
 import sac from "../../assets/sac.png";
 
-import style from "./Game.module.scss";
-
 export default function Game() {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);

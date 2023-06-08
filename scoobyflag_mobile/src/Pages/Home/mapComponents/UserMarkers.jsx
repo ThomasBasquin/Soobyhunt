@@ -1,8 +1,8 @@
-import React from "react";
+import React, { memo } from "react";
 import {Marker as MarkerComponent} from 'react-native-maps';
 import {Image, View} from 'react-native';
 
-function UserMarker({user}){
+const UserMarker=  memo(function UserMarker({user}){
   return (
         <MarkerComponent
           tappable={false}
@@ -14,6 +14,6 @@ function UserMarker({user}){
           </MarkerComponent>
 
     )
-}
+});
 
 export default UserMarker;

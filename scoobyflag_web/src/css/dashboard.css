@@ -128,7 +128,7 @@
     font-size: 34px;
     font-weight: bold;
     width: 100%;
-    margin: 20px;
+    margin: 20px 20px 0 20px;
 }
 
 .map-config {
@@ -165,6 +165,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    cursor: pointer;
 }
 
 .item-selected {
@@ -176,16 +177,12 @@
     margin: 15px;
 }
 
-.div-btn-config {
-    display: flex;
-}
-
 .btn-edit-config {
     height: 70px;
     width: 70px;
     background-color: #EE9158;
     border-radius: 20px;
-    margin: 10px;
+    margin: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
