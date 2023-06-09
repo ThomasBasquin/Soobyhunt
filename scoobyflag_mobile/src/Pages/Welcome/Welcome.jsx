@@ -14,12 +14,14 @@ function Welcome({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [pseudo, setPseudo] = useState('');
   const [codeParty, setCodeParty] = useState(null);
-  const [,setServer] = useServer();
+  const [, setServer] = useServer();
 
   function getConfig() {
     setIsLoading(true);
-    const gameServer = "http://207.154.194.125:8" + codeParty.trim().substring(0,3);
-    const mercureServer = "http://207.154.194.125:9" + codeParty.trim().substring(3,6);
+    const gameServer =
+      'http://207.154.194.125:8' + codeParty.trim().substring(0, 3);
+    const mercureServer =
+      'http://207.154.194.125:9' + codeParty.trim().substring(3, 6);
 
     console.log(gameServer);
     fetch(gameServer + '/user/join', {
@@ -31,9 +33,10 @@ function Welcome({navigation}) {
     })
       .then(res => res.json())
       .then(user => {
-        setServer({idUser: user.id, pseudo, gameServer, mercureServer });
+        setServer({idUser: user.id, pseudo, gameServer, mercureServer});
         navigation.navigate('Team');
       })
+      .catch(err => console.log(err))
       .finally(() => setIsLoading(false));
   }
 
