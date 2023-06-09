@@ -24,6 +24,11 @@ class GameController extends AbstractController
         $data = $request->toArray();
         return $this->json($this->gameService->importGameSetting($data['gameTemplate']['json']), 200, [], ["groups" => ["Game:read", "Item:read", "Team:read", "Objective:read"]]);
     }
+    #[Route('/game/stat', name: 'get_stat', methods: ['GET'])]
+    public function stat()
+    {
+        return $this->json($this->gameService->stat());
+    }
 
     #[Route('/game/stat', name: 'get_stat', methods: ['GET'])]
     public function stat()
@@ -43,4 +48,11 @@ class GameController extends AbstractController
     {
         return $this->json($game, 200, [], ['groups' => ["Game:read", 'Item:read', 'Team:read', 'Objective:read']]);
     }
+
+    #[Route('/game/end', name: 'game_end', methods: ['GET'])]
+    public function end(Game $game)
+    {
+        return $this->json($game, 200, [], ['groups' => ["Game:read", 'Item:read', 'Team:read', 'Objective:read']]);
+    }
+
 }
