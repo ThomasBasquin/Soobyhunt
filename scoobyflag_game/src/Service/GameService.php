@@ -56,7 +56,6 @@ class GameService
     }
     public function importGameSetting($data)
     {
-        dump('si tu vois pas ce message je t\'encule thomas');
         $game = new Game();
         $game->setLimitTime($data['limitTime']);
         $game->setName($data['name']);
@@ -117,7 +116,6 @@ class GameService
             $this->em->persist($newTeam);
         }
         $this->em->flush();
-        dump($game->getId());
         return $game;
     }
 
