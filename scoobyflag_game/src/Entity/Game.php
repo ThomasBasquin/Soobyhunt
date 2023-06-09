@@ -19,19 +19,19 @@ class Game
     private ?int $id = null;
     
     #[ORM\Column(length: 255)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read"])]
     private ?string $name = null;
     
     #[ORM\Column(length: 255)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read"])]
     private ?string $mode = null;
     
     #[ORM\Column(nullable:true)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read"])]
     private ?\DateTimeImmutable $startAt = null;
     
     #[ORM\Column]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read"])]
     private ?int $limitTime = null;
     
     // #[ORM\OneToOne(cascade: ['persist', 'remove'])]

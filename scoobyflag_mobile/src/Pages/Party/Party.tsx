@@ -5,13 +5,27 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import COLORS from '../../Constantes/colors';
 import useServer from '../../Constantes/Hooks/useServer';
-import {useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
+import useUrl from '../../Constantes/Hooks/useUrl';
 
 function Party({route, navigation}: any) {
-  const [server, setServer] = useServer();
+  const [, setServer] = useServer();
+  const [isLoading, setIsLoading] = useState(true);
+  const {GAME} = useUrl();
+
+  useEffect(()=>{
+    fetch(GAME.getInfo)
+    .then(res => res.json())
+    .then(info => {
+      console.log(info);
+      
+    })
+    .finally(() => setIsLoading(false));
+  });
 
   const teams = useMemo(
     () => [
@@ -58,6 +72,9 @@ function Party({route, navigation}: any) {
     ],
     [],
   );
+
+  if (isLoading)
+    return <ActivityIndicator size="large" color={COLORS.secondary} />;
 
   return (
     <ScrollView style={{backgroundColor: COLORS.secondary}}>
@@ -138,25 +155,6 @@ function Party({route, navigation}: any) {
                 color: COLORS.primary,
               }}>
               4
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              borderBottomColor: '#e0e0e0',
-              borderBottomWidth: 1,
-              padding: 5,
-            }}>
-            <Text>Maître du jeu :</Text>
-            <Text
-              style={{
-                flex: 1,
-                textAlign: 'right',
-                fontWeight: '700',
-                color: COLORS.primary,
-              }}>
-              Roméo Probstate
             </Text>
           </View>
           <View

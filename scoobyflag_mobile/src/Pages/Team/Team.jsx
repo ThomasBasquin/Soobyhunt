@@ -13,6 +13,7 @@ function Team({navigation}) {
   const [teams, setTeams] = useState([]);
   const [anyTeamPlayers, setAnyTeamPlayers] = useState([]);
   const {GAME} = useUrl();
+  const [{mercureServer}] = useServer();
 
   useEffect(() => {
     fetch(GAME.team)
@@ -92,7 +93,7 @@ function Team({navigation}) {
     );
 
     const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+      mercureServer+'/.well-known/mercure'.concat('?topic=', topic),
     );
 
     eventSource.addEventListener('open', event => {
