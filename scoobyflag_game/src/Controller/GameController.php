@@ -30,13 +30,7 @@ class GameController extends AbstractController
         return $this->json($this->gameService->stat());
     }
 
-    #[Route('/game/stat', name: 'get_stat', methods: ['GET'])]
-    public function stat()
-    {
-        return $this->json($this->gameService->stat());
-    }
-
-    #[Route('/game/info', name: 'get_stat', methods: ['GET'])]
+    #[Route('/game/info', name: 'get-info', methods: ['GET'])]
     public function info(GameService $gameService)
     {
         $game = $gameService->find(1);
