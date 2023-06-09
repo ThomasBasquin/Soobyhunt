@@ -9,7 +9,7 @@ function ChoiceTeam() {
   const [teams, setTeams] = useState([]);
   const [joueursConnectes, setjoueursConnectes] = useState([]);
   const [selected, setSelected] = useState(null);
-
+  
   const [nomPartie, setnomPartie] = useState("Hudog");
 
   useEffect(() => {
@@ -240,7 +240,7 @@ const ChoixEquipe = ({
             return noms.id ? (
               <div className="equipe" key={noms.id}>
                 <p className="titreEquipe">{noms.name}</p>
-                {selected ? (
+                {selected && noms.players.length < noms.nbPlayers ? (
                   <div
                     className="buttonRejoindre"
                     onClick={() => placerJoueur(noms.id)}

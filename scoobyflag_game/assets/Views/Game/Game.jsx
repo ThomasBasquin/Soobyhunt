@@ -26,7 +26,6 @@ export default function Game() {
   const [menuConfig, setMenuConfig] = useState(false);
   const [clickedSupprimer, setClickedSupprimer] = useState(false);
   const [partieLancee, setPartieLancee] = useState(false);
-
   const [zoneJeu, setZoneJeu] = useState([]);
   const [zonesInterdites, setZonesInterdites] = useState([]);
   const [mechants, setMechants] = useState([]);
@@ -49,13 +48,13 @@ export default function Game() {
       console.log(data);
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
-      if(user.latitude || user.longitude)
-      {
-      if (!alreadyExist) {
-        ajouterJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
-      } else {
-        deplacerJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
-      }}
+      if (user.latitude || user.longitude) {
+        if (!alreadyExist) {
+          ajouterJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
+        } else {
+          deplacerJoueur(user.id, user.pseudo, [user.latitude, user.longitude]);
+        }
+      }
 
       // else if (data.includes("deplacer")) {
       //     deplacerJoueur(0, [Math.random() * (48.54 - 48.53) + 48.53, Math.random() * (7.74 - 7.73) + 7.73]);
@@ -105,7 +104,7 @@ export default function Game() {
     iconUrl: ghost,
     iconSize: [50, 50],
     iconAnchor: [25, 25],
-  });;
+  });
 
   const ajouterJoueur = (id, pseudo, coordonnees) => {
     //setJoueurs([...joueurs, { id: joueurs.length, coordonnees: coordonnees }])
@@ -191,8 +190,36 @@ export default function Game() {
     private: true,
     idCreator: "1",
   };
+
+  const InfosPartie = ({ time, setTime }) => {
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setTime(time => time - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }, [time]);
+    return (
+      <div
+        style={{
+          zIndex: "1000",
+          position: "absolute",
+          backgroundColor: "#ee9158",
+          marginLeft : "45%",
+          marginRight : "50%",
+          padding : 30,
+          fontSize : 30
+        }}
+      >
+        {time}
+      </div>
+    );
+  };
+
+  const [time, setTime] = useState(jsonTemplate.limitTime);
   return (
     <MapContainer center={[48.530437, 7.735647777777776]} zoom={16}>
+      <InfosPartie time={time} setTime={setTime} />
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -213,13 +240,11 @@ export default function Game() {
       {jsonTemplate.mechants.map((mechant, id) => {
         console.log(mechant);
         let mechantItem = "";
-        if(mechant.name == "mechant1")
-         {
+        if (mechant.name == "mechant1") {
           mechantItem = mechant1Icon;
-         }
-         else {
+        } else {
           mechantItem = mechant2Icon;
-         }
+        }
         return (
           <Marker
             key={id}
@@ -232,24 +257,16 @@ export default function Game() {
       {jsonTemplate.items.map((item, id) => {
         console.log(item);
         let iconItem = "";
-        if(item.name === 'ghost')
-         {
+        if (item.name === "ghost") {
           iconItem = ghostIcon;
-         }
-         else if(item.name === 'lunettes')
-         {
+        } else if (item.name === "lunettes") {
           iconItem = lunettesIcon;
-         }
-         else if(item.name === 'sac')
-         {
+        } else if (item.name === "sac") {
           iconItem = sacIcon;
-         }
-         else
-         {
+        } else {
           iconItem = loupeIcon;
-         }
+        }
         return (
-          
           <Marker
             key={id}
             position={[item.latitude, item.longitude]}
@@ -259,9 +276,8 @@ export default function Game() {
       })}
       {joueurs.map((joueur, id) => {
         console.log(joueur);
-        
-        return (
 
+        return (
           <Marker key={id} position={joueur.coordonnees} icon={playerIcon}>
             <Popup>Joueur : {joueur.pseudo}</Popup>
           </Marker>
