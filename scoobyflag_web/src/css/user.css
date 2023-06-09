@@ -72,9 +72,20 @@
   cursor: pointer;
 }
 
-.custom-button {
+.btn-deconnect {
   font-size: 1.3rem !important;
-  background-color: #ee9158 !important;
   padding: 0.9rem 1.4rem !important;
   margin: 0 2rem 0 4rem !important;
+
+  background-color: #ee9158;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  border: #6B2B94 solid 1px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.btn-deconnect:hover {
+  color: #6B2B94;
 }

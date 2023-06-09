@@ -24,6 +24,10 @@ import ItemEquipe from "../components/ItemEquipe";
 export default function Carte() {
   const navigate = useNavigate();
 
+  const [nomConfig, setNomConfig] = useState("");
+  const [heures, setHeures] = useState(0);
+  const [minutes, setMinutes] = useState(5);
+  const [dureeConfig, setDureeConfig] = useState(0);
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
@@ -157,7 +161,6 @@ export default function Carte() {
       setZoneJeu([{ id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type == "zoneInterdite") {
-      console.log("ouais");
       setZonesInterdites(oldZones => [...oldZones, { id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type.includes("mechant")) {
@@ -166,29 +169,6 @@ export default function Carte() {
     else {
       setItems(oldItems => [...oldItems, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
     }
-
-    /*var ok = true;
-    var tabZone = [];
- 
-    for (var i = 0; i < zonesInterdites.length; i++) {
-      tabZone = [];
-      for (var j = 0; j < zonesInterdites[i].length; j++) {
-        tabZone.push(Object.values(zonesInterdites[i][j]));
-      }
-      if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-        ok = false;
-      }
-    }
- 
-    tabZone = [];
-    for (var k = 0; k < zoneJeu[0].length; k++) {
-      tabZone.push(Object.values(zoneJeu[0][k]));
-    }
-    if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-      ok = false;
-    }
- 
-    console.log(ok);*/
   }
 
   const onDeleted = (e) => {
@@ -309,11 +289,74 @@ export default function Carte() {
     navigate("/dashboard");
   }
 
+  function openSave() {
+    var configOk = true;
+    var message = "";
+
+    //Verif des equipes (nom,...)
+    equipes.forEach(equipe => {
+      if (equipe.nom == "") {
+        configOk = false;
+        message = "Equipe";
+      }
+    })
+
+    //Zone de jeu présente ?
+    if (zoneJeu.length < 1) {
+      configOk = false;
+      message = "Zone de jeu";
+    }
+    //Au moins deux mechants ?
+    if (mechants.length < 2) {
+      configOk = false;
+      message = "Mechants";
+    }
+
+    //Points dans la zone
+    /*var ok = true;
+    var tabZone = [];
+
+    if (configOk) {
+      for (var i = 0; i < zonesInterdites.length; i++) {
+        tabZone = [];
+        for (var j = 0; j < zonesInterdites[i].length; j++) {
+          tabZone.push(Object.values(zonesInterdites[i][j]));
+        }
+        mechants.forEach(mechant => {
+          if (pointInPolygon([mechant.lat, mechant.lng], tabZone)) {
+            ok = false;
+          }
+        })
+      }
+      tabZone = [];
+      for (var k = 0; k < zoneJeu[0].length; k++) {
+        tabZone.push(Object.values(zoneJeu[0][k]));
+      }
+      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+        ok = false;
+      }
+
+      console.log(ok);
+    }*/
+
+
+    if (configOk) {
+      document.querySelector(".fondSombre").style.display = "flex";
+    }
+    else {
+      alert(message)
+    }
+  }
+
+  function closeSave() {
+    document.querySelector(".fondSombre").style.display = "none";
+  }
+
   async function saveConfig() {
     var bodyConfig = JSON.stringify({
-      name: "Sprint 1", //A CHANGER
+      name: nomConfig,
       modeDeJeu: "Time",
-      limitTime: 600, //A CHANGER
+      limitTime: dureeConfig,
       teams: equipes,
       authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
       unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
@@ -323,52 +366,44 @@ export default function Carte() {
       idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
     });
 
-    var configOk = true;
+    console.log(bodyConfig);
 
-    //Verif points dans la zone, equipes, ...
-
-    //Pop up pour le nom de la config ?
-
-    if (zoneJeu.length < 1) {
-      configOk == false;
+    if (configId == null) {
+      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: bodyConfig,
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((json) => {
+          console.log(json);
+          setConfigId(json.gameTemplate.id);
+          document.querySelector(".fondSombre").style.display = "none";
+        });
     }
-
-    if (configOk) {
-      if (configId == null) {
-        const response = await fetch("https://scoobyhunt.fr/game/create/template", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: bodyConfig,
+    else {
+      const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: bodyConfig,
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
         })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then((json) => {
-            console.log(json);
-            setConfigId(json.gameTemplate.id)
-          });
-      }
-      else {
-        const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: bodyConfig,
-        })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then((json) => {
-            console.log(json);
-          });
-      }
+        .then((json) => {
+          console.log(json);
+          document.querySelector(".fondSombre").style.display = "none";
+        });
     }
   }
 
@@ -653,7 +688,7 @@ export default function Carte() {
           })}
         </div>
       </div>
-      <div className="btnCarte" id="btnSave" onClick={saveConfig}>
+      <div className="btnCarte" id="btnSave" onClick={openSave}>
         Sauvegarder
       </div>
       <div className="btnCarte" id="btnQuit" onClick={quitter}>
@@ -664,6 +699,34 @@ export default function Carte() {
       </div>
       <div className="btnCarte" id="btnAnnuler" onClick={clickCancelEdit}>
         Annuler les modifications
+      </div>
+
+      <div className="fondSombre">
+        <div className="popUp" id="deconnexion">
+          <form onSubmit={saveConfig}>
+            <div>
+              <label htmlFor="nomConfig">Nom de la configuration :</label>
+              <input type="text" id='nomConfig' value={nomConfig} onChange={(e) => setNomConfig(e.target.value)} required />
+            </div>
+            <div>
+              <label htmlFor="dureeConfig">Durée de la partie :</label>
+              <input type="number" id='heures' value={heures} min={0} onChange={(e) => {
+                setHeures(e.target.value)
+                setDureeConfig(minutes * 60 + e.target.value * 3600);
+              }} required />
+              <label htmlFor="heures">H</label>
+              <input type="number" id='minutes' value={minutes} min={0} max={59} onChange={(e) => {
+                setMinutes(e.target.value)
+                setDureeConfig(e.target.value * 60 + heures * 3600);
+              }} required />
+              <label htmlFor="minutes">Min</label>
+            </div>
+            <div>
+              <input type="submit" value={"Sauvegarder"} />
+              <input type="button" value={"Annuler"} onClick={closeSave} />
+            </div>
+          </form>
+        </div>
       </div>
     </>
   ) : (
