@@ -16,8 +16,8 @@ export default function Dashboard() {
     //Recuperer les configs du user
     fetch(
       "https://scoobyhunt.fr/user/" +
-      JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
-      "/getAllTemplate"
+        JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+        "/getAllTemplate"
     )
       .then((res) => {
         if (res.ok) {
@@ -26,7 +26,7 @@ export default function Dashboard() {
       })
       .then((json) => {
         setIsLoading(false);
-        setTemplates(json.filter(a => a.isActive == 1));
+        setTemplates(json.filter((a) => a.isActive == 1));
       });
   }, []);
 
@@ -44,9 +44,12 @@ export default function Dashboard() {
   }
 
   function deleteConfig(idConfig) {
-    const response = fetch("https://scoobyhunt.fr/game/delete/template/" + idConfig, {
-      method: "DELETE"
-    })
+    const response = fetch(
+      "https://scoobyhunt.fr/game/delete/template/" + idConfig,
+      {
+        method: "DELETE",
+      }
+    )
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -56,15 +59,35 @@ export default function Dashboard() {
         console.log(json);
         setSelectedConfig("");
         setIndexSelected(-1);
-        setTemplates(templates.filter(a => a.id !== idConfig));
+        setTemplates(templates.filter((a) => a.id !== idConfig));
       });
   }
 
   function creerPartie() {
+    const createGameOption = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ idTemplate: selectedConfig.id }),
+    };
+
+    let idGame = "";
+    
+    fetch("https://scoobyhunt.fr/game/create", createGameOption)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur lors de la requête.");
+        }
+        return response.json();
+      })
+      .then((json) => {
+        // id de la game qu'on envoie au serveur
+        idGame = json.id;
+      });
+
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ID: selectedConfig.id }),
+      body: JSON.stringify({ ID: idGame ? idGame : '' }),
     };
 
     fetch("http://207.154.194.125:1234/create", requestOptions)
@@ -87,11 +110,11 @@ export default function Dashboard() {
     var totalLat = 0;
     var totalLng = 0;
     var nbPoint = 0;
-    selectedConfig.json.authorizedZone.map(point => {
+    selectedConfig.json.authorizedZone.map((point) => {
       totalLat += point.latitude;
       totalLng += point.longitude;
       nbPoint++;
-    })
+    });
     const map = useMap();
     map.setView([totalLat / nbPoint, totalLng / nbPoint], 14);
     return null;
@@ -101,7 +124,12 @@ export default function Dashboard() {
     <div className="fond-degrade-dashboard">
       <div className="header">
         <div className="header-gauche">
-          <img src="logo.png" alt="" className="logo-header-dashboard" onClick={() => navigate("/")} />
+          <img
+            src="logo.png"
+            alt=""
+            className="logo-header-dashboard"
+            onClick={() => navigate("/")}
+          />
           <div className="titre-header">ScoobyHunt</div>
         </div>
         <img
@@ -116,18 +144,24 @@ export default function Dashboard() {
           <div className="titre-zone">Liste de mes configurations</div>
 
           <div className="liste-config">
-            {isLoading ? <Loader /> : templates.length == 0 ? <div className="texte-config">Aucune configuration</div> : templates.map((template, index) => {
-              return (
-                <ItemConfig
-                  config={template}
-                  key={index}
-                  selectConfig={selectConfig}
-                  index={index}
-                  selected={index == indexSelected}
-                  deleteConfig={deleteConfig}
-                />
-              );
-            })}
+            {isLoading ? (
+              <Loader />
+            ) : templates.length == 0 ? (
+              <div className="texte-config">Aucune configuration</div>
+            ) : (
+              templates.map((template, index) => {
+                return (
+                  <ItemConfig
+                    config={template}
+                    key={index}
+                    selectConfig={selectConfig}
+                    index={index}
+                    selected={index == indexSelected}
+                    deleteConfig={deleteConfig}
+                  />
+                );
+              })
+            )}
           </div>
 
           <div className="dashboard-button" onClick={addConfig}>

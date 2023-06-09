@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Game;
 use App\Entity\GameTemplate;
+use App\Repository\GameRepository;
 use App\Repository\GameTemplateRepository;
 use App\Service\GameService;
 use DateTime;
@@ -21,10 +22,12 @@ class GameController extends AbstractController
 
     private GameService $gameService;
     private GameTemplateRepository $gameTemplateRepository;
-    public function __construct(GameService $gameService,GameTemplateRepository $gameTemplateRepository)
+    private GameRepository $gameRepository;
+    public function __construct(GameService $gameService,GameTemplateRepository $gameTemplateRepository,GameRepository $gameRepository)
     {
         $this->gameService = $gameService;
         $this->gameTemplateRepository = $gameTemplateRepository;
+        $this->gameRepository = $gameRepository;
     }
     #[Route('/create', name: 'create', methods: 'POST')]
     public function createGame(Request $request)
@@ -41,10 +44,19 @@ class GameController extends AbstractController
         return $this->json('Template existe pas mamen');
        
     }
+    #[Route('/{game}', name: 'get', methods: 'get')]
+    public function getGame(Game $game)
+    {
+        dump($game,
+        $this->gameRepository->find(12));
+        $this->gameRepository->find(5);
+        return $this->json($game->getGameTemplate(), 201,[],['groups'=>['Game:read','GameTemplate:read' ]]);
+       
+    }
 
 
     #[Route('/gameTemplate/{gameTemplate}', name: 'get_template', methods: 'GET')]
-    public function get(GameTemplate $gameTemplate)
+    public function getTemplate(GameTemplate $gameTemplate)
     {
         return $this->json(['gameTemplate' => $gameTemplate], 200, [],['groups'=> ['GameTemplate:read', 'User:read']]);
     }

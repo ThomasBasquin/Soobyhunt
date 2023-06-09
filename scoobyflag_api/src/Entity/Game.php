@@ -15,6 +15,7 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Game:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'games')]
