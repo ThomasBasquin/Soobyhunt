@@ -70,8 +70,6 @@ export default function Dashboard() {
       body: JSON.stringify({ idTemplate: selectedConfig.id }),
     };
 
-    let idGame = "";
-    
     fetch("https://scoobyhunt.fr/game/create", createGameOption)
       .then((response) => {
         if (!response.ok) {
@@ -81,13 +79,14 @@ export default function Dashboard() {
       })
       .then((json) => {
         // id de la game qu'on envoie au serveur
-        idGame = json.id;
+        lauchContainer(json.id);
       });
-
+  }
+  function lauchContainer(idGame) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ID: idGame ? idGame : '' }),
+      body: JSON.stringify({ ID: idGame }),
     };
 
     fetch("http://207.154.194.125:1234/create", requestOptions)
