@@ -52,12 +52,11 @@ class GameService
         $response = $client->request('GET', $url);
     
         $content = $response->toArray();
-    
         $this->importGameSetting($content['json']);
     }
     public function importGameSetting($data)
     {
-        dump($data);
+        dump('si tu vois pas ce message je t\'encule thomas');
         $game = new Game();
         $game->setLimitTime($data['limitTime']);
         $game->setName($data['name']);
@@ -118,7 +117,7 @@ class GameService
             $this->em->persist($newTeam);
         }
         $this->em->flush();
-        dump($game);
+        dump($game->getId());
         return $game;
     }
 
