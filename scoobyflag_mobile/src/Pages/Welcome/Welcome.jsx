@@ -23,7 +23,6 @@ function Welcome({navigation}) {
     const mercureServer =
       'http://207.154.194.125:9' + codeParty.trim().substring(3, 6);
 
-    console.log(gameServer);
     fetch(gameServer + '/user/join', {
       method: 'POST',
       headers: {
