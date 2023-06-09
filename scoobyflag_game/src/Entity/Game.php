@@ -15,23 +15,23 @@ class Game
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', 'Game:info'])]
     private ?int $id = null;
     
     #[ORM\Column(length: 255)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read", 'Game:info'])]
     private ?string $name = null;
     
     #[ORM\Column(length: 255)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read", 'Game:info'])]
     private ?string $mode = null;
     
     #[ORM\Column(nullable:true)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read", 'Game:info'])]
     private ?\DateTimeImmutable $startAt = null;
     
     #[ORM\Column]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', "Info:read"])]
     private ?int $limitTime = null;
     
     // #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -46,7 +46,7 @@ class Game
     private Collection $gameLocations;
     
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Objective::class)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', 'Game:info'])]
     private Collection $objectives;
     
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Item::class)]
@@ -54,7 +54,7 @@ class Game
     private Collection $items;
     
     #[ORM\OneToMany(mappedBy: 'game', targetEntity: Team::class)]
-    #[Groups(['Game:read'])]
+    #[Groups(['Game:read', 'Game:info'])]
     private Collection $teams;
 
     public function __construct()

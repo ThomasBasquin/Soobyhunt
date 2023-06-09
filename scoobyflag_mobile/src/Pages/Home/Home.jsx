@@ -2,7 +2,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {useState, useEffect, useCallback} from 'react';
 import {View, Alert, Text, Pressable} from 'react-native';
 import {DateTime} from 'luxon';
-import Map from "./Map";
+import Map from './Map';
 import {
   getEffects,
   reset,
@@ -61,16 +61,14 @@ export default function Home({route, navigation}) {
     isOpen: false,
     item: null,
   });
-  const [{idUser, map, team},setServer] = useServer();
+  const [{idUser, map, team, mercureServer},setServer] = useServer();
 
   useEffect(() => {
     if (!idUser) return;
-    const topic = encodeURIComponent(
-      'https://scoobyflag/user/' + idUser,
-    );
+    const topic = encodeURIComponent('https://scoobyflag/user/' + idUser);
 
     const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+      mercureServer+'/.well-known/mercure'.concat('?topic=', topic),
     );
 
     eventSource.addEventListener('open', event => {
@@ -110,8 +108,8 @@ export default function Home({route, navigation}) {
   }, [idUser]);
 
   useEffect(() => {
-    if(currentPosition)return;
-      const outOfMap = pointInPolygon(currentPosition.coordinate, mapCoordinates);
+    if (currentPosition) return;
+    const outOfMap = pointInPolygon(currentPosition.coordinate, mapCoordinates);
     let inUnauthorizedZone = false;
     unauthorizedZone.forEach(zone => {
       const inZone = pointInPolygon(currentPosition.coordinate, zone);
@@ -222,29 +220,29 @@ export default function Home({route, navigation}) {
   }
 
   const renderUserMarkers = useCallback(() => {
-    return userMarkers.filter(user => user.id!==idUser).map((user, i) => <UserMarker key={i} user={user} team={team} />);
+    return userMarkers
+      .filter(user => user.id !== idUser)
+      .map((user, i) => <UserMarker key={i} user={user} team={team} />);
   }, [userMarkers]);
 
   const renderVilainMarkers = useCallback(() => {
-    return vilainMarkers
-      .map((vilain, i) => (
-        <VilainMarker
-          vilain={vilain}
-          openModal={vilain => setStateVilainModal({isOpen: true, vilain})}
-          key={i}
-        />
-      ));
+    return vilainMarkers.map((vilain, i) => (
+      <VilainMarker
+        vilain={vilain}
+        openModal={vilain => setStateVilainModal({isOpen: true, vilain})}
+        key={i}
+      />
+    ));
   }, [vilainMarkers, currentPosition]);
 
   const renderItemMarkers = useCallback(() => {
-    return itemMarkers
-      .map((item, i) => (
-        <ItemMarker
-          item={item}
-          openModal={item => setStateItemModal({isOpen: true, item})}
-          key={i}
-        />
-      ));
+    return itemMarkers.map((item, i) => (
+      <ItemMarker
+        item={item}
+        openModal={item => setStateItemModal({isOpen: true, item})}
+        key={i}
+      />
+    ));
   }, [itemMarkers, currentPosition]);
 
   const visibilityZone = useCallback(() => {
@@ -359,7 +357,16 @@ export default function Home({route, navigation}) {
       {EffectComponent()}
       {ItemComponent()}
       {notifComponent()}
-      <Map region={region} onMapReady={() => setIsMountedMap(true)} updateUserLocation={updateUserLocation} renderUnauthorizedZone={renderUnauthorizedZone} gameZone={gameZone} renderVilainMarkers={renderVilainMarkers} renderItemMarkers={renderItemMarkers} renderUserMarkers={renderUserMarkers} />
+      <Map
+        region={region}
+        onMapReady={() => setIsMountedMap(true)}
+        updateUserLocation={updateUserLocation}
+        renderUnauthorizedZone={renderUnauthorizedZone}
+        gameZone={gameZone}
+        renderVilainMarkers={renderVilainMarkers}
+        renderItemMarkers={renderItemMarkers}
+        renderUserMarkers={renderUserMarkers}
+      />
     </View>
   ) : null;
 }
