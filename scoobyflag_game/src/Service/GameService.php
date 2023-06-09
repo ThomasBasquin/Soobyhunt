@@ -12,6 +12,7 @@ use App\Entity\Team;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use App\Entity\User;
+use App\Repository\GameRepository;
 use App\Repository\ItemRepository;
 use App\Repository\ObjectiveRepository;
 use App\Repository\TeamRepository;
@@ -26,14 +27,16 @@ class GameService
     private ItemRepository $itemRepository;
     private ObjectiveRepository $objectiveRepository;
     private TeamRepository $teamRepository;
+    private GameRepository $gameRepository;
 
-    public function __construct(TeamRepository $teamRepository, ObjectiveRepository $objectiveRepository, ItemRepository $itemRepository, EntityManagerInterface $em, UserRepository $userRepository)
+    public function __construct(TeamRepository $teamRepository, ObjectiveRepository $objectiveRepository, ItemRepository $itemRepository, EntityManagerInterface $em, UserRepository $userRepository, GameRepository $gameRepository)
     {
         $this->em = $em;
         $this->userRepository = $userRepository;
         $this->itemRepository = $itemRepository;
         $this->objectiveRepository = $objectiveRepository;
         $this->teamRepository = $teamRepository;
+        $this->gameRepository = $gameRepository;
     }
 
     public function importGame()
@@ -43,18 +46,16 @@ class GameService
         $dotenv->load(__DIR__ . '/../../.env');
     
         $id = $_ENV['ID'];
-        $url = 'https://scoobyhunt.fr/game/gameTemplate/' . $id;
+        $url = 'https://scoobyhunt.fr/game/' . $id;
 
         $client = HttpClient::create();
         $response = $client->request('GET', $url);
     
         $content = $response->toArray();
-    
-        $this->importGameSetting($content['gameTemplate']['json']);
+        $this->importGameSetting($content['json']);
     }
     public function importGameSetting($data)
     {
-        dump($data);
         $game = new Game();
         $game->setLimitTime($data['limitTime']);
         $game->setName($data['name']);
@@ -115,8 +116,11 @@ class GameService
             $this->em->persist($newTeam);
         }
         $this->em->flush();
-        dump($game);
         return $game;
+    }
+
+    public function find($id, $lockMode = null, $lockVersion = null){
+        return $this->gameRepository->find($id, $lockMode, $lockVersion);
     }
 
     public function stat()

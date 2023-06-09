@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Game;
 use App\Entity\GameTemplate;
+use App\Repository\GameRepository;
+use App\Repository\GameTemplateRepository;
 use App\Service\GameService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,49 +21,42 @@ class GameController extends AbstractController
 {
 
     private GameService $gameService;
-    public function __construct(GameService $gameService)
+    private GameTemplateRepository $gameTemplateRepository;
+    private GameRepository $gameRepository;
+    public function __construct(GameService $gameService,GameTemplateRepository $gameTemplateRepository,GameRepository $gameRepository)
     {
         $this->gameService = $gameService;
+        $this->gameTemplateRepository = $gameTemplateRepository;
+        $this->gameRepository = $gameRepository;
     }
     #[Route('/create', name: 'create', methods: 'POST')]
     public function createGame(Request $request)
     {
-        $response = new JsonResponse();
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-
-        $body = $request->getContent();
-        $data = json_decode($body, true);
-        $id = $data['id'];
-        $containerName = "game-server-$id";
-
-        // Générer un port aléatoire
-        $port = rand(1024, 9999);
-        $gameServerPort = 1650;
-
-        // Exécuter la commande Docker avec le port aléatoire
-        $process = new Process(['docker', 'run', '-d', '-p', "$port:$gameServerPort", '-e', "id=$id", '--name', $containerName, 'totomadne/game-server']);
-        $process->run();
-
-        // Récupérer l'adresse IP du serveur
-        $containerId = trim($process->getOutput());
-        $inspectProcess = new Process(['docker', 'inspect', '-f', '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}', $containerId]);
-        $inspectProcess->run();
-
-        // Récupérer l'adresse IP du serveur
-        $ipAddress = trim($inspectProcess->getOutput());
-
-        // Retourner l'adresse IP et le port attribué
-        return $this->json([
-            'ip' => $ipAddress,
-            'port' => $port
-        ],
-            200
-        );
+        $data = json_decode($request->getContent(), true);
+        
+        if (!!$this->gameTemplateRepository->find($data['idTemplate'])) {
+            $game = new Game();
+            $game->setGameTemplate($this->gameTemplateRepository->find($data['idTemplate']));
+            $game->setStartAt(new DateTime());
+            $this->gameService->save($game);
+            return $this->json($game, 201,[],['groups'=>['Game:read','GameTemplate:read' ]]);
+        }
+        return $this->json('Template existe pas mamen');
+       
+    }
+    #[Route('/{game}', name: 'get', methods: 'get')]
+    public function getGame(Game $game)
+    {
+        dump($game,
+        $this->gameRepository->find(12));
+        $this->gameRepository->find(5);
+        return $this->json($game->getGameTemplate(), 201,[],['groups'=>['Game:read','GameTemplate:read' ]]);
+       
     }
 
 
     #[Route('/gameTemplate/{gameTemplate}', name: 'get_template', methods: 'GET')]
-    public function get(GameTemplate $gameTemplate)
+    public function getTemplate(GameTemplate $gameTemplate)
     {
         return $this->json(['gameTemplate' => $gameTemplate], 200, [],['groups'=> ['GameTemplate:read', 'User:read']]);
     }
@@ -82,13 +78,13 @@ class GameController extends AbstractController
         $this->gameService->save($gameTemplate);
         return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
-
+    
     #[Route('/delete/template/{gameTemplate}', name: 'delete_template', methods: 'DELETE')]
     public function delete(GameTemplate $gameTemplate)
     {
         $gameTemplate->setIsActive(false);
         $this->gameService->save($gameTemplate);
-        return $this->json(['gameTemplate' => $gameTemplate]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
     
 }

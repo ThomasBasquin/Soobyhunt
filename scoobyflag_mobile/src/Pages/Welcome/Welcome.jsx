@@ -8,19 +8,22 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import COLORS from '../../Constantes/colors';
-import useUrl from '../../Constantes/Hooks/useUrl';
 import useServer from '../../Constantes/Hooks/useServer';
 
 function Welcome({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [pseudo, setPseudo] = useState('');
-  const [ipParty, setIpParty] = useState(null);
-  const {GAME} = useUrl();
-  const [server, setServer] = useServer();
+  const [codeParty, setCodeParty] = useState(null);
+  const [, setServer] = useServer();
 
   function getConfig() {
     setIsLoading(true);
-    fetch(ipParty.trim() + '/user/join', {
+    const gameServer =
+      'http://207.154.194.125:8' + codeParty.trim().substring(0, 3);
+    const mercureServer =
+      'http://207.154.194.125:9' + codeParty.trim().substring(3, 6);
+
+    fetch(gameServer + '/user/join', {
       method: 'POST',
       headers: {
         'Content-type': 'Application/json',
@@ -29,9 +32,10 @@ function Welcome({navigation}) {
     })
       .then(res => res.json())
       .then(user => {
-        setServer({idUser: user.id, pseudo, server: ipParty.trim()});
+        setServer({idUser: user.id, pseudo, gameServer, mercureServer});
         navigation.navigate('Team');
       })
+      .catch(err => console.log(err))
       .finally(() => setIsLoading(false));
   }
 
@@ -57,14 +61,14 @@ function Welcome({navigation}) {
       />
       <TextInput
         style={{borderWidth: 1, borderRadius: 15, width: '50%'}}
-        onChangeText={e => setIpParty(e)}
-        value={ipParty}
+        onChangeText={e => setCodeParty(e)}
+        value={codeParty}
         placeholder="ID de la partie"
         keyboardType="default"
       />
       <TouchableOpacity
         style={{
-          opacity: isLoading || !ipParty ? 0.7 : 1,
+          opacity: isLoading || !codeParty ? 0.7 : 1,
           width: '50%',
           marginVertical: 20,
           padding: 10,
@@ -73,7 +77,7 @@ function Welcome({navigation}) {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        disabled={isLoading || !ipParty}
+        disabled={isLoading || !codeParty}
         onPress={getConfig}>
         {isLoading ? (
           <ActivityIndicator size="small" color={COLORS.secondary} />

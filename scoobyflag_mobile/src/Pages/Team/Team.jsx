@@ -12,7 +12,8 @@ function Team({navigation}) {
   const [isReady, setIsReady] = useState(false);
   const [teams, setTeams] = useState([]);
   const [anyTeamPlayers, setAnyTeamPlayers] = useState([]);
-  const {API, GAME} = useUrl();
+  const {GAME} = useUrl();
+  const [{mercureServer}] = useServer();
 
   useEffect(() => {
     fetch(GAME.team)
@@ -92,7 +93,7 @@ function Team({navigation}) {
     );
 
     const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+      mercureServer+'/.well-known/mercure'.concat('?topic=', topic),
     );
 
     eventSource.addEventListener('open', event => {
@@ -126,13 +127,16 @@ function Team({navigation}) {
 
   function loadMap() {
     setIsLoading(true);
-    fetch(API.getTemplate.replace('{game}', 4))
+    fetch(GAME.getMap.replace('{game}', 1))
       .then(res => res.json())
-      .then(e => setServer({...server, map: e.gameTemplate.json}))
+      .then(map => {
+        setServer({...server, map: {authorizedZone: map.gameLocations, unauthorizedZone: map.gameInterdictionLocalisations.map(zone => zone.locations), items: [], mechants: []}});
+      })
       .finally(() => setIsLoading(false));
   }
 
   function changeTeam(newTeam) {
+    setAnyTeamPlayers(anyTeamPlayers.filter(user => user.id !== server.idUser));
     setReady(false);
     const team = teams.find(t => t.id == newTeam.id);
     setTeams(cur =>
@@ -220,6 +224,7 @@ function Team({navigation}) {
           <View style={{marginLeft: 25}}>
             {anyTeamPlayers.map(player => (
               <Text
+              key={player.id}
                 style={{
                   fontSize: 20,
                   color: '#a0a0a0',

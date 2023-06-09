@@ -53,6 +53,18 @@ class UserRepository extends ServiceEntityRepository
            ->getResult()
        ;
    }
+   public function findWhoSeeItem($latMin, $latMax, $lngMin, $lngMax)
+   {
+       return $this->createQueryBuilder('u')
+           ->where('u.latitude > :latMin and u.latitude < :latMax and u.longitude > :lngMin and u.longitude < :lngMax')
+           ->setParameter('latMin', $latMin)
+           ->setParameter('latMax', $latMax)
+           ->setParameter('lngMin', $lngMin)
+           ->setParameter('lngMax', $lngMax)
+           ->getQuery()
+           ->getResult()
+       ;
+   }
 
 //    public function findOneBySomeField($value): ?User
 //    {

@@ -84,6 +84,21 @@ class UserService
         // $longitudeMin = $user->getLongitude() - $longitudeParam;
     }
 
+    public function getUsersByItemView($longitude, $latitude, $distanceViewRadius)
+    {
+        $distanceView = $distanceViewRadius / 1000;
+
+        $latitudeParam = ($distanceView) / 110.574;
+        $longitudeParam = $distanceView / (110.320 * cos($latitudeParam));
+
+        $latitudeMax = $latitude + $latitudeParam;
+        $latitudeMin = $latitude - $latitudeParam;
+        $longitudeMax = $longitude + $longitudeParam;
+        $longitudeMin = $longitude - $longitudeParam;
+        
+        return $this->userRepository->findWhoSeeItem($latitudeMin, $latitudeMax, $longitudeMin, $longitudeMax);
+    }
+
     function distanceCalculation($lat1, $lng1, $lat2, $lng2)
     {
         $earthRadius = 6371; //radius of Earth in KM.
