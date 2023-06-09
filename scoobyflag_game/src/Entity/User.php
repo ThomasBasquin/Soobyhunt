@@ -15,23 +15,23 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['User:read',"Team:get"])]
+    #[Groups(['User:read',"Team:get",'User:info'])]
     private ?int $id = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read','User:info'])]
     private ?int $idOrigin = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read','User:info'])]
     private ?int $objectiveCaptured = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read','User:info'])]
     private ?int $itemGet = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['User:read'])]
+    #[Groups(['User:read','User:info'])]
     private ?int $itemUsed = null;
 
     #[ORM\Column(nullable: true)]
@@ -59,9 +59,9 @@ class User
     private ?bool $isReady = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['User:read',"Team:get"])]
+    #[Groups(['User:read',"Team:get",'User:info'])]
     private ?string $pseudo = null;
-
+    
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Objective::class)]
     private Collection $objectives;
 

@@ -36,8 +36,9 @@ class Objective
     #[ORM\Column]
     #[Groups(['Objective:read'])]
     private ?float $latitude = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'objectives')]
+    #[Groups(['Objective:read'])]
     private ?User $user = null;
 
     public function getId(): ?int

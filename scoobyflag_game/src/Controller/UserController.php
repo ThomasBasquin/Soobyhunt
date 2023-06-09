@@ -149,19 +149,35 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/objective/{objective}', name: 'capture_objective', methods: ['PUT'])]
-    public function captureObjective(User $user, Objective $objective)
+    public function captureObjective(HubInterface $hub,User $currentUser, Objective $objective)
     {
 
-        $objective->setUser($user);
+        $objective->setUser($currentUser);
         $this->em->persist($objective);
         $this->em->flush();
 
-        // $update = new Update(
-        //     'https://example.com/users/dunglas',
-        //     json_encode(['status' => 'OutOfStock'])
-        // );
+        $users = $this->userService->getUsersByItemView( $objective->getLongitude(),$objective->getLatitude(),300);
 
-        // $hub->publish($update);
+
+        // mercure
+        foreach ($users as $user) {
+            if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+                $update = new Update(
+                    "https://scoobyflag/user/" . $user->getId(),
+                    json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
+                );
+                $hub->publish($update);
+            }
+        }
+        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
+            $update = new Update(
+                "https://scoobyflag/user/0",
+                json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
+            );
+            $hub->publish($update);
+        }
+
+       
 
         return $this->json($user, 200, [], ['groups' => ["User:read", "Objective:read"]]);
     }
