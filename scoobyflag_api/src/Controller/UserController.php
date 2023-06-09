@@ -38,6 +38,7 @@ class UserController extends AbstractController
         
         return $this->json($user,201,[], ["groups" => ["User:read"]] );
     }
+    
     #[Route('/{user}/getAllTemplate', name: 'get_all_template', methods: ['GET'])]
     public function getTemplate(User $user): JsonResponse
     {
