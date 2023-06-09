@@ -82,13 +82,13 @@ class GameController extends AbstractController
         $this->gameService->save($gameTemplate);
         return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
-
+    
     #[Route('/delete/template/{gameTemplate}', name: 'delete_template', methods: 'DELETE')]
     public function delete(GameTemplate $gameTemplate)
     {
         $gameTemplate->setIsActive(false);
         $this->gameService->save($gameTemplate);
-        return $this->json(['gameTemplate' => $gameTemplate]);
+        return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
     
 }

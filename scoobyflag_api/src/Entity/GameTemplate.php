@@ -29,6 +29,7 @@ class GameTemplate
     private array $json = [];
     
     #[ORM\Column]
+    #[Groups(['GameTemplate:read'])]
     private ?bool $isActive = null;
     
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

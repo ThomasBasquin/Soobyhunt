@@ -32,8 +32,6 @@ class UserService
     {
         $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
         $user->setPassword($hashedPassword);
-        $user->setEmail('admin');
-        $user->setPseudo('admin');
         $this->save($user);
     }
 

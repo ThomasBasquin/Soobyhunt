@@ -3,21 +3,21 @@ import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
+import Loader from "../components/Loader";
 
 export default function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [indexSelected, setIndexSelected] = useState(-1);
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     //Recuperer les configs du user
     fetch(
       "https://scoobyhunt.fr/user/" +
-        JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
-        "/getAllTemplate"
+      JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+      "/getAllTemplate"
     )
       .then((res) => {
         if (res.ok) {
@@ -25,8 +25,8 @@ export default function Dashboard() {
         }
       })
       .then((json) => {
-        console.log(json);
-        setTemplates(json);
+        setIsLoading(false);
+        setTemplates(json.filter(a => a.isActive == 1));
       });
   }, []);
 
@@ -41,8 +41,23 @@ export default function Dashboard() {
   function selectConfig(config, index) {
     setSelectedConfig(config);
     setIndexSelected(index);
-    setLatitude(config.json.authorizedZone[0].latitude);
-    setLongitude(config.json.authorizedZone[0].longitude);
+  }
+
+  function deleteConfig(idConfig) {
+    const response = fetch("https://scoobyhunt.fr/game/delete/template/" + idConfig, {
+      method: "DELETE"
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        console.log(json);
+        setSelectedConfig("");
+        setIndexSelected(-1);
+        setTemplates(templates.filter(a => a.id !== idConfig));
+      });
   }
 
   function creerPartie() {
@@ -68,9 +83,17 @@ export default function Dashboard() {
       });
   }
 
-  function ChangeView({ latitude, longitude }) {
+  function ChangeView() {
+    var totalLat = 0;
+    var totalLng = 0;
+    var nbPoint = 0;
+    selectedConfig.json.authorizedZone.map(point => {
+      totalLat += point.latitude;
+      totalLng += point.longitude;
+      nbPoint++;
+    })
     const map = useMap();
-    map.setView([latitude, longitude], 12);
+    map.setView([totalLat / nbPoint, totalLng / nbPoint], 14);
     return null;
   }
 
@@ -78,7 +101,7 @@ export default function Dashboard() {
     <div className="fond-degrade-dashboard">
       <div className="header">
         <div className="header-gauche">
-          <img src="logo.png" alt="" className="logo-header-dashboard" />
+          <img src="logo.png" alt="" className="logo-header-dashboard" onClick={() => navigate("/")} />
           <div className="titre-header">ScoobyHunt</div>
         </div>
         <img
@@ -93,7 +116,7 @@ export default function Dashboard() {
           <div className="titre-zone">Liste de mes configurations</div>
 
           <div className="liste-config">
-            {templates.map((template, index) => {
+            {isLoading ? <Loader /> : templates.length == 0 ? <div className="texte-config">Aucune configuration</div> : templates.map((template, index) => {
               return (
                 <ItemConfig
                   config={template}
@@ -101,6 +124,7 @@ export default function Dashboard() {
                   selectConfig={selectConfig}
                   index={index}
                   selected={index == indexSelected}
+                  deleteConfig={deleteConfig}
                 />
               );
             })}
@@ -127,25 +151,23 @@ export default function Dashboard() {
                 </div>
                 <MapContainer
                   className="map-config"
-                  center={[latitude, longitude]}
-                  zoom={30}
                   dragging={false}
                   scrollWheelZoom={false}
                 >
-                  <ChangeView latitude={latitude} longitude={longitude} />
+                  <ChangeView />
                   <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
                   <Polygon
-                    pathOptions={{ fillColor: "blue" }}
+                    pathOptions={{ color: "#6b2b94" }}
                     positions={selectedConfig.json.authorizedZone.map(
                       (point) => [point.latitude, point.longitude]
                     )}
                   />
                   {selectedConfig.json.unauthorizedZone.map((zone) => (
                     <Polygon
-                      pathOptions={{ color: "red" }}
+                      pathOptions={{ color: "#ee9158" }}
                       positions={zone.map((point) => [
                         point.latitude,
                         point.longitude,

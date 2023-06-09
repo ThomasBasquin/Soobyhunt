@@ -61,14 +61,14 @@ export default function Home({route, navigation}) {
     isOpen: false,
     item: null,
   });
-  const [{idUser, map, team}, setServer] = useServer();
+  const [{idUser, map, team, mercureServer},setServer] = useServer();
 
   useEffect(() => {
     if (!idUser) return;
     const topic = encodeURIComponent('https://scoobyflag/user/' + idUser);
 
     const eventSource = new EventSource(
-      'http://hugoslr.fr:16640/.well-known/mercure'.concat('?topic=', topic),
+      mercureServer+'/.well-known/mercure'.concat('?topic=', topic),
     );
 
     eventSource.addEventListener('open', event => {
