@@ -527,51 +527,6 @@ export default function Carte() {
               circlemarker: false,
               circle: false,
               marker: {
-                icon: mechant1Icon,
-                popup: "test"
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#6b2b94"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-            onCreated={(e) => onCreated(e)}
-            onDeleted={(e) => onDeleted(e)}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
-                icon: mechant2Icon,
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#ee9158"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
                 icon: loupeIcon,
               },
               polygon: false,
@@ -628,6 +583,51 @@ export default function Carte() {
               polygon: false,
             }}
           />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant1Icon,
+                popup: "test"
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#6b2b94"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+            onCreated={(e) => onCreated(e)}
+            onDeleted={(e) => onDeleted(e)}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant2Icon,
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#ee9158"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
         </FeatureGroup>
       </MapContainer >
       <div className="sideBar">
@@ -662,11 +662,11 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsMechants">
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
               <img src="mechant1.png" alt="" className="iconBar" />
               Méchant 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
               <img src="mechant2.png" alt="" className="iconBar" />
               Méchant 2
             </div>
@@ -683,19 +683,19 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsItems">
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 0)}>
               <img src="loupe.png" alt="" className="iconBar" />
               Item 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 1)}>
               <img src="lunettes.png" alt="" className="iconBar" />
               Item 2
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
               <img src="sac.png" alt="" className="iconBar" />
               Item 3
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
               <img src="ghost.png" alt="" className="iconBar" />
               Item 4
             </div>
