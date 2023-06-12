@@ -1,0 +1,91 @@
+.fond-degrade {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgb(107, 43, 148), rgb(238, 145, 88));
+  display: flex;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+}
+
+.header {
+  height: 10%;
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 2.5%;
+}
+
+.first-title {
+  color: white;
+  font-size: 50px;
+  margin: 0 30px;
+  flex-grow: 1;
+  font-weight: 600;
+}
+
+.menu-list {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-grow: 2;
+}
+
+.menu-list li {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+  margin: 0 15px;
+}
+
+.menu-list li:hover {
+  transform: scale(1.1);
+}
+
+.second-title.active {
+  border-bottom: 3px solid #ee9158;
+  padding-bottom: 10px;
+}
+
+.menu-list h2 {
+  font-weight: 200;
+}
+
+.header-gauche {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.logo-header-profil {
+  height: 30% !important;
+  transform: rotateY(180deg);
+  margin: 0 2rem 0 0;
+  cursor: pointer;
+}
+
+.btn-deconnect {
+  font-size: 1.3rem !important;
+  padding: 0.9rem 1.4rem !important;
+  margin: 0 2rem 0 4rem !important;
+
+  background-color: #ee9158;
+  border-radius: 15px;
+  text-decoration: none;
+  color: white;
+  border: #6B2B94 solid 1px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.btn-deconnect:hover {
+  color: #6B2B94;
+}
