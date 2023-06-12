@@ -200,6 +200,22 @@ export default function Carte() {
     //console.log(e.layers);
   }
 
+  const onEditStart = (e) => {
+    console.log("onEditStart", e);
+  }
+
+  const onEditMove = (e) => {
+    console.log("onEditMove : ", e);
+  }
+
+  const onEditResize = (e) => {
+    console.log("onEditResize : ", e);
+  }
+
+  const onEdited = (e) => {
+    console.log("onEdited : ", e);
+  }
+
   const clickZoneJeu = (e) => {
     if (zoneJeu.length == 0) {
       var e = document.createEvent("Event");
@@ -614,6 +630,10 @@ export default function Carte() {
             }}
             onCreated={(e) => onCreated(e)}
             onDeleted={(e) => onDeleted(e)}
+            onEditStart={(e) => onEditStart(e)}
+            onEditMove={(e) => onEditMove(e)}
+            onEditResize={(e) => onEditResize(e)}
+            onEdited={(e) => onEdited(e)}
           />
           <EditControl
             position="topright"
