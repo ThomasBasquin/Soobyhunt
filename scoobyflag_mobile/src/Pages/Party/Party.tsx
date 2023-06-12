@@ -36,52 +36,6 @@ function Party({route, navigation}: any) {
 
   const [party, setParty] = useState<any>(null);
 
-  const teams = useMemo(
-    () => [
-      {
-        name: 'Equipe 1',
-        players: [
-          {player: 'Roméo', point: 3},
-          {player: 'Hugo', point: 10},
-          {player: 'Lucas', point: 2},
-          {player: 'Thomas', point: 1},
-          {player: 'Gaytan', point: 0},
-        ],
-      },
-      {
-        name: 'Equipe 2',
-        players: [
-          {player: 'Roméo', point: 10},
-          {player: 'Hugo', point: 0},
-          {player: 'Lucas', point: 3},
-          {player: 'Thomas', point: 4},
-          {player: 'Gaytan', point: 2},
-        ],
-      },
-      {
-        name: 'Equipe 3',
-        players: [
-          {player: 'Roméo', point: 7},
-          {player: 'Hugo', point: 2},
-          {player: 'Lucas', point: 0},
-          {player: 'Thomas', point: 0},
-          {player: 'Gaytan', point: 0},
-        ],
-      },
-      {
-        name: 'Equipe 4',
-        players: [
-          {player: 'Roméo', point: 15},
-          {player: 'Hugo', point: 5},
-          {player: 'Lucas', point: 4},
-          {player: 'Thomas', point: 3},
-          {player: 'Gaytan', point: 1},
-        ],
-      },
-    ],
-    [],
-  );
-
   if (isLoading || !party)
     return <ActivityIndicator size="large" color={COLORS.secondary} />;
 
