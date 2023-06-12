@@ -24,6 +24,10 @@ import ItemEquipe from "../components/ItemEquipe";
 export default function Carte() {
   const navigate = useNavigate();
 
+  const [nomConfig, setNomConfig] = useState("");
+  const [heures, setHeures] = useState(0);
+  const [minutes, setMinutes] = useState(5);
+  const [dureeConfig, setDureeConfig] = useState(0);
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
@@ -43,30 +47,54 @@ export default function Carte() {
   useEffect(() => {
     if (state != null) {
       const { config } = state;
-      console.log(config);
       setConfigLoaded(config);
       setConfigId(config.id);
-    }
 
-    getLocation();
+      console.log(config.json);
+      setNomConfig(config.json.name);
+      var teams = [];
+      config.json.teams.forEach(team => {
+        teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
+      })
+      setEquipes(teams);
+
+      getLocation(config);
+    }
+    else {
+      getLocation();
+    }
   }, []);
 
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      setStatus("Votre navigateur ne supporte pas la géolocalisation");
-    } else {
-      setStatus("Localisation...");
-      setLatitude(48.530437);
-      setLongitude(7.735647777777776);
+  const getLocation = (configLoaded) => {
+    if (configLoaded != null) {
+      var totalLat = 0;
+      var totalLng = 0;
+      var nbPoint = 0;
+      configLoaded.json.authorizedZone.map((point) => {
+        totalLat += point.latitude;
+        totalLng += point.longitude;
+        nbPoint++;
+      });
+      setLatitude(totalLat / nbPoint);
+      setLongitude(totalLng / nbPoint);
       setStatus(null);
-      /*navigator.geolocation.getCurrentPosition((position) => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        console.log(position.coords);
+    }
+    else {
+      if (!navigator.geolocation) {
+        setStatus("Votre navigateur ne supporte pas la géolocalisation");
+      } else {
+        setStatus("Localisation...");
+        setLatitude(48.53036756667678);
+        setLongitude(7.7355033213811035);
         setStatus(null);
-      }, () => {
-        setStatus("Impossible de récupérer votre position");
-      });*/
+        /*navigator.geolocation.getCurrentPosition((position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setStatus(null);
+        }, () => {
+          setStatus("Impossible de récupérer votre position");
+        });*/
+      }
     }
   };
 
@@ -107,6 +135,7 @@ export default function Carte() {
   });
 
   const onCreated = (e) => {
+    console.log(e);
     //On cherche quel objet est ajouté
     var type;
     if (e.layerType === "polygon") {
@@ -157,7 +186,6 @@ export default function Carte() {
       setZoneJeu([{ id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type == "zoneInterdite") {
-      console.log("ouais");
       setZonesInterdites(oldZones => [...oldZones, { id: e.layer._leaflet_id, coords: e.layer.getLatLngs()[0] }]);
     }
     else if (type.includes("mechant")) {
@@ -166,33 +194,26 @@ export default function Carte() {
     else {
       setItems(oldItems => [...oldItems, { id: e.layer._leaflet_id, name: type, coords: e.layer.getLatLng() }])
     }
-
-    /*var ok = true;
-    var tabZone = [];
- 
-    for (var i = 0; i < zonesInterdites.length; i++) {
-      tabZone = [];
-      for (var j = 0; j < zonesInterdites[i].length; j++) {
-        tabZone.push(Object.values(zonesInterdites[i][j]));
-      }
-      if (pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-        ok = false;
-      }
-    }
- 
-    tabZone = [];
-    for (var k = 0; k < zoneJeu[0].length; k++) {
-      tabZone.push(Object.values(zoneJeu[0][k]));
-    }
-    if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-      ok = false;
-    }
- 
-    console.log(ok);*/
   }
 
   const onDeleted = (e) => {
     //console.log(e.layers);
+  }
+
+  const onEditStart = (e) => {
+    console.log("onEditStart", e);
+  }
+
+  const onEditMove = (e) => {
+    console.log("onEditMove : ", e);
+  }
+
+  const onEditResize = (e) => {
+    console.log("onEditResize : ", e);
+  }
+
+  const onEdited = (e) => {
+    console.log("onEdited : ", e);
   }
 
   const clickZoneJeu = (e) => {
@@ -309,11 +330,84 @@ export default function Carte() {
     navigate("/dashboard");
   }
 
-  async function saveConfig() {
+  function openSave() {
+    var configOk = true;
+    var message = "";
+
+    //Verif des equipes (nom,...)
+    equipes.forEach(equipe => {
+      if (equipe.nom == "") {
+        configOk = false;
+        message = "Equipe";
+      }
+    })
+
+    //Zone de jeu présente ?
+    if (zoneJeu.length < 1) {
+      configOk = false;
+      message = "Zone de jeu";
+    }
+    //Au moins deux mechants ?
+    if (mechants.length < 2) {
+      configOk = false;
+      message = "Mechants";
+    }
+
+    //Points dans la zone
+    var pointsInZone = true;
+
+    if (configOk) {
+      mechants.forEach(mechant => {
+        //Verif si le mechant est dans la zone de jeu
+        if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
+        }
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
+          }
+        })
+      })
+      items.forEach(item => {
+        //Verif si l'item est dans la zone de jeu
+        console.log(pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng])));
+        if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
+        }
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
+          }
+        })
+      })
+
+      if (!pointsInZone) {
+        configOk = false;
+        message = "Mechants/Items ne sont pas dans la zone de jeu";
+      }
+    }
+
+    if (configOk) {
+      document.querySelector(".fondSombre").style.display = "flex";
+    }
+    else {
+      alert(message)
+    }
+  }
+
+  function closeSave() {
+    document.querySelector(".fondSombre").style.display = "none";
+  }
+
+  async function saveConfig(e) {
+    e.preventDefault();
+
     var bodyConfig = JSON.stringify({
-      name: "Sprint 1", //A CHANGER
+      name: nomConfig,
       modeDeJeu: "Time",
-      limitTime: 600, //A CHANGER
+      limitTime: dureeConfig,
       teams: equipes,
       authorizedZone: zoneJeu[0].coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng })),
       unauthorizedZone: zonesInterdites.map(zone => zone.coords.map(pts => ({ latitude: pts.lat, longitude: pts.lng }))),
@@ -323,52 +417,42 @@ export default function Carte() {
       idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
     });
 
-    var configOk = true;
+    console.log(bodyConfig);
 
-    //Verif points dans la zone, equipes, ...
-
-    //Pop up pour le nom de la config ?
-
-    if (zoneJeu.length < 1) {
-      configOk == false;
+    if (configId == null) {
+      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: bodyConfig,
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((json) => {
+          setConfigId(json.gameTemplate.id);
+          document.querySelector(".fondSombre").style.display = "none";
+        });
     }
-
-    if (configOk) {
-      if (configId == null) {
-        const response = await fetch("https://scoobyhunt.fr/game/create/template", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: bodyConfig,
+    else {
+      const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: bodyConfig,
+      })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
         })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then((json) => {
-            console.log(json);
-            setConfigId(json.gameTemplate.id)
-          });
-      }
-      else {
-        const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: bodyConfig,
-        })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-          })
-          .then((json) => {
-            console.log(json);
-          });
-      }
+        .then((json) => {
+          document.querySelector(".fondSombre").style.display = "none";
+        });
     }
   }
 
@@ -467,51 +551,6 @@ export default function Carte() {
               circlemarker: false,
               circle: false,
               marker: {
-                icon: mechant1Icon,
-                popup: "test"
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#6b2b94"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-            onCreated={(e) => onCreated(e)}
-            onDeleted={(e) => onDeleted(e)}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
-                icon: mechant2Icon,
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#ee9158"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
                 icon: loupeIcon,
               },
               polygon: false,
@@ -568,6 +607,55 @@ export default function Carte() {
               polygon: false,
             }}
           />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant1Icon,
+                popup: "test"
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#6b2b94"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+            onCreated={(e) => onCreated(e)}
+            onDeleted={(e) => onDeleted(e)}
+            onEditStart={(e) => onEditStart(e)}
+            onEditMove={(e) => onEditMove(e)}
+            onEditResize={(e) => onEditResize(e)}
+            onEdited={(e) => onEdited(e)}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant2Icon,
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#ee9158"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
         </FeatureGroup>
       </MapContainer >
       <div className="sideBar">
@@ -602,11 +690,11 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsMechants">
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
               <img src="mechant1.png" alt="" className="iconBar" />
               Méchant 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
               <img src="mechant2.png" alt="" className="iconBar" />
               Méchant 2
             </div>
@@ -623,19 +711,19 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsItems">
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 0)}>
               <img src="loupe.png" alt="" className="iconBar" />
               Item 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 1)}>
               <img src="lunettes.png" alt="" className="iconBar" />
               Item 2
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
               <img src="sac.png" alt="" className="iconBar" />
               Item 3
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
               <img src="ghost.png" alt="" className="iconBar" />
               Item 4
             </div>
@@ -653,7 +741,7 @@ export default function Carte() {
           })}
         </div>
       </div>
-      <div className="btnCarte" id="btnSave" onClick={saveConfig}>
+      <div className="btnCarte" id="btnSave" onClick={openSave}>
         Sauvegarder
       </div>
       <div className="btnCarte" id="btnQuit" onClick={quitter}>
@@ -664,6 +752,35 @@ export default function Carte() {
       </div>
       <div className="btnCarte" id="btnAnnuler" onClick={clickCancelEdit}>
         Annuler les modifications
+      </div>
+
+      <div className="fondSombre">
+        <div className="popUp" id="deconnexion">
+          <h3>Sauvegarde de la configuration</h3>
+          <form onSubmit={saveConfig} id="formConfig">
+            <div className="ligneForm">
+              <label htmlFor="nomConfig">Nom de la configuration :&nbsp;</label>
+              <input type="text" id='nomConfig' value={nomConfig} onChange={(e) => setNomConfig(e.target.value)} required />
+            </div>
+            <div className="ligneForm">
+              <label htmlFor="dureeConfig">Durée de la partie :&nbsp;</label>
+              <input type="number" id='heures' value={heures} min={0} onChange={(e) => {
+                setHeures(e.target.value)
+                setDureeConfig(minutes * 60 + e.target.value * 3600);
+              }} required />
+              <label htmlFor="heures">&nbsp;H&nbsp;</label>
+              <input type="number" id='minutes' value={minutes} min={0} max={59} onChange={(e) => {
+                setMinutes(e.target.value)
+                setDureeConfig(e.target.value * 60 + heures * 3600);
+              }} required />
+              <label htmlFor="minutes">&nbsp;Min</label>
+            </div>
+            <div className="ligneForm">
+              <input type="submit" className="btnForm" value={"Sauvegarder"} />
+              <input type="button" className="btnForm" value={"Annuler"} onClick={closeSave} />
+            </div>
+          </form>
+        </div>
       </div>
     </>
   ) : (

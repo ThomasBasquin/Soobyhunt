@@ -1,5 +1,5 @@
 {
-  "jwt_key": "mySecretKey",
+  "jwt_key": "!ChangeThisMercureHubJWTSecretKey!",
   "publish_allowed_origins": ["*"],
   "subscriptions_allowed_origins": ["*"],
   "cors_allowed_origins": ["*"],

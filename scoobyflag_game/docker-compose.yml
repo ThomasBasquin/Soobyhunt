@@ -34,15 +34,19 @@ services:
     restart: unless-stopped
     environment:
       SERVER_NAME: ":80"
-      MERCURE_SUBSCRIBER_JWT_ALG: "HS256"
-      MERCURE_PUBLISHER_JWT_ALG: "HS256"
+      # MERCURE_SUBSCRIBER_JWT_ALG: "HS256"
+      # MERCURE_PUBLISHER_JWT_ALG: "HS256"
       MERCURE_PUBLISHER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
       MERCURE_SUBSCRIBER_JWT_KEY: "!ChangeThisMercureHubJWTSecretKey!"
       APP_SECRET: ${APP_SECRET}
       DATABASE_URL: ${DATABASE_URL}
-      # Set the URL of your Symfony project (without trailing slash!) as value of the cors_origins directive
-      MERCURE_EXTRA_DIRECTIVES:
-        # cors_origins *
+      MERCURE_EXTRA_DIRECTIVES: |-
+        cors_origins *
+        publish_origins *
+        demo
+        ui
+        anonymous
+        subscriptions
       # Comment the following line to disable the development mode
       command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
     ports:

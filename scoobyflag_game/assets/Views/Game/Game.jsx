@@ -192,10 +192,9 @@ export default function Game() {
   };
 
   const InfosPartie = ({ time, setTime }) => {
-
     useEffect(() => {
       const interval = setInterval(() => {
-        setTime(time => time - 1);
+        setTime((time) => time - 1);
       }, 1000);
       return () => clearInterval(interval);
     }, [time]);
@@ -205,10 +204,10 @@ export default function Game() {
           zIndex: "1000",
           position: "absolute",
           backgroundColor: "#ee9158",
-          marginLeft : "45%",
-          marginRight : "50%",
-          padding : 30,
-          fontSize : 30
+          marginLeft: "45%",
+          marginRight: "50%",
+          padding: 30,
+          fontSize: 30,
         }}
       >
         {time}

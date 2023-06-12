@@ -4,4 +4,4 @@
 FROM dunglas/mercure
 
 # Copiez la configuration personnalisée de Mercure
-COPY .docker/mercure.json /etc/mercure/mercure.json
+COPY ./caddyfile.dev /etc/mercure/caddyfile
