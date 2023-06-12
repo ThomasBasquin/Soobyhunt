@@ -200,22 +200,6 @@ export default function Carte() {
     //console.log(e.layers);
   }
 
-  const onEditStart = (e) => {
-    console.log("onEditStart", e);
-  }
-
-  const onEditMove = (e) => {
-    console.log("onEditMove : ", e);
-  }
-
-  const onEditResize = (e) => {
-    console.log("onEditResize : ", e);
-  }
-
-  const onEdited = (e) => {
-    console.log("onEdited : ", e);
-  }
-
   const clickZoneJeu = (e) => {
     if (zoneJeu.length == 0) {
       var e = document.createEvent("Event");
@@ -354,40 +338,32 @@ export default function Carte() {
     }
 
     //Points dans la zone
-    var pointsInZone = true;
+    /*var ok = true;
+    var tabZone = [];
 
     if (configOk) {
-      mechants.forEach(mechant => {
-        //Verif si le mechant est dans la zone de jeu
-        if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
-          pointsInZone = false;
+      for (var i = 0; i < zonesInterdites.length; i++) {
+        tabZone = [];
+        for (var j = 0; j < zonesInterdites[i].length; j++) {
+          tabZone.push(Object.values(zonesInterdites[i][j]));
         }
-        //Verif des zones interdites
-        zonesInterdites.forEach(zoneInterdite => {
-          if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
-            pointsInZone = false;
+        mechants.forEach(mechant => {
+          if (pointInPolygon([mechant.lat, mechant.lng], tabZone)) {
+            ok = false;
           }
         })
-      })
-      items.forEach(item => {
-        //Verif si l'item est dans la zone de jeu
-        console.log(pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng])));
-        if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
-          pointsInZone = false;
-        }
-        //Verif des zones interdites
-        zonesInterdites.forEach(zoneInterdite => {
-          if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
-            pointsInZone = false;
-          }
-        })
-      })
-
-      if (!pointsInZone) {
-        configOk = false;
-        message = "Mechants/Items ne sont pas dans la zone de jeu";
       }
-    }
+      tabZone = [];
+      for (var k = 0; k < zoneJeu[0].length; k++) {
+        tabZone.push(Object.values(zoneJeu[0][k]));
+      }
+      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
+        ok = false;
+      }
+
+      console.log(ok);
+    }*/
+
 
     if (configOk) {
       document.querySelector(".fondSombre").style.display = "flex";
@@ -630,10 +606,6 @@ export default function Carte() {
             }}
             onCreated={(e) => onCreated(e)}
             onDeleted={(e) => onDeleted(e)}
-            onEditStart={(e) => onEditStart(e)}
-            onEditMove={(e) => onEditMove(e)}
-            onEditResize={(e) => onEditResize(e)}
-            onEdited={(e) => onEdited(e)}
           />
           <EditControl
             position="topright"
