@@ -9,6 +9,7 @@ use App\Repository\GameTemplateRepository;
 use App\Service\GameService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -41,9 +42,31 @@ class GameController extends AbstractController
             $this->gameService->save($game);
             return $this->json($game, 201,[],['groups'=>['Game:read','GameTemplate:read' ]]);
         }
-        return $this->json('Template existe pas mamen');
+        return $this->json('Template existe pas');
        
     }
+    
+    #[Route('/end/{game}', name: 'end', methods: 'PUT')]
+    public function endGame(Game $game, Request $request)
+    {
+
+        $data = json_decode($request->getContent(), true);
+
+        // supprime le conteneur docker
+        // $url = 'http://207.154.194.125:1234/delete';
+
+        // $client = HttpClient::create();
+        // $response = $client->request('DELETE', $url, [
+        //     'headers' => [
+        //         'Content-Type' => 'application/json',
+        //     ],
+        //     'body' => json_encode(['projectName' => $data['projectname']]),
+        // ]);
+
+        return $this->json($data, 200,[],['groups'=>['Game:read','GameTemplate:read' ]]);
+       
+    }
+
     #[Route('/{game}', name: 'get', methods: 'get')]
     public function getGame(Game $game)
     {
@@ -86,6 +109,8 @@ class GameController extends AbstractController
         $this->gameService->save($gameTemplate);
         return $this->json(['gameTemplate' => $gameTemplate], 200,[],['groups'=>['GameTemplate:read', 'User:read']]);
     }
+
+    
     
 }
 

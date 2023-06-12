@@ -44,13 +44,13 @@ class GameService
 
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
-    
+
         $id = $_ENV['ID'];
         $url = 'https://scoobyhunt.fr/game/' . $id;
 
         $client = HttpClient::create();
         $response = $client->request('GET', $url);
-    
+
         $content = $response->toArray();
         $this->importGameSetting($content['json']);
     }
@@ -119,8 +119,42 @@ class GameService
         return $game;
     }
 
-    public function find($id, $lockMode = null, $lockVersion = null){
+    public function find($id, $lockMode = null, $lockVersion = null)
+    {
         return $this->gameRepository->find($id, $lockMode, $lockVersion);
+    }
+
+    public function formatData(): array
+    {
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+        $data = [
+            'startedAt' => $game->getStartAt(),
+            'name' => $game->getName()
+        ];
+        $teams = [];
+        foreach ($game->getTeams() as $team) {
+            $teamObjectUsed = 0;
+            $teamObjectGet = 0;
+            $teamObjectifGet = 0;
+            $usersData = [];
+            foreach ($team->getPlayers() as $user) {
+                $teamObjectGet += $user->getItemGet();
+                $teamObjectUsed += $user->getItemUsed();
+                $teamObjectifGet += count($user->getObjectives());
+                $usersData[] = [
+                    'idOrigin' => $user->getIdOrigin(),
+                    'pseudo' => $user->getPseudo(),
+                    'itemGet' => $user->getItemGet(),
+                    'itemUsed' => $user->getItemUsed(),
+                    'objectifs' => count($user->getObjectives())
+                ];
+            }
+
+
+            $teams[] = ['name' => $team->getName(), 'objectUsed' => $teamObjectUsed, 'objectGet' => $teamObjectGet, 'objectifs' => $teamObjectifGet, 'users' => $usersData];
+        }
+        $data['teams'] = $teams;
+        return $data;
     }
 
     public function stat()
