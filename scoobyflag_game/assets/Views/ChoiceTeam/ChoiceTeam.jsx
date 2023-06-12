@@ -2,9 +2,8 @@ import React from "react";
 import { useState, useEffect, useCallback } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 import Loader from "../../Components/Loader";
-import env from "react-dotenv";
 
-function ChoiceTeam({MERCURE_PORT, HOST_PORT}) {
+function ChoiceTeam({ MERCURE_PORT, HOST_PORT }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMap, setIsLoadingMap] = useState(false);
   const [teams, setTeams] = useState([]);
@@ -17,18 +16,14 @@ function ChoiceTeam({MERCURE_PORT, HOST_PORT}) {
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
-
-      
-      
   }, []);
- useEffect(()=> {
-  teams.map(
-    (t)=> {
-      {!t.id ? setjoueursConnectes(t.players) : ""}
-    }
-  )
-  
- })
+  useEffect(() => {
+    teams.map((t) => {
+      {
+        !t.id ? setjoueursConnectes(t.players) : "";
+      }
+    });
+  });
   const onMessageListen = useCallback(
     (user) => {
       if (!user.team) {
@@ -105,7 +100,9 @@ function ChoiceTeam({MERCURE_PORT, HOST_PORT}) {
     const topic = encodeURIComponent("https://scoobyflag/user/0");
 
     const eventSource = new EventSource(
-    "http://207.154.194.125:"+MERCURE_PORT+"/.well-known/mercure".concat("?topic=", topic)
+      "http://207.154.194.125:" +
+        MERCURE_PORT +
+        "/.well-known/mercure".concat("?topic=", topic)
     );
 
     eventSource.onopen = (event) => {
@@ -179,7 +176,7 @@ const ChoixEquipe = ({
   setjoueursConnectes,
   setNomsEquipe,
   HOST_PORT,
-  MERCURE_PORT
+  MERCURE_PORT,
 }) => {
   useEffect(() => {}, [joueursConnectes, teams]);
 
@@ -226,12 +223,10 @@ const ChoixEquipe = ({
             padding: 10,
             fontSize: 30,
             color: "white",
-            marginTop : 10,
-            
+            marginTop: 10,
           }}
           className="lancerPartie"
-
-          onClick={()=> document.location.href="/game"}
+          onClick={() => (document.location.href = "/game")}
         >
           Lancer la partie
         </div>
@@ -240,7 +235,7 @@ const ChoixEquipe = ({
         <div className="listeEquipe">
           {teams.map((noms) => {
             console.log(noms);
-       
+
             return noms.id ? (
               <div className="equipe" key={noms.id}>
                 <p className="titreEquipe">{noms.name}</p>
@@ -292,13 +287,16 @@ const ChoixEquipe = ({
                     </div>
                   )}
                 </div>
-              </div>) : (<></>);
+              </div>
+            ) : (
+              <></>
+            );
           })}
         </div>
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
           Rejoindre :{" "}
           <span style={{ fontSize: 50, color: "red" }}>
-            {HOST_PORT.substr(-3)+MERCURE_PORT.substr(-3)}
+            {HOST_PORT.substr(-3) + MERCURE_PORT.substr(-3)}
           </span>
         </h1>
       </div>
@@ -361,4 +359,10 @@ const ItemJoueurs = ({ nom, selected, setSelected }) => {
     </div>
   );
 };
-renderOnDomLoaded(<ChoiceTeam MERCURE_PORT={document.querySelector("#MERCURE_PORT").value} HOST_PORT={document.querySelector("#HOST_PORT").value }/>, "HomeRoot");
+renderOnDomLoaded(
+  <ChoiceTeam
+    MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
+    HOST_PORT={document.querySelector("#HOST_PORT").value}
+  />,
+  "HomeRoot"
+);
