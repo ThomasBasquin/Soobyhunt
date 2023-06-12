@@ -30,12 +30,14 @@ function Welcome({navigation}) {
       },
       body: JSON.stringify({pseudo: pseudo}),
     })
-      .then(res => res.json())
+      .then(res => {
+        return res.json();
+      })
       .then(user => {
         setServer({idUser: user.id, pseudo, gameServer, mercureServer});
         navigation.navigate('Team');
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log("err :"+err))
       .finally(() => setIsLoading(false));
   }
 
