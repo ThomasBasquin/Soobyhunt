@@ -81,7 +81,6 @@ export default function Home({route, navigation}) {
       const alreadyInParty = userMarkers.find(u => {
         return u.id == user.id;
       });
-      console.log(alreadyInParty);
       setUserMarkers(cur =>
         alreadyInParty
           ? cur.map(u => (u.id == user.id ? user : u))

@@ -4,8 +4,6 @@ import {Image, View} from 'react-native';
 
 const UserMarker=  memo(function UserMarker({user, team}){
 
-  console.log(user.id,  team.id, user.team.id);
-
   return (
         <MarkerComponent
           tappable={false}

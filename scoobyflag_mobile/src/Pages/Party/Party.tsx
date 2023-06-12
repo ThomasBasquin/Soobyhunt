@@ -13,19 +13,28 @@ import {useEffect, useMemo, useState} from 'react';
 import useUrl from '../../Constantes/Hooks/useUrl';
 
 function Party({route, navigation}: any) {
-  const [, setServer] = useServer();
+  const [{idUser}, setServer] = useServer();
   const [isLoading, setIsLoading] = useState(true);
   const {GAME} = useUrl();
 
   useEffect(()=>{
+    refresh()
+    const interval = setInterval(refresh,60000);
+
+    return () => clearInterval(interval);
+  },[]);
+
+  function refresh(){
     fetch(GAME.getInfo)
     .then(res => res.json())
     .then(info => {
       console.log(info);
-      
+      setParty(info);
     })
     .finally(() => setIsLoading(false));
-  });
+  }
+
+  const [party, setParty] = useState<any>(null);
 
   const teams = useMemo(
     () => [
@@ -73,7 +82,7 @@ function Party({route, navigation}: any) {
     [],
   );
 
-  if (isLoading)
+  if (isLoading || !party)
     return <ActivityIndicator size="large" color={COLORS.secondary} />;
 
   return (
@@ -93,9 +102,8 @@ function Party({route, navigation}: any) {
           </Text>
         </Pressable>
       </View>
-      {/* TODO : nom de la partie */}
       <Text style={{fontSize: 30, fontWeight: '800', color: '#fff'}}>
-        Partie de Roméo
+        {party.game.name}
       </Text>
       <View style={{margin: '2.5%'}}>
         <Text style={{color: '#fff'}}>CONFIGURATION</Text>
@@ -116,7 +124,7 @@ function Party({route, navigation}: any) {
                 fontWeight: '700',
                 color: COLORS.primary,
               }}>
-              jeu.romeo.fr:8000
+              {party.game.name}
             </Text>
           </View>
           <View
@@ -135,7 +143,7 @@ function Party({route, navigation}: any) {
                 fontWeight: '700',
                 color: COLORS.primary,
               }}>
-              TIME
+              {party.game.name}
             </Text>
           </View>
           <View
@@ -154,7 +162,7 @@ function Party({route, navigation}: any) {
                 fontWeight: '700',
                 color: COLORS.primary,
               }}>
-              4
+              {party.teams.length}
             </Text>
           </View>
           <View
@@ -172,10 +180,7 @@ function Party({route, navigation}: any) {
                 textAlign: 'right',
                 fontWeight: '700',
                 color: COLORS.primary,
-              }}>{`${new Date().toLocaleDateString()} à ${new Date()
-              .toLocaleTimeString()
-              .replace(':', 'h')
-              .substring(0, 5)}`}</Text>
+              }}>{party.game.startAt}</Text>
           </View>
         </View>
       </View>
@@ -195,11 +200,17 @@ function Party({route, navigation}: any) {
             fontWeight: '700',
             color: COLORS.primary,
           }}>
-          1h52
+          TODO
         </Text>
       </View>
       <View style={{margin: '2.5%'}}>
         <Text style={{color: '#fff'}}>MON EQUIPE</Text>
+        {party.teams.map((team:any) => {
+          if(!team.playersScore.find((user:any) => user.id == idUser))return;
+          
+          console.log(team);
+          
+          return (
         <View style={style.card}>
           <View
             style={{
@@ -207,7 +218,7 @@ function Party({route, navigation}: any) {
               alignItems: 'center',
               padding: 5,
             }}>
-            <Text style={{fontSize: 25, fontWeight: '700'}}>Equipe 1</Text>
+            <Text style={{fontSize: 25, fontWeight: '700'}}>{team.team}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
               <Text
                 style={{
@@ -218,7 +229,7 @@ function Party({route, navigation}: any) {
                   fontSize: 25,
                   marginRight: 5,
                 }}>
-                {teams[0].players.reduce((acc, val) => val.point + acc, 0)}
+                {team.playersScore.reduce((acc:any, val:any) => val.score + acc, 0)}
               </Text>
               <Image
                 source={require('../../Assets/Icon/fleurPoint.png')}
@@ -226,11 +237,11 @@ function Party({route, navigation}: any) {
               />
             </View>
           </View>
-          {teams[0].players
-            .sort((a, b) => (a.point < b.point ? 1 : -1))
-            .map(p => (
+          {team.playersScore
+            .sort((a:any, b:any) => (a.score < b.score ? 1 : -1))
+            .map((p:any) => (
               <View
-                key={p.player}
+                key={p.id}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -238,7 +249,7 @@ function Party({route, navigation}: any) {
                   borderBottomWidth: 1,
                   padding: 5,
                 }}>
-                <Text>{p.player}</Text>
+                <Text>{p.pseudo}</Text>
                 <View
                   style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
                   <Text
@@ -249,7 +260,7 @@ function Party({route, navigation}: any) {
                       color: COLORS.primary,
                       marginRight: 5,
                     }}>
-                    {p.point}
+                    {p.score}
                   </Text>
                   <Image
                     source={require('../../Assets/Icon/fleurPoint.png')}
@@ -259,13 +270,14 @@ function Party({route, navigation}: any) {
               </View>
             ))}
         </View>
-      </View>
+        )})}
+        </View>
       <View style={{margin: '2.5%'}}>
         <Text style={{color: '#fff'}}>CLASSEMENT</Text>
         <View style={style.card}>
-          {teams.sort((a,b) => a.players.reduce((acc, val) => val.point + acc, 0) < b.players.reduce((acc, val) => val.point + acc, 0) ? 1 : -1).map((t, i) => (
+          {party.teams.sort((a:any,b:any) => a.playersScore.reduce((acc:any, val:any) => val.score + acc, 0) < b.playersScore.reduce((acc:any, val:any) => val.score + acc, 0) ? 1 : -1).map((t:any, i:any) => (
             <View
-              key={t.name}
+              key={t.team}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -297,7 +309,7 @@ function Party({route, navigation}: any) {
                     fontWeight: '700',
                     color: i == 0 ? '#fff' : "#fff",
                   }}>
-                  {t.name}
+                  {t.team}
                 </Text>
               </View>
               <View
@@ -311,7 +323,7 @@ function Party({route, navigation}: any) {
                     fontSize: i == 0 ? 30 : 25,
                     marginRight: 5,
                   }}>
-                  {t.players.reduce((acc, val) => val.point + acc, 0)}
+                  {t.playersScore.reduce((acc:any, val:any) => val.score + acc, 0)}
                 </Text>
                 <Image
                   source={require('../../Assets/Icon/fleurPoint.png')}
