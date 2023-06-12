@@ -243,3 +243,20 @@
   top: 5rem;
   display: none;
 }
+
+#formConfig input {
+  font-size: 26px;
+  text-align: center;
+}
+
+#formConfig input[type="number"] {
+  width: 100px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

@@ -47,30 +47,54 @@ export default function Carte() {
   useEffect(() => {
     if (state != null) {
       const { config } = state;
-      console.log(config);
       setConfigLoaded(config);
       setConfigId(config.id);
-    }
 
-    getLocation();
+      console.log(config.json);
+      setNomConfig(config.json.name);
+      var teams = [];
+      config.json.teams.forEach(team => {
+        teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
+      })
+      setEquipes(teams);
+
+      getLocation(config);
+    }
+    else {
+      getLocation();
+    }
   }, []);
 
-  const getLocation = () => {
-    if (!navigator.geolocation) {
-      setStatus("Votre navigateur ne supporte pas la géolocalisation");
-    } else {
-      setStatus("Localisation...");
-      setLatitude(48.530437);
-      setLongitude(7.735647777777776);
+  const getLocation = (configLoaded) => {
+    if (configLoaded != null) {
+      var totalLat = 0;
+      var totalLng = 0;
+      var nbPoint = 0;
+      configLoaded.json.authorizedZone.map((point) => {
+        totalLat += point.latitude;
+        totalLng += point.longitude;
+        nbPoint++;
+      });
+      setLatitude(totalLat / nbPoint);
+      setLongitude(totalLng / nbPoint);
       setStatus(null);
-      /*navigator.geolocation.getCurrentPosition((position) => {
-        setLatitude(position.coords.latitude);
-        setLongitude(position.coords.longitude);
-        console.log(position.coords);
+    }
+    else {
+      if (!navigator.geolocation) {
+        setStatus("Votre navigateur ne supporte pas la géolocalisation");
+      } else {
+        setStatus("Localisation...");
+        setLatitude(48.53036756667678);
+        setLongitude(7.7355033213811035);
         setStatus(null);
-      }, () => {
-        setStatus("Impossible de récupérer votre position");
-      });*/
+        /*navigator.geolocation.getCurrentPosition((position) => {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+          setStatus(null);
+        }, () => {
+          setStatus("Impossible de récupérer votre position");
+        });*/
+      }
     }
   };
 
@@ -111,6 +135,7 @@ export default function Carte() {
   });
 
   const onCreated = (e) => {
+    console.log(e);
     //On cherche quel objet est ajouté
     var type;
     if (e.layerType === "polygon") {
@@ -352,7 +377,9 @@ export default function Carte() {
     document.querySelector(".fondSombre").style.display = "none";
   }
 
-  async function saveConfig() {
+  async function saveConfig(e) {
+    e.preventDefault();
+
     var bodyConfig = JSON.stringify({
       name: nomConfig,
       modeDeJeu: "Time",
@@ -382,7 +409,6 @@ export default function Carte() {
           }
         })
         .then((json) => {
-          console.log(json);
           setConfigId(json.gameTemplate.id);
           document.querySelector(".fondSombre").style.display = "none";
         });
@@ -401,7 +427,6 @@ export default function Carte() {
           }
         })
         .then((json) => {
-          console.log(json);
           document.querySelector(".fondSombre").style.display = "none";
         });
     }
@@ -502,51 +527,6 @@ export default function Carte() {
               circlemarker: false,
               circle: false,
               marker: {
-                icon: mechant1Icon,
-                popup: "test"
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#6b2b94"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-            onCreated={(e) => onCreated(e)}
-            onDeleted={(e) => onDeleted(e)}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
-                icon: mechant2Icon,
-              },
-              polygon: {
-                shapeOptions: {
-                  color: "#ee9158"
-                },
-              },
-            }}
-            edit={{
-              remove: false,
-              edit: false,
-            }}
-          />
-          <EditControl
-            position="topright"
-            draw={{
-              polyline: false,
-              rectangle: false,
-              circlemarker: false,
-              circle: false,
-              marker: {
                 icon: loupeIcon,
               },
               polygon: false,
@@ -603,6 +583,51 @@ export default function Carte() {
               polygon: false,
             }}
           />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant1Icon,
+                popup: "test"
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#6b2b94"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+            onCreated={(e) => onCreated(e)}
+            onDeleted={(e) => onDeleted(e)}
+          />
+          <EditControl
+            position="topright"
+            draw={{
+              polyline: false,
+              rectangle: false,
+              circlemarker: false,
+              circle: false,
+              marker: {
+                icon: mechant2Icon,
+              },
+              polygon: {
+                shapeOptions: {
+                  color: "#ee9158"
+                },
+              },
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+          />
         </FeatureGroup>
       </MapContainer >
       <div className="sideBar">
@@ -637,11 +662,11 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsMechants">
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 0)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
               <img src="mechant1.png" alt="" className="iconBar" />
               Méchant 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 1)}>
+            <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
               <img src="mechant2.png" alt="" className="iconBar" />
               Méchant 2
             </div>
@@ -658,19 +683,19 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsItems">
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 0)}>
               <img src="loupe.png" alt="" className="iconBar" />
               Item 1
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 1)}>
               <img src="lunettes.png" alt="" className="iconBar" />
               Item 2
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 4)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
               <img src="sac.png" alt="" className="iconBar" />
               Item 3
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 5)}>
+            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
               <img src="ghost.png" alt="" className="iconBar" />
               Item 4
             </div>
@@ -703,27 +728,28 @@ export default function Carte() {
 
       <div className="fondSombre">
         <div className="popUp" id="deconnexion">
-          <form onSubmit={saveConfig}>
-            <div>
-              <label htmlFor="nomConfig">Nom de la configuration :</label>
+          <h3>Sauvegarde de la configuration</h3>
+          <form onSubmit={saveConfig} id="formConfig">
+            <div className="ligneForm">
+              <label htmlFor="nomConfig">Nom de la configuration :&nbsp;</label>
               <input type="text" id='nomConfig' value={nomConfig} onChange={(e) => setNomConfig(e.target.value)} required />
             </div>
-            <div>
-              <label htmlFor="dureeConfig">Durée de la partie :</label>
+            <div className="ligneForm">
+              <label htmlFor="dureeConfig">Durée de la partie :&nbsp;</label>
               <input type="number" id='heures' value={heures} min={0} onChange={(e) => {
                 setHeures(e.target.value)
                 setDureeConfig(minutes * 60 + e.target.value * 3600);
               }} required />
-              <label htmlFor="heures">H</label>
+              <label htmlFor="heures">&nbsp;H&nbsp;</label>
               <input type="number" id='minutes' value={minutes} min={0} max={59} onChange={(e) => {
                 setMinutes(e.target.value)
                 setDureeConfig(e.target.value * 60 + heures * 3600);
               }} required />
-              <label htmlFor="minutes">Min</label>
+              <label htmlFor="minutes">&nbsp;Min</label>
             </div>
-            <div>
-              <input type="submit" value={"Sauvegarder"} />
-              <input type="button" value={"Annuler"} onClick={closeSave} />
+            <div className="ligneForm">
+              <input type="submit" className="btnForm" value={"Sauvegarder"} />
+              <input type="button" className="btnForm" value={"Annuler"} onClick={closeSave} />
             </div>
           </form>
         </div>

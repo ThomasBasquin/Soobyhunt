@@ -1,6 +1,14 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+     # Register your global variables under the globals key:
+    globals:
+        mycustom_variable: 12345
+        # Obtain it from the .env file:
+        app_environment: '%env(APP_ENV)%'
+        mercure_port : '%env(MERCURE_PORT)%'
+        host_port : '%env(HOST_PORT)%'
 
 when@test:
     twig:
         strict_variables: true
+
