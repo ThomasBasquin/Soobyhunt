@@ -26,33 +26,30 @@ export default function User() {
         <ul className="menu-list">
           <li onClick={() => setActiveItem("infos")}>
             <h2
-              className={`second-title ${
-                activeItem === "infos" ? "active" : ""
-              }`}
+              className={`second-title ${activeItem === "infos" ? "active" : ""
+                }`}
             >
               Mes infos
             </h2>
           </li>
           <li onClick={() => setActiveItem("stats")}>
             <h2
-              className={`second-title ${
-                activeItem === "stats" ? "active" : ""
-              }`}
+              className={`second-title ${activeItem === "stats" ? "active" : ""
+                }`}
             >
               Mes stats
             </h2>
           </li>
           <li onClick={() => setActiveItem("parties")}>
             <h2
-              className={`second-title ${
-                activeItem === "parties" ? "active" : ""
-              }`}
+              className={`second-title ${activeItem === "parties" ? "active" : ""
+                }`}
             >
               Mes parties
             </h2>
           </li>
         </ul>
-        <button className="custom-button" onClick={logout}>
+        <button className="btn-deconnect" onClick={logout}>
           Se déconnecter
         </button>
       </div>
