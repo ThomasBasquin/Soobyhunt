@@ -9,4 +9,5 @@ cd ../scoobyflag_api
 composer i
 php bin/console d:s:u -f --complete
 php bin/console c:c
+npm i
 npm run build
