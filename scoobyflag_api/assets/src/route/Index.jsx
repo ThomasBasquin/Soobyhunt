@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "../css/main.css";
 
 export default function Index() {
@@ -24,9 +24,9 @@ export default function Index() {
             height: 100,
           }}
         >
-          <Link className="createGame" to="/app/login" style={{ marginRight: 40 }}>
+          <NavLink className="createGame" to="/app/login" style={{ marginRight: 40 }}>
             Se connecter
-          </Link>
+          </NavLink>
         </div>
       </div>
     </div>
