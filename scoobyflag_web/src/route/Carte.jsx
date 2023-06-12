@@ -338,32 +338,40 @@ export default function Carte() {
     }
 
     //Points dans la zone
-    /*var ok = true;
-    var tabZone = [];
+    var pointsInZone = true;
 
     if (configOk) {
-      for (var i = 0; i < zonesInterdites.length; i++) {
-        tabZone = [];
-        for (var j = 0; j < zonesInterdites[i].length; j++) {
-          tabZone.push(Object.values(zonesInterdites[i][j]));
+      mechants.forEach(mechant => {
+        //Verif si le mechant est dans la zone de jeu
+        if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
         }
-        mechants.forEach(mechant => {
-          if (pointInPolygon([mechant.lat, mechant.lng], tabZone)) {
-            ok = false;
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
           }
         })
-      }
-      tabZone = [];
-      for (var k = 0; k < zoneJeu[0].length; k++) {
-        tabZone.push(Object.values(zoneJeu[0][k]));
-      }
-      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-        ok = false;
-      }
+      })
+      items.forEach(item => {
+        //Verif si l'item est dans la zone de jeu
+        console.log(pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng])));
+        if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
+        }
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
+          }
+        })
+      })
 
-      console.log(ok);
-    }*/
-
+      if (!pointsInZone) {
+        configOk = false;
+        message = "Mechants/Items ne sont pas dans la zone de jeu";
+      }
+    }
 
     if (configOk) {
       document.querySelector(".fondSombre").style.display = "flex";
