@@ -1,0 +1,262 @@
+.App {
+  text-align: center;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+}
+
+#map-config .leaflet-control-container {
+  display: none;
+}
+
+.detail {
+  position: absolute;
+  left: 9rem;
+  height: 25%;
+  display: flex;
+  visibility: hidden;
+}
+
+#detailsMechants {
+  top: 50%;
+}
+
+#detailsItems {
+  top: 75%;
+}
+
+.btnDetail {
+  width: 9rem;
+  padding: 1rem 0.3rem;
+  cursor: pointer;
+  transition: transform 0.4s ease, background-color 0.4s ease;
+  font-size: 1.1rem;
+  color: #333;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.btnDetail:hover {
+  background-color: var(--orange);
+  transform: scale(1.04);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.sideBar {
+  position: absolute;
+  z-index: 2;
+  width: 9rem;
+  left: 1rem;
+  top: 1rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: bold;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  height: 60%;
+
+  background: rgba(255, 255, 255, 0.59);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divBtnSideBar {
+  height: 25%;
+  width: 100%;
+}
+
+.btnSideBar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  /*calc(10vh - 1.4rem);*/
+  width: 100%;
+  /*padding: 1rem 0.3rem;*/
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.4s ease, background-color 0.4s ease;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.btnSideBar:hover {
+  background-color: var(--orange);
+  transform: scale(1.04);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+.iconBar {
+  /*width: 64%;
+  max-height: 90%;*/
+  height: 55%;
+  object-fit: contain;
+  padding-bottom: 0.3rem;
+}
+
+.divEquipes {
+  position: absolute;
+  z-index: 2;
+  width: 20rem;
+  height: 35%;
+  left: 1rem;
+  bottom: 1rem;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+
+  background: rgba(255, 255, 255, 0.59);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divTopEquipes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.titreEquipe {
+  font-size: 24px;
+  margin: 10px;
+}
+
+.btnAddEquipe {
+  height: 70%;
+  cursor: pointer;
+}
+
+.listeEquipes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  overflow-y: scroll;
+  margin: 10px;
+}
+
+.itemEquipe {
+  margin: 5px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  height: 35px;
+  background-color: #999;
+  border-radius: 5px;
+  font-size: 20px;
+}
+
+.itemEquipe input[type=text] {
+  font-size: 18px;
+  width: 60%;
+  border: none;
+  background: #ebebeb;
+  opacity: 0.85;
+  border-radius: 8px;
+}
+
+.itemEquipe input[type=number] {
+  width: 20%;
+  font-size: 18px;
+  text-align: center;
+  border: none;
+  background: #ebebeb;
+  opacity: 0.85;
+  border-radius: 8px;
+}
+
+.btnDeleteEquipe {
+  height: 70%;
+  margin: auto 0;
+  cursor: pointer;
+}
+
+.btnCarte {
+  z-index: 2;
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.4s ease;
+  padding: 10px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: black;
+  font-size: 24px;
+  width: fit-content;
+
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.59);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(18.3px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btnCarte:hover {
+  background-color: var(--orange);
+  transform: scale(1.04);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+#btnSave {
+  right: 1rem;
+  top: 1rem;
+}
+
+#btnQuit {
+  right: 1rem;
+  top: 5rem;
+}
+
+#btnConfirmer {
+  right: 1rem;
+  top: 1rem;
+  display: none;
+}
+
+#btnAnnuler {
+  right: 1rem;
+  top: 5rem;
+  display: none;
+}
+
+#formConfig input {
+  font-size: 26px;
+  text-align: center;
+}
+
+#formConfig input[type="number"] {
+  width: 100px;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
