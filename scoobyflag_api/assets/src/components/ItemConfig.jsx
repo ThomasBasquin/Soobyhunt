@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import React from "react";
 
 export default function ItemConfig({ config, selectConfig, selected, index, deleteConfig }) {
     const navigate = useNavigate();
@@ -13,11 +14,11 @@ export default function ItemConfig({ config, selectConfig, selected, index, dele
         </div>
 
         <div className="div-btn-config">
-            <div className="btn-edit-config" onClick={() => navigate("/carte", { state: { config: config } })}>
-                <img src="edit.svg" alt="" className="img-btn-edit-config" />
+            <div className="btn-edit-config" onClick={() => navigate("/app/carte", { state: { config: config } })}>
+                <img src="../assets/edit.svg" alt="" className="img-btn-edit-config" />
             </div>
             <div className="btn-delete-config" onClick={() => deleteConfig(config.id)}>
-                <img src="bin.png" alt="" className="img-btn-edit-config" />
+                <img src="../assets/bin.png" alt="" className="img-btn-edit-config" />
             </div>
         </div>
     </div>

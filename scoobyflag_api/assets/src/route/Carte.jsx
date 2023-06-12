@@ -7,7 +7,7 @@ import {
   Polygon,
   Popup
 } from "react-leaflet";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "../css/carte.css";
@@ -200,6 +200,22 @@ export default function Carte() {
     //console.log(e.layers);
   }
 
+  const onEditStart = (e) => {
+    console.log("onEditStart", e);
+  }
+
+  const onEditMove = (e) => {
+    console.log("onEditMove : ", e);
+  }
+
+  const onEditResize = (e) => {
+    console.log("onEditResize : ", e);
+  }
+
+  const onEdited = (e) => {
+    console.log("onEdited : ", e);
+  }
+
   const clickZoneJeu = (e) => {
     if (zoneJeu.length == 0) {
       var e = document.createEvent("Event");
@@ -311,7 +327,7 @@ export default function Carte() {
 
   function quitter() {
     //Verif modifs pour sauvegarde ?
-    navigate("/dashboard");
+    navigate("/app/dashboard");
   }
 
   function openSave() {
@@ -322,48 +338,56 @@ export default function Carte() {
     equipes.forEach(equipe => {
       if (equipe.nom == "") {
         configOk = false;
-        message = "Equipe";
+        message = "Erreur dans le nom des équipes";
       }
     })
 
     //Zone de jeu présente ?
     if (zoneJeu.length < 1) {
       configOk = false;
-      message = "Zone de jeu";
+      message = "Il n'y a pas de zone de jeu";
     }
     //Au moins deux mechants ?
     if (mechants.length < 2) {
       configOk = false;
-      message = "Mechants";
+      message = "Il n'y a pas assez de méchants";
     }
 
     //Points dans la zone
-    /*var ok = true;
-    var tabZone = [];
+    var pointsInZone = true;
 
     if (configOk) {
-      for (var i = 0; i < zonesInterdites.length; i++) {
-        tabZone = [];
-        for (var j = 0; j < zonesInterdites[i].length; j++) {
-          tabZone.push(Object.values(zonesInterdites[i][j]));
+      mechants.forEach(mechant => {
+        //Verif si le mechant est dans la zone de jeu
+        if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
         }
-        mechants.forEach(mechant => {
-          if (pointInPolygon([mechant.lat, mechant.lng], tabZone)) {
-            ok = false;
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
           }
         })
-      }
-      tabZone = [];
-      for (var k = 0; k < zoneJeu[0].length; k++) {
-        tabZone.push(Object.values(zoneJeu[0][k]));
-      }
-      if (!pointInPolygon([e.layer.getLatLng().lat, e.layer.getLatLng().lng], tabZone)) {
-        ok = false;
-      }
+      })
+      items.forEach(item => {
+        //Verif si l'item est dans la zone de jeu
+        console.log(pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng])));
+        if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
+          pointsInZone = false;
+        }
+        //Verif des zones interdites
+        zonesInterdites.forEach(zoneInterdite => {
+          if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+            pointsInZone = false;
+          }
+        })
+      })
 
-      console.log(ok);
-    }*/
-
+      if (!pointsInZone) {
+        configOk = false;
+        message = "Mechants/Items ne sont pas dans la zone de jeu";
+      }
+    }
 
     if (configOk) {
       document.querySelector(".fondSombre").style.display = "flex";
@@ -606,6 +630,10 @@ export default function Carte() {
             }}
             onCreated={(e) => onCreated(e)}
             onDeleted={(e) => onDeleted(e)}
+            onEditStart={(e) => onEditStart(e)}
+            onEditMove={(e) => onEditMove(e)}
+            onEditResize={(e) => onEditResize(e)}
+            onEdited={(e) => onEdited(e)}
           />
           <EditControl
             position="topright"
@@ -637,7 +665,7 @@ export default function Carte() {
             onClick={(e) => clickZoneJeu(e)}
             className="btnSideBar"
           >
-            <img src="gaming-zone.png" alt="" className="iconBar" />
+            <img src="../assets/gaming-zone.png" alt="" className="iconBar" />
             Zone de jeu
           </div>
         </div>
@@ -647,7 +675,7 @@ export default function Carte() {
             onClick={(e) => clickZoneInterdite(e)}
             className="btnSideBar"
           >
-            <img src="forbidden.png" alt="" className="iconBar" />
+            <img src="../assets/forbidden.png" alt="" className="iconBar" />
             Zone interdite
           </div>
         </div>
@@ -657,17 +685,17 @@ export default function Carte() {
             onClick={(e) => clickMechant(e)}
             className="btnSideBar"
           >
-            <img src="villain.png" alt="" className="iconBar" />
+            <img src="../assets/villain.png" alt="" className="iconBar" />
             Méchants
           </div>
 
           <div className="detail" id="detailsMechants">
             <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
-              <img src="mechant1.png" alt="" className="iconBar" />
+              <img src="../assets/mechant1.png" alt="" className="iconBar" />
               Méchant 1
             </div>
             <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
-              <img src="mechant2.png" alt="" className="iconBar" />
+              <img src="../assets/mechant2.png" alt="" className="iconBar" />
               Méchant 2
             </div>
           </div>
@@ -678,25 +706,25 @@ export default function Carte() {
             onClick={(e) => clickObjet(e)}
             className="btnSideBar"
           >
-            <img src="object.png" alt="" className="iconBar" />
+            <img src="../assets/object.png" alt="" className="iconBar" />
             Objets
           </div>
 
           <div className="detail" id="detailsItems">
             <div className="btnDetail" onClick={(e) => chooseItem(e, 0)}>
-              <img src="loupe.png" alt="" className="iconBar" />
+              <img src="../assets/loupe.png" alt="" className="iconBar" />
               Item 1
             </div>
             <div className="btnDetail" onClick={(e) => chooseItem(e, 1)}>
-              <img src="lunettes.png" alt="" className="iconBar" />
+              <img src="../assets/lunettes.png" alt="" className="iconBar" />
               Item 2
             </div>
             <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
-              <img src="sac.png" alt="" className="iconBar" />
+              <img src="../assets/sac.png" alt="" className="iconBar" />
               Item 3
             </div>
             <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
-              <img src="ghost.png" alt="" className="iconBar" />
+              <img src="../assets/ghost.png" alt="" className="iconBar" />
               Item 4
             </div>
           </div>
@@ -705,7 +733,7 @@ export default function Carte() {
       <div className="divEquipes">
         <div className="divTopEquipes">
           <div className="titreEquipe">Équipes</div>
-          <img src="add.png" className="btnAddEquipe" onClick={addEquipe}></img>
+          <img src="../assets/add.png" className="btnAddEquipe" onClick={addEquipe}></img>
         </div>
         <div className="listeEquipes">
           {equipes.map((equipe, index) => {
