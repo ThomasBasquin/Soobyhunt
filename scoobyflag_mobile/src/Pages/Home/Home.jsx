@@ -195,6 +195,41 @@ export default function Home({route, navigation}) {
       });
   }
 
+  function getItem(){
+    fetch(GAME.getItem.replace('{user}', idUser).replace("{item}",stateItemModal.item.id), {
+      method: 'POST',
+      headers: {
+        'Content-type': 'Application/json',
+      },
+      body: JSON.stringify({})
+    })
+    .then(res => res.json())
+    .then(res => console.log(res))
+
+    setItemMarkers(
+      itemMarkers.map(i =>
+        i.id == stateItemModal.item.id
+          ? {...i, quantite: i.quantite - 1}
+          : i,
+      ),
+    );
+    const indexItemUser = itemsUser.findIndex(
+      i => i.name == stateItemModal.item.name,
+    );
+    if (indexItemUser !== -1) {
+      setItemsUser(
+        itemsUser.map((i, index) =>
+          index == indexItemUser ? {...i, quantite: i.quantite + 1} : i,
+        ),
+      );
+    } else {
+      setItemsUser([
+        ...itemsUser,
+        {...stateItemModal.item, quantite: 1},
+      ]);
+    }
+  }
+
   function getCurrentPosition(fixPosition = false) {
     Geolocation.getCurrentPosition(
       pos => {
@@ -322,30 +357,7 @@ export default function Home({route, navigation}) {
       ) : null}
       {stateItemModal.isOpen ? (
         <ItemModal
-          onSubmit={() => {
-            setItemMarkers(
-              itemMarkers.map(i =>
-                i.id == stateItemModal.item.id
-                  ? {...i, quantite: i.quantite - 1}
-                  : i,
-              ),
-            );
-            const indexItemUser = itemsUser.findIndex(
-              i => i.name == stateItemModal.item.name,
-            );
-            if (indexItemUser !== -1) {
-              setItemsUser(
-                itemsUser.map((i, index) =>
-                  index == indexItemUser ? {...i, quantite: i.quantite + 1} : i,
-                ),
-              );
-            } else {
-              setItemsUser([
-                ...itemsUser,
-                {...stateItemModal.item, quantite: 1},
-              ]);
-            }
-          }}
+          onSubmit={getItem}
           state={stateItemModal}
           onRequestClose={() =>
             setStateItemModal({...stateItemModal, isOpen: false})

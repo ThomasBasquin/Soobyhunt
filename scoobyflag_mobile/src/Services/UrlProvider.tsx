@@ -28,7 +28,8 @@ export function UrlProvider({children}:IProps){
         team: GAME_DOMAIN+"/team",
         changeTeam:GAME_DOMAIN+"/user/{user}/team/{team}",
         getMap: GAME_DOMAIN + "/game/{game}",
-        getInfo: GAME_DOMAIN + "/game/info"
+        getInfo: GAME_DOMAIN + "/game/info",
+        getItem: GAME_DOMAIN + "/user/{user}/item/get/{item}",
     };
     
     const API={
