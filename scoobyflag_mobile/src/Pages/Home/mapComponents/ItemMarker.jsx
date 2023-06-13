@@ -5,7 +5,7 @@ import { findPiture } from "../../../Constantes/utils";
 
 const ItemMarker = memo(function ItemMarker({item, openModal}){
     
-    const picture= useRef(findPiture(item.type));
+    const picture= useRef(findPiture("loupe"));
 
     return (
         <MarkerComponent

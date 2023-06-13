@@ -4,6 +4,8 @@ import {Image, View} from 'react-native';
 
 const UserMarker=  memo(function UserMarker({user, team}){
 
+  if(!user.latitude || !user.longitude)return;
+
   return (
         <MarkerComponent
           tappable={false}
