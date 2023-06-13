@@ -20,6 +20,7 @@ import { EditControl } from "react-leaflet-draw";
 import pointInPolygon from "point-in-polygon";
 import ItemEquipe from "../components/ItemEquipe";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
+import Loader from "../components/Loader";
 
 export default function Carte() {
   const [nomConfig, setNomConfig] = useState("");
@@ -40,28 +41,37 @@ export default function Carte() {
 
   const mapRef = useRef(null);
 
-  // const { state } = useLocation();
+  useEffect(() => {
+    var idConfig = new URLSearchParams(window.location.search).get("carte");
+    console.log(idConfig);
 
-  // useEffect(() => { / //TODO
-  //   if (state != null) {
-  //     const { config } = state;
-  //     setConfigLoaded(config);
-  //     setConfigId(config.id);
+    if (idConfig != null) {
+      setStatus("Chargement...")
+      fetch(
+        "https://scoobyhunt.fr/game/gameTemplate/" + idConfig
+      )
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then((json) => {
+          setConfigLoaded(json.gameTemplate);
+          setConfigId(idConfig);
+          setNomConfig(json.gameTemplate.json.name);
+          var teams = [];
+          json.gameTemplate.json.teams.forEach(team => {
+            teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
+          })
+          setEquipes(teams);
 
-  //     console.log(config.json);
-  //     setNomConfig(config.json.name);
-  //     var teams = [];
-  //     config.json.teams.forEach(team => {
-  //       teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
-  //     })
-  //     setEquipes(teams);
-
-  //     getLocation(config);
-  //   }
-  //   else {
-  //     getLocation();
-  //   }
-  // }, []);
+          getLocation(json.gameTemplate);
+        });
+    }
+    else {
+      getLocation();
+    }
+  }, []);
 
   const getLocation = (configLoaded) => {
     if (configLoaded != null) {
@@ -325,7 +335,7 @@ export default function Carte() {
 
   function quitter() {
     //Verif modifs pour sauvegarde ?
-    // navigate("/app/dashboard"); ///TODO
+    document.location.assign("/app/dashboard")
   }
 
   function openSave() {
@@ -362,7 +372,7 @@ export default function Carte() {
         }
         //Verif des zones interdites
         zonesInterdites.forEach(zoneInterdite => {
-          if (!pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+          if (pointInPolygon([mechant.coords.lat, mechant.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
             pointsInZone = false;
           }
         })
@@ -375,7 +385,7 @@ export default function Carte() {
         }
         //Verif des zones interdites
         zonesInterdites.forEach(zoneInterdite => {
-          if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
+          if (pointInPolygon([item.coords.lat, item.coords.lng], zoneInterdite.coords.map(point => [point.lat, point.lng]))) {
             pointsInZone = false;
           }
         })
@@ -782,7 +792,10 @@ export default function Carte() {
       </div>
     </>
   ) : (
-    <h1>{status}</h1>
+    <>
+      <h1>{status}</h1>
+      <Loader />
+    </>
   );
 }
 

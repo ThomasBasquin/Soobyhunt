@@ -7,7 +7,7 @@ export default function User() {
 
   function logout() {
     localStorage.clear("user");
-    // navigate("/");//TODO
+    document.location.assign("/app")
   }
 
   return (
@@ -18,7 +18,7 @@ export default function User() {
             src="../assets/fleche.png"
             alt="logo"
             className="logo-header-profil"
-            // onClick={() => navigate("/app/dashboard")}//TODO
+            onClick={() => document.location.assign("/app/dashboard")}
           />
           <div className="titre-header">ScoobyHunt</div>
         </div>
@@ -56,4 +56,4 @@ export default function User() {
   );
 }
 
-renderOnDomLoaded(<User />,"user");
+renderOnDomLoaded(<User />, "user");
