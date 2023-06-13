@@ -220,6 +220,10 @@ export default function Carte() {
     console.log("onEditResize : ", e);
   }
 
+  const onEditVertex = (e) => {
+    console.log("onEditVertex : ", e);
+  }
+
   const onEdited = (e) => {
     console.log("onEdited : ", e);
   }
@@ -641,6 +645,7 @@ export default function Carte() {
             onEditStart={(e) => onEditStart(e)}
             onEditMove={(e) => onEditMove(e)}
             onEditResize={(e) => onEditResize(e)}
+            onEditVertex={(e) => onEditVertex(e)}
             onEdited={(e) => onEdited(e)}
           />
           <EditControl
@@ -763,7 +768,7 @@ export default function Carte() {
       </div>
 
       <div className="fondSombre">
-        <div className="popUp" id="deconnexion">
+        <div className="popUp">
           <h3>Sauvegarde de la configuration</h3>
           <form onSubmit={saveConfig} id="formConfig">
             <div className="ligneForm">

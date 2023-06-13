@@ -12,18 +12,21 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT }) {
   const [nomPartie, setnomPartie] = useState("Hudog");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/team")
+    fetch("http://localhost:"+HOST_PORT+"/team")
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
   }, []);
+
+
   useEffect(() => {
     teams.map((t) => {
       {
         !t.id ? setjoueursConnectes(t.players) : "";
       }
     });
-  });
+  },[joueursConnectes]);
+  
   const onMessageListen = useCallback(
     (user) => {
       if (!user.team) {

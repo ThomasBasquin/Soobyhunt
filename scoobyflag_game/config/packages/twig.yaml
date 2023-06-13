@@ -8,7 +8,6 @@ twig:
     app_environment: "%env(APP_ENV)%"
     mercure_port: "%env(MERCURE_PORT)%"
     host_port: "%env(HOST_PORT)%"
-    db_port: "%env(DB_PORT)%"
 
 when@test:
   twig:

@@ -173,6 +173,30 @@
     background: white;
 }
 
+.ligneBouton {
+    display: flex;
+    justify-content: center;
+}
+
+
+.btnConfirm {
+    background-color: #6B2B94;
+    padding: 10px 20px;
+    margin: 20px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 26px;
+    border: #6B2B94 solid 1px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.btnConfirm:hover {
+    color: #6B2B94;
+    background: white;
+}
+
 /***ItemConfig***/
 .item-config {
     width: 100%;
@@ -200,7 +224,7 @@
 }
 
 .btn-edit-config {
-    z-index: 150;
+    z-index: 2;
     height: 70px;
     width: 70px;
     background-color: #ee9158;
