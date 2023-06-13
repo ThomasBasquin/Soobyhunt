@@ -149,37 +149,17 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/objective/{objective}', name: 'capture_objective', methods: ['PUT'])]
-    public function captureObjective(HubInterface $hub,User $currentUser, Objective $objective)
+    public function captureObjective(User $user, Objective $objective)
     {
-
-        $objective->setUser($currentUser);
+        $objective->setUser($user);
         $this->em->persist($objective);
         $this->em->flush();
 
-        $users = $this->userService->getUsersByItemView( $objective->getLongitude(),$objective->getLatitude(),300);
+        $users = $this->userService->getUsersByItemView($objective->getLongitude(),$objective->getLatitude(),300);
 
-
-        // mercure
-        foreach ($users as $user) {
-            if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-                $update = new Update(
-                    "https://scoobyflag/user/" . $user->getId(),
-                    json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
-                );
-                $hub->publish($update);
-            }
-        }
-        if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-            $update = new Update(
-                "https://scoobyflag/user/0",
-                json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
-            );
-            $hub->publish($update);
-        }
-
+        $this->mercureService->publish($users,$user,$this->serializer->serialize($objective, "json", ["groups" => ["User:read", "Objective:read"]]),false);
        
-
-        return $this->json($user, 200, [], ['groups' => ["User:read", "Objective:read"]]);
+        return $this->json($objective, 200, [], ['groups' => ["User:read", "Objective:read"]]);
     }
 
     #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
