@@ -78,7 +78,8 @@ class GameController extends AbstractController
                         ->setUser($user)
                         ->setItemUsed($player['itemUsed'] ?? 0)
                         ->setObjectifCaptured($player['objectifCaptured'] ?? 0)
-                        ->setItemGet($player['itemGet'] ?? 0);
+                        ->setItemGet($player['itemGet'] ?? 0)
+                        ->setJson($data['data']);
 
                     if ($winnerTeam === $team['name']) {
                         $userGame->setWin(true);

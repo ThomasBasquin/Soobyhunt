@@ -31,6 +31,9 @@ class UserGame
     #[ORM\Column]
     private ?bool $win = null;
 
+    #[ORM\Column]
+    private array $json = [];
+
 
     public function __construct()
     {
@@ -113,6 +116,18 @@ class UserGame
     public function setWin(bool $win): self
     {
         $this->win = $win;
+
+        return $this;
+    }
+
+    public function getJson(): array
+    {
+        return $this->json;
+    }
+
+    public function setJson(array $json): self
+    {
+        $this->json = $json;
 
         return $this;
     }
