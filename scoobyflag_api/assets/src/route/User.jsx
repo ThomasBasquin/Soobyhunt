@@ -1,14 +1,13 @@
-import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import "../css/user.css";
+import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 
 export default function User() {
-  const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState("infos");
 
   function logout() {
     localStorage.clear("user");
-    navigate("/");
+    document.location.assign("/app")
   }
 
   return (
@@ -19,7 +18,7 @@ export default function User() {
             src="../assets/fleche.png"
             alt="logo"
             className="logo-header-profil"
-            onClick={() => navigate("/app/dashboard")}
+            onClick={() => document.location.assign("/app/dashboard")}
           />
           <div className="titre-header">ScoobyHunt</div>
         </div>
@@ -56,3 +55,5 @@ export default function User() {
     </div>
   );
 }
+
+renderOnDomLoaded(<User />, "user");

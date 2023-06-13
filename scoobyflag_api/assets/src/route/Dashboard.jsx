@@ -1,16 +1,16 @@
-import { useNavigate } from "react-router-dom";
 import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
 import Loader from "../components/Loader";
+import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
   const [selectedConfig, setSelectedConfig] = useState("");
   const [indexSelected, setIndexSelected] = useState(-1);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   useEffect(() => {
     //Recuperer les configs du user
@@ -31,11 +31,11 @@ export default function Dashboard() {
   }, []);
 
   function clickUser() {
-    navigate("/app/user");
+    document.location.assign("/app/user")
   }
 
   function addConfig() {
-    navigate("/app/carte");
+    document.location.assign("/app/carte")
   }
 
   function selectConfig(config, index) {
@@ -127,7 +127,7 @@ export default function Dashboard() {
             src="../assets/logo.png"
             alt=""
             className="logo-header-dashboard"
-            onClick={() => navigate("/")}
+            onClick={() => document.location.assign("/app")}
           />
           <div className="titre-header">ScoobyHunt</div>
         </div>
@@ -220,3 +220,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
+renderOnDomLoaded(<Dashboard />, "dashboard");

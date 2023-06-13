@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import "../css/main.css";
+import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 
 export default function Index() {
   return (
@@ -24,11 +24,13 @@ export default function Index() {
             height: 100,
           }}
         >
-          <Link className="createGame" to="/app/login" style={{ marginRight: 40 }}>
+          <button className="createGame" style={{ marginRight: 40 }} onClick={() => document.location.assign("/app/login")}>
             Se connecter
-          </Link>
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
+renderOnDomLoaded(<Index />, "index");
