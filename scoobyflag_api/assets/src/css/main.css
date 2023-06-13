@@ -113,9 +113,10 @@ h1 {
     border-radius: 3vh;
     background-color: rgba(255, 255, 255, 1);
     margin: auto;
-    padding: 20px;
+    padding: 40px;
     animation-name: animatemodal;
     animation-duration: 0.5s;
+    text-align: center;
 }
 
 .popUp form {
