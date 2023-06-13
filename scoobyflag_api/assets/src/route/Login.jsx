@@ -13,7 +13,7 @@ export default function Login() {
 
     useEffect(() => {
         if (localStorage.getItem("user") != null) {
-            // navigate('/app/dashboard'); //TODO
+            document.location.assign("/app/dashboard")
         }
     }, [])
 
@@ -43,7 +43,7 @@ export default function Login() {
             })
             .then(json => {
                 localStorage.setItem("user", JSON.stringify(json));
-                // navigate('/app/dashboard'); //TODO
+                document.location.assign("/app/dashboard")
             })
     }
 
