@@ -19,7 +19,7 @@ import ghost from "../../assets/ghost.png";
 import lunettes from "../../assets/lunettes.png";
 import sac from "../../assets/sac.png";
 
-export default function Game() {
+export default function Game({ MERCURE_PORT, DB_PORT }) {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
@@ -31,9 +31,12 @@ export default function Game() {
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
   const [joueurs, setJoueurs] = useState([]);
-
+  console.log(DB_PORT);
+  console.log(MERCURE_PORT);
   useEffect(() => {
-    const url = new URL("http://hugoslr.fr:16640/.well-known/mercure");
+    const url = new URL(
+      "http://207.154.194.125:" + MERCURE_PORT + "/.well-known/mercure"
+    );
     url.searchParams.append(
       "topic",
       "https://scoobyflag/user/{userId}".replace(
@@ -286,4 +289,10 @@ export default function Game() {
   );
 }
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
-renderOnDomLoaded(<Game />, "GameRoot");
+renderOnDomLoaded(
+  <Game
+    MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
+    DB_PORT={document.querySelector("#DB_PORT").value}
+  />,
+  "GameRoot"
+);
