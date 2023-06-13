@@ -8,7 +8,6 @@ import {
   Popup
 } from "react-leaflet";
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "../css/carte.css";
 import mechant1 from "../assets/mechant1.png";
@@ -20,10 +19,9 @@ import ghost from "../assets/ghost.png";
 import { EditControl } from "react-leaflet-draw";
 import pointInPolygon from "point-in-polygon";
 import ItemEquipe from "../components/ItemEquipe";
+import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 
 export default function Carte() {
-  const navigate = useNavigate();
-
   const [nomConfig, setNomConfig] = useState("");
   const [heures, setHeures] = useState(0);
   const [minutes, setMinutes] = useState(5);
@@ -42,28 +40,28 @@ export default function Carte() {
 
   const mapRef = useRef(null);
 
-  const { state } = useLocation();
+  // const { state } = useLocation();
 
-  useEffect(() => {
-    if (state != null) {
-      const { config } = state;
-      setConfigLoaded(config);
-      setConfigId(config.id);
+  // useEffect(() => { / //TODO
+  //   if (state != null) {
+  //     const { config } = state;
+  //     setConfigLoaded(config);
+  //     setConfigId(config.id);
 
-      console.log(config.json);
-      setNomConfig(config.json.name);
-      var teams = [];
-      config.json.teams.forEach(team => {
-        teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
-      })
-      setEquipes(teams);
+  //     console.log(config.json);
+  //     setNomConfig(config.json.name);
+  //     var teams = [];
+  //     config.json.teams.forEach(team => {
+  //       teams.push({ id: equipes.length, nom: team.nom, nbJoueur: team.nbJoueur });
+  //     })
+  //     setEquipes(teams);
 
-      getLocation(config);
-    }
-    else {
-      getLocation();
-    }
-  }, []);
+  //     getLocation(config);
+  //   }
+  //   else {
+  //     getLocation();
+  //   }
+  // }, []);
 
   const getLocation = (configLoaded) => {
     if (configLoaded != null) {
@@ -327,7 +325,7 @@ export default function Carte() {
 
   function quitter() {
     //Verif modifs pour sauvegarde ?
-    navigate("/app/dashboard");
+    // navigate("/app/dashboard"); ///TODO
   }
 
   function openSave() {
@@ -787,3 +785,5 @@ export default function Carte() {
     <h1>{status}</h1>
   );
 }
+
+renderOnDomLoaded(<Carte />, "carte");

@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import '../css/login.css';
+import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 
 export default function Login() {
     const [authMode, setAuthMode] = useState("signin");
@@ -9,11 +9,11 @@ export default function Login() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [email, setEmail] = useState("");
     const [feedback, setFeedback] = useState("");
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     useEffect(() => {
         if (localStorage.getItem("user") != null) {
-            navigate('/app/dashboard');
+            // navigate('/app/dashboard'); //TODO
         }
     }, [])
 
@@ -43,7 +43,7 @@ export default function Login() {
             })
             .then(json => {
                 localStorage.setItem("user", JSON.stringify(json));
-                navigate('/app/dashboard');
+                // navigate('/app/dashboard'); //TODO
             })
     }
 
@@ -142,3 +142,5 @@ export default function Login() {
         </div >}
     </div >
 }
+
+renderOnDomLoaded(<Login />, "login");
