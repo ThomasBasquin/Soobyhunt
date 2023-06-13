@@ -19,6 +19,27 @@ class UserGame
     #[ORM\ManyToOne(inversedBy: 'userGames')]
     private ?Game $game = null;
 
+    #[ORM\Column]
+    private ?int $objectifCaptured = null;
+
+    #[ORM\Column]
+    private ?int $itemGet = null;
+
+    #[ORM\Column]
+    private ?int $itemUsed = null;
+
+    #[ORM\Column]
+    private ?bool $win = null;
+
+
+    public function __construct()
+    {
+        $this->itemGet = 0;
+        $this->itemUsed = 0;
+        $this->objectifCaptured = 0;
+        $this->win = false;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +65,54 @@ class UserGame
     public function setGame(?Game $game): self
     {
         $this->game = $game;
+
+        return $this;
+    }
+
+    public function getObjectifCaptured(): ?int
+    {
+        return $this->objectifCaptured;
+    }
+
+    public function setObjectifCaptured(int $objectifCaptured): self
+    {
+        $this->objectifCaptured = $objectifCaptured;
+
+        return $this;
+    }
+
+    public function getItemGet(): ?int
+    {
+        return $this->itemGet;
+    }
+
+    public function setItemGet(int $itemGet): self
+    {
+        $this->itemGet = $itemGet;
+
+        return $this;
+    }
+
+    public function getItemUsed(): ?int
+    {
+        return $this->itemUsed;
+    }
+
+    public function setItemUsed(int $itemUsed): self
+    {
+        $this->itemUsed = $itemUsed;
+
+        return $this;
+    }
+
+    public function isWin(): ?bool
+    {
+        return $this->win;
+    }
+
+    public function setWin(bool $win): self
+    {
+        $this->win = $win;
 
         return $this;
     }
