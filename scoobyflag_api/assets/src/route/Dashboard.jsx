@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import ItemConfig from "../components/ItemConfig";
 import "../css/dashboard.css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
 import Loader from "../components/Loader";
 
@@ -16,8 +16,8 @@ export default function Dashboard() {
     //Recuperer les configs du user
     fetch(
       "https://scoobyhunt.fr/user/" +
-        JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
-        "/getAllTemplate"
+      JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+      "/getAllTemplate"
     )
       .then((res) => {
         if (res.ok) {
@@ -31,11 +31,11 @@ export default function Dashboard() {
   }, []);
 
   function clickUser() {
-    navigate("/user");
+    navigate("/app/user");
   }
 
   function addConfig() {
-    navigate("/carte");
+    navigate("/app/carte");
   }
 
   function selectConfig(config, index) {
@@ -124,7 +124,7 @@ export default function Dashboard() {
       <div className="header">
         <div className="header-gauche">
           <img
-            src="logo.png"
+            src="../assets/logo.png"
             alt=""
             className="logo-header-dashboard"
             onClick={() => navigate("/")}
@@ -132,7 +132,7 @@ export default function Dashboard() {
           <div className="titre-header">ScoobyHunt</div>
         </div>
         <img
-          src="profile.png"
+          src="../assets/profile.png"
           alt=""
           className="btn-user"
           onClick={clickUser}

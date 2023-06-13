@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../css/login.css';
 
 export default function Login() {
@@ -13,10 +13,9 @@ export default function Login() {
 
     useEffect(() => {
         if (localStorage.getItem("user") != null) {
-            navigate('/dashboard');
+            navigate('/app/dashboard');
         }
     }, [])
-
 
     function submitLogin(e) {
         e.preventDefault();
@@ -44,7 +43,7 @@ export default function Login() {
             })
             .then(json => {
                 localStorage.setItem("user", JSON.stringify(json));
-                navigate('/dashboard');
+                navigate('/app/dashboard');
             })
     }
 
@@ -97,10 +96,10 @@ export default function Login() {
 
     return <div className="fond-degrade-login">
         {authMode == "signin" ? <div className='div-login'>
-            <img src="scooby.png" alt="" className='scooby' />
+            <img src="../assets/scooby.png" alt="" className='scooby' />
 
             <div className='zone-login'>
-                <img src="logo.png" alt="" className='logo' />
+                <img src="../assets/logo.png" alt="" className='logo' />
 
                 <form onSubmit={submitLogin} method='post' id='formLogin'>
                     <label htmlFor="pseudo">Identifiant</label>
@@ -114,12 +113,12 @@ export default function Login() {
                 <div onClick={changeAuthMode} className='change-auth txt-auth'>Créer un compte</div>
             </div>
 
-            <img src="vera.png" alt="" className='vera' />
+            <img src="../assets/vera.png" alt="" className='vera' />
         </div> : <div className='div-login'>
-            <img src="daphnee.png" alt="" className='daphnee' />
+            <img src="../assets/daphnee.png" alt="" className='daphnee' />
 
             <div className='zone-login'>
-                <img src="logo.png" alt="" className='logo' />
+                <img src="../assets/logo.png" alt="" className='logo' />
 
                 <form onSubmit={submitCreate} method='post' id='formLogin'>
                     <label htmlFor="email">E-mail</label>
@@ -139,7 +138,7 @@ export default function Login() {
                 </div>
             </div >
 
-            <img src="fred.png" alt="" className='fred' />
+            <img src="../assets/fred.png" alt="" className='fred' />
         </div >}
     </div >
 }

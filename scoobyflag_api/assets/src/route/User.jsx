@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 import "../css/user.css";
 
 export default function User() {
@@ -16,10 +16,10 @@ export default function User() {
       <div className="header">
         <div className="header-gauche">
           <img
-            src="fleche.png"
+            src="../assets/fleche.png"
             alt="logo"
             className="logo-header-profil"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/app/dashboard")}
           />
           <div className="titre-header">ScoobyHunt</div>
         </div>

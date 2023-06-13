@@ -75,6 +75,7 @@ class User
         $this->itemUser = new ArrayCollection();
         $this->objectives = new ArrayCollection();
     }
+    
     public function getId(): ?int
     {
         return $this->id;
