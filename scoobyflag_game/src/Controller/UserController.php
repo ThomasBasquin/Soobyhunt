@@ -196,9 +196,9 @@ class UserController extends AbstractController
 
             $users = $this->userService->getUsersByItemView( $item->getLongitude(),$item->getLatitude(),300);
 
-            $this->mercureService->publish($users,$user,$this->serializer->serialize($user, "json", ["groups" => ["User:read"]]),false);
+            $this->mercureService->publish($users,$user,$this->serializer->serialize($item, "json", ["groups" => ["User:read", "Item:read"]]),false);
 
-            return $this->json($users, 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
+            return $this->json($item, 200, [], ['groups' => ["User:read", "Item:read"]]);
         }
         return new JsonResponse("Il n'y a plus d'item dispo", 302);
     }

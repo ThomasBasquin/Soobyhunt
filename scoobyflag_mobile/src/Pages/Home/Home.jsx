@@ -76,16 +76,23 @@ export default function Home({route, navigation}) {
     });
 
     eventSource.addEventListener('message', event => {
-      const user = JSON.parse(JSON.parse(event.data));
+      const data = JSON.parse(JSON.parse(event.data));
 
-      const alreadyInParty = userMarkers.find(u => {
-        return u.id == user.id;
-      });
-      setUserMarkers(cur =>
-        alreadyInParty
+      //C'ets un user
+      if(data.pseudo){
+        const user = data;
+        const alreadyInParty = userMarkers.find(u => {
+          return u.id == user.id;
+        });
+        setUserMarkers(cur =>
+          alreadyInParty
           ? cur.map(u => (u.id == user.id ? user : u))
           : [...cur, user],
-      );
+          );
+        }else{
+          const item = data;
+          console.log(item);
+        }
     });
 
     eventSource.addEventListener('error', event => {
