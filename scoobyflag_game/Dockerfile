@@ -36,7 +36,7 @@ RUN apt-get update && \
 
 RUN cd /var/www && \
     composer install && \
-    npm install --force && \
+    npm ci && \
     npm run build
     
 WORKDIR /var/www/

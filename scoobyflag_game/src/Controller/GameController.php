@@ -47,18 +47,16 @@ class GameController extends AbstractController
     {
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
 
-
         $data = $this->gameService->formatData();
-        // stop game
+
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
         $projectName = $_ENV['PROJECT_NAME'];
         
         $id = $_ENV['ID'];
-        // $url = 'https://scoobyhunt.fr/game/' . $id . '/end';
-        $url = 'https://127.0.0.1:8000/game/end/10';
+        $url = 'https://scoobyhunt.fr/game/' . $id . '/end';
+        // $url = 'https://127.0.0.1:8000/game/end/10';
         // $url = 'https://127.0.0.1:8000/game/' . $id . '/end';
-        dump($url, $data);
 
         try {
             $client = HttpClient::create();
@@ -67,6 +65,7 @@ class GameController extends AbstractController
                 $url,
                 [
                     'headers' => [
+                        'accept' => 'application/json',
                         'Content-Type' => 'application/json',
                     ],
                     'body' => json_encode(['projectName' => $projectName, 'data'=> $data]),
@@ -75,7 +74,7 @@ class GameController extends AbstractController
     
             // Process the response as needed
     
-            return $this->json(['projectname' => $projectName, 'game' => $game], 200, [], ['groups' => ["Game:info", 'Item:read', 'Team:get', 'Objective:read', 'User:info']]);
+            return $this->json(['projectname' => $projectName, 'data' => $data], 200, [], ['groups' => ["Game:info", 'Item:read', 'Team:get', 'User:info']]);
         } catch (\Throwable $e) {
             // Handle the exception
             // You can log the error, display a specific error message, or perform any necessary error handling logic
