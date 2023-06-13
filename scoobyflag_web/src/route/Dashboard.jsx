@@ -70,7 +70,7 @@ export default function Dashboard() {
       body: JSON.stringify({ idTemplate: selectedConfig.id }),
     };
 
-    fetch("https://127.0.0.1:8000/game/create", createGameOption)
+    fetch("https://scoobyhunt.fr/game/create", createGameOption)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");
