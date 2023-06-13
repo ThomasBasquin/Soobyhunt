@@ -22,7 +22,7 @@ body {
     overflow-x: hidden;
 }
 
-#root {
+#index {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -31,7 +31,7 @@ body {
     width: 100%;
 }
 
-#root>main {
+#index>main {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -75,6 +75,8 @@ body {
     font-weight: 700;
     width: auto;
     color: #6B2B94;
+    cursor: pointer;
+    border: none;
 }
 
 .infoAccueil {

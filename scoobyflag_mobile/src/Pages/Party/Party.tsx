@@ -19,7 +19,7 @@ function Party({route, navigation}: any) {
 
   useEffect(()=>{
     refresh()
-    const interval = setInterval(refresh,60000);
+    const interval = setInterval(refresh,5000);
 
     return () => clearInterval(interval);
   },[]);
@@ -28,7 +28,6 @@ function Party({route, navigation}: any) {
     fetch(GAME.getInfo)
     .then(res => res.json())
     .then(info => {
-      console.log(info);
       setParty(info);
     })
     .finally(() => setIsLoading(false));
@@ -161,9 +160,6 @@ function Party({route, navigation}: any) {
         <Text style={{color: '#fff'}}>MON EQUIPE</Text>
         {party.teams.map((team:any) => {
           if(!team.playersScore.find((user:any) => user.id == idUser))return;
-          
-          console.log(team);
-          
           return (
         <View style={style.card}>
           <View

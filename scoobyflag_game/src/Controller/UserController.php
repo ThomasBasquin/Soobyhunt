@@ -183,12 +183,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/{user}/item/get/{item}', name: 'get_item', methods: ['POST'])]
-    public function itemGet(HubInterface $hub, Item $item, Request $request, User $currentUser): Response
+    public function itemGet(HubInterface $hub, Item $item, User $user): Response
     {
         if ($item->getQuantity()) {
             $item->setQuantity($item->getQuantity() - 1);
             $itemUser = new ItemUser();
-            $itemUser->setGetBy($currentUser);
+            $itemUser->setGetBy($user);
             $itemUser->setItem($item);
             $this->em->persist($itemUser);
             $this->em->persist($item);
@@ -196,24 +196,7 @@ class UserController extends AbstractController
 
             $users = $this->userService->getUsersByItemView( $item->getLongitude(),$item->getLatitude(),300);
 
-
-            // mercure
-            foreach ($users as $user) {
-                if (!$currentUser->getId() == $user->getId() && $currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-                    $update = new Update(
-                        "https://scoobyflag/user/" . $user->getId(),
-                        json_encode($this->serializer->serialize($user, "json", ["groups" => ["User:read"]]))
-                    );
-                    $hub->publish($update);
-                }
-            }
-            if ($currentUser->getLatitude() !== null && $currentUser->getLongitude() !== null) {
-                $update = new Update(
-                    "https://scoobyflag/user/0",
-                    json_encode($this->serializer->serialize($currentUser, "json", ["groups" => ["User:read"]]))
-                );
-                $hub->publish($update);
-            }
+            $this->mercureService->publish($users,$user,$this->serializer->serialize($user, "json", ["groups" => ["User:read"]]),false);
 
             return $this->json($users, 200, [], ['groups' => ["User:read", "Objective:read", "Item:read"]]);
         }

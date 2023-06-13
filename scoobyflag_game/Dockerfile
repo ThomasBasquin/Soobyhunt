@@ -34,9 +34,19 @@ RUN apt-get update && \
     unzip \
     zip
 
+# copy package*.json
+COPY package*.json /var/www/
+
+# create cache and install node modules
+RUN cd /var/www && \
+    npm ci && mkdir /node_modules_cache && cp -R ./node_modules/* /node_modules_cache
+
+# copy from cache before npm ci
+RUN cp -R /node_modules_cache/* /var/www/node_modules/ && cd /var/www && npm ci
+
+# your other build steps
 RUN cd /var/www && \
     composer install && \
-    npm ci && \
     npm run build
     
 WORKDIR /var/www/

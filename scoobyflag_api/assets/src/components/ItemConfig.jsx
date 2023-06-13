@@ -12,8 +12,7 @@ export default function ItemConfig({ config, selectConfig, selected, index, dele
         </div>
 
         <div className="div-btn-config">
-            {/* <div className="btn-edit-config" onClick={() => navigate("/app/carte", { state: { config: config } })}> */} //TODO
-            <div className="btn-edit-config" >
+            <div className="btn-edit-config" onClick={() => document.location.assign("/app/carte?carte=" + config.id)}>
                 <img src="../assets/edit.svg" alt="" className="img-btn-edit-config" />
             </div>
             <div className="btn-delete-config" onClick={() => deleteConfig(config.id)}>

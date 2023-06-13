@@ -24,10 +24,7 @@ export default function Index() {
             height: 100,
           }}
         >
-          {/*//TODO <Link className="createGame" to="/app/login" style={{ marginRight: 40 }}>
-            Se connecter
-          </Link> */}
-          <button className="createGame" style={{ marginRight: 40 }}>
+          <button className="createGame" style={{ marginRight: 40 }} onClick={() => document.location.assign("/app/login")}>
             Se connecter
           </button>
         </div>

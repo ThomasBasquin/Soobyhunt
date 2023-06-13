@@ -31,11 +31,11 @@ export default function Dashboard() {
   }, []);
 
   function clickUser() {
-    // navigate("/app/user"); //TODO
+    document.location.assign("/app/user")
   }
 
   function addConfig() {
-    // navigate("/app/carte"); // TODO
+    document.location.assign("/app/carte")
   }
 
   function selectConfig(config, index) {
@@ -127,7 +127,7 @@ export default function Dashboard() {
             src="../assets/logo.png"
             alt=""
             className="logo-header-dashboard"
-            // onClick={() => navigate("/")} //TODO
+            onClick={() => document.location.assign("/app")}
           />
           <div className="titre-header">ScoobyHunt</div>
         </div>
