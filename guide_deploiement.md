@@ -47,5 +47,57 @@ Voici ce que vous devez faire sur votre VPS avant de pouvoir déployer l'applica
 - Connectez vous ensuite à MySQL : ``sudo mysql -u root -p``,
 - Créez un compte avec grant all privileges puis testez la création avec : ``sudo mysql -u [nom du compte] -p``,
 - Copiez le .env en .env.local : ``cp .env .env.local``,
-- **C'est un peu long comme prérequis mais on arrive bientôt à la fin...** Faites un ``composer i``
+- **C'est un peu long comme prérequis mais on arrive bientôt à la fin...** Faites un ``composer i`` dans ``scoobyflag_game et scoobyflag_api`` puis faites ``php bin/console d:d:c`` et ``php bin/console d:s:u -f`` pour d'abord créer la base de données puis update le schéma.
+- Créez ensuite le fichier conf pour apache puis faites ``a2ensite [nom du fichier].conf``. N'oubliez pas de reload apache : ``systemctl reload apache2``.
+- Vous allez ensuite installer certbot pour avoir la certification sur votre serveur. Tout d'abord, installez snap : ``sudo apt install snapd`` puis faites ``sudo snap install core; sudo snap refresh core``. Vous pouvez par la suite installer cerbot : ``sudo snap install --classic certbot`` pour faire après les commandes ``sudo ln -s /snap/bin/certbot /usr/bin/certbot`` et ``sudo certbot renew --dry-run``.
+- Prenez la configuration de base sur le site de Symfony.
+- **Enfin,** installez phpmyadmin : ``wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.tar.gz`` , ``sudo tar xvf phpMyAdmin-latest-all-languages.tar.gz`` puis ``sudo mv phpMyAdmin-*-all-languages/ /var/www/html/phpmyadmin``.
 
+# Déploiement
+
+Pour déployer nous avons écris un script que vous lancerez lorsque vous désirez push la dernière version de l'application :
+
+```sh
+git pull
+cd scoobyflag_game
+npm i
+composer i
+php bin/console d:s:u -f --complete
+php bin/console c:c
+npm run build
+cd ../scoobyflag_api
+composer i
+php bin/console d:s:u -f --complete
+php bin/console c:c
+npm i
+npm run build 
+```
+## Changement dans le code
+
+Vous allez devoir adapter le code à vos serveurs. Pour cela, il faudra changer les liens de vos fetchs, ainsi que vos liens pour Mercure.
+
+**Exemple :**
+
+```js
+useEffect(() => {
+    //Recuperer les configs du user
+    fetch(
+      "https://[votreServeur]/user/" +
+      JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
+      "/getAllTemplate"
+    )
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+      })
+      .then((json) => {
+        setIsLoading(false);
+        setTemplates(json.filter((a) => a.isActive == 1));
+      });
+  }, []);
+```
+
+
+# Conclusion
+Avec toutes ces informations, vous pouvez normalement réutiliser le code pour continuer l'aventure ScoobyHunt. 

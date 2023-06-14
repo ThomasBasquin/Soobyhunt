@@ -3,16 +3,15 @@ import { useState, useEffect, useCallback } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 import Loader from "../../Components/Loader";
 
-function ChoiceTeam({ MERCURE_PORT, HOST_PORT }) {
+function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMap, setIsLoadingMap] = useState(false);
   const [teams, setTeams] = useState([]);
   const [joueursConnectes, setjoueursConnectes] = useState([]);
   const [selected, setSelected] = useState(null);
   const [nomPartie, setnomPartie] = useState("Hudog");
 
   useEffect(() => {
-    fetch("http://localhost:"+HOST_PORT+"/team")
+    fetch("http://207.154.194.125:"+HOST_PORT+"/team")
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
@@ -366,6 +365,7 @@ renderOnDomLoaded(
   <ChoiceTeam
     MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
     HOST_PORT={document.querySelector("#HOST_PORT").value}
+    IP={document.querySelector("#IP").value}
   />,
   "HomeRoot"
 );
