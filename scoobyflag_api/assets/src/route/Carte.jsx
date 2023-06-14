@@ -48,12 +48,7 @@ export default function Carte() {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    console.log(zoneJeuTemp);
-  }, [zoneJeuTemp])
-
-  useEffect(() => {
     var idConfig = new URLSearchParams(window.location.search).get("carte");
-    console.log(idConfig);
 
     if (idConfig != null) {
       setStatus("Chargement...")
@@ -153,7 +148,6 @@ export default function Carte() {
   });
 
   const onCreated = (e) => {
-    console.log(e);
     //On cherche quel objet est ajouté
     var type;
     if (e.layerType === "polygon") {
@@ -214,12 +208,7 @@ export default function Carte() {
     }
   }
 
-  const onDeleted = (e) => {
-    //console.log(e.layers);
-  }
-
   const onEditStart = (e) => {
-    console.log("onEditStart", e);
     setZoneJeu(old => {
       setZoneJeuTemp(old);
     })
@@ -273,7 +262,6 @@ export default function Carte() {
   }
 
   const onEdited = (e) => {
-    console.log("onEdited : ", e);
     setZoneJeuTemp(old => {
       setZoneJeu(old);
     })
@@ -443,7 +431,6 @@ export default function Carte() {
       })
       items.forEach(item => {
         //Verif si l'item est dans la zone de jeu
-        console.log(pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng])));
         if (!pointInPolygon([item.coords.lat, item.coords.lng], zoneJeu[0].coords.map(point => [point.lat, point.lng]))) {
           pointsInZone = false;
         }
@@ -488,8 +475,6 @@ export default function Carte() {
       private: true,
       idCreator: JSON.stringify(JSON.parse(localStorage.getItem("user")).id)
     });
-
-    console.log(bodyConfig);
 
     if (configId == null) {
       const response = await fetch("https://scoobyhunt.fr/game/create/template", {

@@ -57,7 +57,6 @@ export default function Dashboard() {
         }
       })
       .then((json) => {
-        console.log(json);
         setSelectedConfig("");
         setIndexSelected(-1);
         setTemplates(templates.filter((a) => a.id !== idConfig));
