@@ -57,7 +57,6 @@ export default function Dashboard() {
         }
       })
       .then((json) => {
-        console.log(json);
         setSelectedConfig("");
         setIndexSelected(-1);
         setTemplates(templates.filter((a) => a.id !== idConfig));
@@ -106,7 +105,7 @@ export default function Dashboard() {
       body: JSON.stringify({ ID: idGame }),
     };
 
-    fetch("https://thomasbasquin.fr:1234/create", requestOptions)
+    fetch("https://thomasbasquin.fr/create", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");
