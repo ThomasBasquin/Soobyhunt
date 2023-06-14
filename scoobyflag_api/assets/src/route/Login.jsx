@@ -22,7 +22,7 @@ export default function Login() {
 
         setFeedback("");
 
-        return fetch("http://scoobyhunt.fr/login", {
+        return fetch("https://scoobyhunt.fr/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export default function Login() {
 
         //On controle si les 2 mdp sont identiques
         if (password == confirmPassword) {
-            return fetch("http://scoobyhunt.fr/user/create", {
+            return fetch("https://scoobyhunt.fr/user/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

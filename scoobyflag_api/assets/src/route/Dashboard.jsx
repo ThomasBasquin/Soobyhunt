@@ -16,7 +16,7 @@ export default function Dashboard() {
   useEffect(() => {
     //Recuperer les configs du user
     fetch(
-      "http://scoobyhunt.fr/user/" +
+      "https://scoobyhunt.fr/user/" +
       JSON.stringify(JSON.parse(localStorage.getItem("user")).id) +
       "/getAllTemplate"
     )
@@ -46,7 +46,7 @@ export default function Dashboard() {
 
   function deleteConfig(idConfig) {
     const response = fetch(
-      "http://scoobyhunt.fr/game/delete/template/" + idConfig,
+      "https://scoobyhunt.fr/game/delete/template/" + idConfig,
       {
         method: "DELETE",
       }
@@ -85,7 +85,7 @@ export default function Dashboard() {
       body: JSON.stringify({ idTemplate: selectedConfig.id }),
     };
 
-    fetch("http://scoobyhunt.fr/game/create", createGameOption)
+    fetch("https://scoobyhunt.fr/game/create", createGameOption)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");

@@ -57,7 +57,7 @@ export default function Carte() {
     if (idConfig != null) {
       setStatus("Chargement...")
       fetch(
-        "http://scoobyhunt.fr/game/gameTemplate/" + idConfig
+        "https://scoobyhunt.fr/game/gameTemplate/" + idConfig
       )
         .then((res) => {
           if (res.ok) {
@@ -490,7 +490,7 @@ export default function Carte() {
     });
 
     if (configId == null) {
-      const response = await fetch("http://scoobyhunt.fr/game/create/template", {
+      const response = await fetch("https://scoobyhunt.fr/game/create/template", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -509,7 +509,7 @@ export default function Carte() {
         });
     }
     else {
-      const response = await fetch("http://scoobyhunt.fr/game/modify/template/" + configId, {
+      const response = await fetch("https://scoobyhunt.fr/game/modify/template/" + configId, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
