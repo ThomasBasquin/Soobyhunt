@@ -55,17 +55,19 @@ function Welcome({navigation}) {
         style={{width: 150, height: 150, marginVertical: 50}}
       />
       <TextInput
-        style={{borderWidth: 1, borderRadius: 15, width: '50%'}}
+        style={{borderWidth: 1, borderRadius: 15, width: '50%', color:"#000"}}
         onChangeText={setPseudo}
         value={pseudo}
         placeholder="Pseudo"
+        placeholderTextColor={"#999"}
         keyboardType="default"
       />
       <TextInput
-        style={{borderWidth: 1, borderRadius: 15, width: '50%'}}
+        style={{borderWidth: 1, borderRadius: 15, width: '50%', color:"#000"}}
         onChangeText={e => setCodeParty(e)}
         value={codeParty}
         placeholder="ID de la partie"
+        placeholderTextColor={"#999"}
         keyboardType="default"
       />
       <TouchableOpacity
