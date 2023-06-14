@@ -11,7 +11,7 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
   const [nomPartie, setnomPartie] = useState("Hudog");
 
   useEffect(() => {
-    fetch("http://"+IP+"/team")
+    fetch("http://207.154.194.125:"+HOST_PORT+"/team")
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
