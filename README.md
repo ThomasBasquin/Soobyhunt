@@ -1,6 +1,6 @@
 # MunchGress
 
-![Logo](./images//logo.png)
+![Logo](images/logo.png)
 
 Bienvenue sur le dépôt de scoobyhunt, application créer par l' équipe MOUGOU dans le cadre du projet de fin d'année de licence profesionnelle.
 
@@ -32,13 +32,13 @@ Voici les documents attendu :
 * La partie peut commencer ! 
 ## Images
 
-![Welcome](./images//Welcome.png)
+![Welcome](images/Welcome.png)
 
-![Dashboard](./images//dashboard.png)
+![Dashboard](images/dashboard.png)
 
-![Configuration](./images//configuration.png)
+![Configuration](images/configuration.png)
 
-![Login](./images//login.png)
+![Login](images/login.png)
 
-![signin](./images//signin.png)
+![signin](images/signin.png)
 
