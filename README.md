@@ -42,3 +42,12 @@ Voici les documents attendu :
 
 ![signin](images/signin.png)
 
+
+
+## Equipe MOUGOU : 
+
+- Hugo SCHELLINGER (hschellinger@etu.unistra.fr)
+- Roméo PROBST (rprobst@etu.unistra.fr)
+- Gaëtan FALLOT-BIANCOLLI (gaetan.fallot-biancolli@etu.unistra.fr)
+- Lucas FRANCOIS (lucas.francois@etu.unistra.fr)
+- Thomas BASQUIN (thomas.basquin@etu.unistra.fr)
