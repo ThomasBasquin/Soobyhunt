@@ -101,11 +101,12 @@ export default function Dashboard() {
   function lauchContainer(idGame) {
     const requestOptions = {
       method: "POST",
+      mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ID: idGame }),
     };
 
-    fetch("https://thomasbasquin.fr/create", requestOptions)
+    fetch("http://207.154.194.125:1234/create", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");
