@@ -30,6 +30,7 @@ export function UrlProvider({children}:IProps){
         getMap: GAME_DOMAIN + "/game/{game}",
         getInfo: GAME_DOMAIN + "/game/info",
         getItem: GAME_DOMAIN + "/user/{user}/item/get/{item}",
+        getVilain: GAME_DOMAIN + "/user/{user}/objective/{objective}",
     };
     
     const API={
