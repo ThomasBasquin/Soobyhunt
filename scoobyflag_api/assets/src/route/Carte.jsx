@@ -48,6 +48,10 @@ export default function Carte() {
   const mapRef = useRef(null);
 
   useEffect(() => {
+    console.log(modifs);
+  }, [modifs])
+
+  useEffect(() => {
     var idConfig = new URLSearchParams(window.location.search).get("carte");
 
     if (idConfig != null) {
@@ -148,6 +152,8 @@ export default function Carte() {
   });
 
   const onCreated = (e) => {
+    setModifs(true);
+
     //On cherche quel objet est ajouté
     var type;
     if (e.layerType === "polygon") {
@@ -386,6 +392,13 @@ export default function Carte() {
   }
 
   function quitter() {
+    if (modifs) {
+
+    }
+    else {
+
+    }
+    console.log(modifs);
     //Verif modifs pour sauvegarde ?
     document.location.assign("/app/dashboard")
   }
@@ -491,6 +504,7 @@ export default function Carte() {
         })
         .then((json) => {
           setConfigId(json.gameTemplate.id);
+          setModifs(false);
           document.querySelector(".fondSombre").style.display = "none";
         });
     }
