@@ -106,7 +106,7 @@ export default function Dashboard() {
       body: JSON.stringify({ ID: idGame }),
     };
 
-    fetch("https://thomasbasquin.fr:1234/create", requestOptions)
+    fetch("https://thomasbasquin.fr/create", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");

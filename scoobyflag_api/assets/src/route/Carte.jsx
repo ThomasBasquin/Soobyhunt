@@ -30,16 +30,26 @@ export default function Carte() {
   const [latitude, setLatitude] = useState(0.0);
   const [longitude, setLongitude] = useState(0.0);
   const [status, setStatus] = useState("");
+
   const [zoneJeu, setZoneJeu] = useState([]);
   const [zonesInterdites, setZonesInterdites] = useState([]);
   const [mechants, setMechants] = useState([]);
   const [items, setItems] = useState([]);
+  const [zoneJeuTemp, setZoneJeuTemp] = useState([]);
+  const [zonesInterditesTemp, setZonesInterditesTemp] = useState([]);
+  const [mechantsTemp, setMechantsTemp] = useState([]);
+  const [itemsTemp, setItemsTemp] = useState([]);
+
   const [equipes, setEquipes] = useState([{ id: 0, nom: "", nbJoueur: 1 }, { id: 1, nom: "", nbJoueur: 1 }]);
   const [configLoaded, setConfigLoaded] = useState(null);
   const [modifs, setModifs] = useState(false);
   const [configId, setConfigId] = useState(null);
 
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    console.log(zoneJeuTemp);
+  }, [zoneJeuTemp])
 
   useEffect(() => {
     var idConfig = new URLSearchParams(window.location.search).get("carte");
@@ -155,8 +165,8 @@ export default function Carte() {
       }
     }
     else {
-      type = e.layer._icon.attributes.src.nodeValue.substr(12);
-      type = type.substr(0, type.length - 4);
+      type = e.layer._icon.attributes.src.nodeValue.substr(14);
+      type = type.substr(0, type.length - 13);
     }
 
     //Ajout du popUp Modifier/Supprimer
@@ -210,22 +220,72 @@ export default function Carte() {
 
   const onEditStart = (e) => {
     console.log("onEditStart", e);
+    setZoneJeu(old => {
+      setZoneJeuTemp(old);
+    })
+    setZonesInterdites(old => {
+      setZonesInterditesTemp(old);
+    })
+    setMechants(old => {
+      setMechantsTemp(old);
+    })
+    setItems(old => {
+      setItemsTemp(old);
+    })
   }
 
   const onEditMove = (e) => {
-    console.log("onEditMove : ", e);
-  }
-
-  const onEditResize = (e) => {
-    console.log("onEditResize : ", e);
+    setMechantsTemp(old => old.map(mechant => {
+      if (mechant.id == e.layer._leaflet_id) {
+        return { id: mechant.id, name: mechant.type, coords: e.layer.getLatLng() };
+      }
+      else {
+        return mechant;
+      }
+    }))
+    setItemsTemp(old => old.map(item => {
+      if (item.id == e.layer._leaflet_id) {
+        return { id: item.id, name: item.type, coords: e.layer.getLatLng() };
+      }
+      else {
+        return item;
+      }
+    }))
   }
 
   const onEditVertex = (e) => {
-    console.log("onEditVertex : ", e);
+    setZoneJeuTemp(old => old.map(zone => {
+      if (zone.id == e.poly._leaflet_id) {
+        return { id: zone.id, coords: e.poly.getLatLngs()[0] };
+      }
+      else {
+        return zone;
+      }
+    }))
+    setZonesInterditesTemp(old => old.map(zone => {
+      if (zone.id == e.poly._leaflet_id) {
+        return { id: zone.id, coords: e.poly.getLatLngs()[0] };
+      }
+      else {
+        return zone;
+      }
+    }))
   }
 
   const onEdited = (e) => {
     console.log("onEdited : ", e);
+    setZoneJeuTemp(old => {
+      setZoneJeu(old);
+    })
+    setZonesInterditesTemp(old => {
+      setZonesInterdites(old);
+    })
+    setMechantsTemp(old => {
+      setMechants(old);
+    })
+    setItemsTemp(old => {
+      setItems(old);
+    })
   }
 
   const clickZoneJeu = (e) => {
@@ -644,7 +704,6 @@ export default function Carte() {
             onDeleted={(e) => onDeleted(e)}
             onEditStart={(e) => onEditStart(e)}
             onEditMove={(e) => onEditMove(e)}
-            onEditResize={(e) => onEditResize(e)}
             onEditVertex={(e) => onEditVertex(e)}
             onEdited={(e) => onEdited(e)}
           />
