@@ -10,7 +10,6 @@ import {
   Popup,
   Polygon,
 } from "react-leaflet";
-import { EditControl } from "react-leaflet-draw";
 import mechant1 from "../../assets/mechant1.png";
 import loupe from "../../assets/loupe.png";
 import player from "../../assets/points.png";
@@ -21,6 +20,15 @@ import sac from "../../assets/sac.png";
 
 export default function Game({ MERCURE_PORT }) {
   const [joueurs, setJoueurs] = useState([]);
+  const [map, setMap] = useState(null);
+
+
+  useEffect(() => {
+    fetch("http://172.29.0.4:"+HOST_PORT+"/team")
+      .then((res) => res.json())
+      .then(setTeams)
+      .finally(() => setIsLoading(false));
+  }, []);
 
   useEffect(() => {
     const url = new URL(
