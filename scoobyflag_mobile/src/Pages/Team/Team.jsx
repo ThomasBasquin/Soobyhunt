@@ -222,20 +222,6 @@ function Team({navigation}) {
         }}>
         Choix des équipe
       </Text>
-      {isReady ? (
-        <Pressable
-          onPress={loadMap}
-          style={{
-            position: 'absolute',
-            right: 30,
-            top: 30,
-            backgroundColor: 'lightgray',
-            padding: 5,
-          }}>
-          <Text>Commencer</Text>
-        </Pressable>
-      ) : null}
-
       <ScrollView style={{flex: 1}}>
         <View>
           <Text
