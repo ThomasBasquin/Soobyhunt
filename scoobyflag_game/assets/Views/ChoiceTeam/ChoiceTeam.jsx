@@ -221,7 +221,9 @@ const ChoixEquipe = ({
 }) => {
 
   function startParty(){
-    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+    fetch("http://207.154.194.125:" + HOST_PORT + "/game/start",{
+      method:"PUT"
+    })
   }
 
   const placerJoueur = (id) => {

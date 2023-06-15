@@ -59,7 +59,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
                   style={{
                     fontWeight: '900',
                     position: 'relative',
-                    color: '#fff',
+                    color: '#000',
                     right: 10,
                   }}>{`x${item.quantite}`}</Text>
               </TouchableOpacity>

@@ -53,11 +53,6 @@ class GameController extends AbstractController
     public function info(GameService $gameService)
     {
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
-
-        dump(
-            $this->gameService->stat(),
-            $this->gameService->formatData()
-        );
         return $this->json(["teams" => $this->gameService->stat(), "game" => $game], 200, [], ["groups" => ["Info:read"]]);
     }
 
