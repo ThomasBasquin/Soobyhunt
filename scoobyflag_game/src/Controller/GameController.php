@@ -41,19 +41,30 @@ class GameController extends AbstractController
     #[Route('/game/stat', name: 'get_stat', methods: ['GET'])]
     public function stat()
     {
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+        dump(
+            $this->gameService->stat(),
+            $this->gameService->formatData()
+        );
         return $this->json($this->gameService->stat());
     }
 
     #[Route('/game/info', name: 'get-info', methods: ['GET'])]
     public function info(GameService $gameService)
     {
-        $game = $gameService->find(1);
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+
+        dump(
+            $this->gameService->stat(),
+            $this->gameService->formatData()
+        );
         return $this->json(["teams" => $this->gameService->stat(), "game" => $game], 200, [], ["groups" => ["Info:read"]]);
     }
 
     #[Route('/game/start', name: 'game_start', methods: ['PUT'])]
     public function start()
     {
+
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
         $game->setStartAt(new DateTimeImmutable());
 
@@ -63,7 +74,7 @@ class GameController extends AbstractController
         // $endAt = new DateTime();
         // $endAt->modify($minutes);
 
-        $process = new Process(['php', 'bin/console', 'game:check-endat']);
+        $process = new Process(['php', 'bin/console', 'game-end-at']);
         $process->start();
 
         foreach ($this->userService->findAll() as $user) {

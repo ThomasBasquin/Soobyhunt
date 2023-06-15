@@ -186,4 +186,18 @@ class GameService
         $this->em->persist($entity);
         $this->em->flush($entity);
     }
+
+    public function checkObjectifAndSetPoint()
+    {
+        $users = $this->userRepository->findAll();
+
+        foreach ($users as $user) {
+            foreach ($user->getObjectives() as $objective) {
+                $user->setObjectiveCaptured($user->getObjectiveCaptured() + 1);
+                $this->em->persist($user);
+            }
+        }
+
+        $this->em->flush();
+    }
 }
