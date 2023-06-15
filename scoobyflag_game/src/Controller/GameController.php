@@ -5,24 +5,31 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Service\GameService;
-use DateTime;
+use App\Service\MercureService;
+use App\Service\UserService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class GameController extends AbstractController
 {
     private GameService $gameService;
     private GameRepository $gameRepository;
+    private UserService $userService;
+    private HubInterface $hub;
 
-    public function __construct(GameService $gameService, GameRepository $gameRepository)
+    public function __construct(GameService $gameService, GameRepository $gameRepository, UserService $userService, HubInterface $hub)
     {
         $this->gameService = $gameService;
         $this->gameRepository = $gameRepository;
+        $this->userService = $userService;
+        $this->hub = $hub;
     }
 
     #[Route('/game/import', name: 'import_game', methods: ['POST'])]
@@ -48,7 +55,7 @@ class GameController extends AbstractController
     public function start()
     {
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
-        $game->setStartAt(new DateTime());
+        $game->setStartAt(new DateTimeImmutable());
 
         $this->gameService->save($game);
 
@@ -58,7 +65,20 @@ class GameController extends AbstractController
 
         $process = new Process(['php', 'bin/console', 'game:check-endat']);
         $process->start();
-    
+
+        foreach ($this->userService->findAll() as $user) {
+            $update = new Update(
+                "https://scoobyflag/user/" . $user->getId(),
+                json_encode(["start" => true])
+            );
+            $this->hub->publish($update);
+        }
+
+        $update = new Update(
+            "https://scoobyflag/user/0",
+            json_encode(["start" => true])
+        );
+        $this->hub->publish($update);
 
         return $this->json($game, 200, [], ['groups' => ['Game:read']]);
     }

@@ -14,6 +14,23 @@ function Team({navigation}) {
   const [anyTeamPlayers, setAnyTeamPlayers] = useState([]);
   const {GAME} = useUrl();
   const [{mercureServer}] = useServer();
+  const [start, setStart] = useState(false);
+  const [count, setCount] = useState(5);
+
+  useEffect(() => {
+    if(!start)return;
+
+    const interval = setInterval(()=> setCount(cur => cur > 0 ? cur - 1 : cur),1000);
+    
+    return () => clearInterval(interval);
+  }, [start]);
+
+
+  useEffect(() => {
+    if(count == 0){
+      loadMap();
+    }
+  }, [count]);
 
   useEffect(() => {
     fetch(GAME.team)
@@ -101,10 +118,13 @@ function Team({navigation}) {
     });
 
     eventSource.addEventListener('message', event => {
-      const user = JSON.parse(JSON.parse(event.data));
-      if (!user.id || user.isReady == null || !user.pseudo) return;
+      const data = JSON.parse(event.data);
       if (!teams.length) return;
-      onMessageListen(user);
+      if(data.start){
+        setStart(true);
+      }else{
+        onMessageListen(JSON.parse(data));
+      }
     });
 
     eventSource.addEventListener('error', event => {
@@ -188,6 +208,11 @@ function Team({navigation}) {
 
   return (
     <View style={{width: '100%', flex: 1}}>
+      {start ? (
+      <View style={{backgroundColor:"rgba(0,0,0,.7)", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
+        <Text style={{fontSize: 25, color:"#fff"}}>La partie commence dans ...</Text>
+        <Text style={{fontSize: 50, color:"#fff"}}>{count}</Text>
+      </View>): null}
       <Text
         style={{
           fontSize: 30,
@@ -261,6 +286,7 @@ function Team({navigation}) {
                     style={{
                       flex: 1,
                       fontSize: 20,
+                      color:"#000",
                       fontWeight: player.id == server.idUser ? '700' : '400',
                     }}>
                     {player.pseudo +

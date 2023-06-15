@@ -63,6 +63,8 @@ export default function Home({route, navigation}) {
   });
   const [{idUser, map, team, mercureServer},setServer] = useServer();
 
+  // setServer({});
+
   useEffect(() => {
     if (!idUser) return;
     const topic = encodeURIComponent('https://scoobyflag/user/' + idUser);
@@ -140,8 +142,6 @@ export default function Home({route, navigation}) {
       }
     }
   }, [vilainMarkers, itemMarkers, currentPosition]);
-
-  // setServer({});
 
   useEffect(() => {
     if (!map) {
