@@ -11,12 +11,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
   const [nomPartie, setnomPartie] = useState("Hudog");
 
   useEffect(() => {
-    fetch("http://207.154.194.125:"+HOST_PORT+"/team")
+    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
   }, []);
-
 
   useEffect(() => {
     teams.map((t) => {
@@ -24,8 +23,8 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
         !t.id ? setjoueursConnectes(t.players) : "";
       }
     });
-  },[joueursConnectes]);
-  
+  }, [joueursConnectes]);
+
   const onMessageListen = useCallback(
     (user) => {
       if (!user.team) {

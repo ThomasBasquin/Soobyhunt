@@ -22,9 +22,8 @@ export default function Game({ MERCURE_PORT }) {
   const [joueurs, setJoueurs] = useState([]);
   const [map, setMap] = useState(null);
 
-
   useEffect(() => {
-    fetch("http://172.29.0.4:"+HOST_PORT+"/team")
+    fetch("http://172.29.0.4:" + HOST_PORT + "/team")
       .then((res) => res.json())
       .then(setTeams)
       .finally(() => setIsLoading(false));
@@ -284,8 +283,6 @@ export default function Game({ MERCURE_PORT }) {
 }
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
 renderOnDomLoaded(
-  <Game
-    MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
-  />,
+  <Game MERCURE_PORT={document.querySelector("#MERCURE_PORT").value} />,
   "GameRoot"
 );

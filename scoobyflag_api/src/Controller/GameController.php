@@ -106,7 +106,6 @@ class GameController extends AbstractController
     #[Route('/{game}', name: 'get', methods: 'get')]
     public function getGame(Game $game)
     {
-        $this->gameRepository->find(5);
         return $this->json($game->getGameTemplate(), 201, [], ['groups' => ['Game:read', 'GameTemplate:read']]);
     }
 
