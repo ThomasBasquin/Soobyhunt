@@ -30,27 +30,39 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
   const [timeFin, setTimeFin] = useState(null);
 
   useEffect(() => {
-    let promiseAll = [];
+    /*let promiseAll = [];
 
-    /*promiseAll.push(() => fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+    promiseAll.push(() => fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
-      .then(setTeams));
- 
+      .then(setTeams))
+
     promiseAll.push(() => fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
       .then((json) => {
-        setConfig(json);
         console.log(json);
-        setTime(json.limitTime)
-      }
-      ));
- 
+        setConfig(json);
+        setTime(json.json.limitTime)
+      }))
+
+    promiseAll.push(() => fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
+      .then((res) => res.json())
+      .then((json) => {
+        setTimeDepart(new Date(json.game.startAt).getTime());
+        console.log(new Date(json.game.startAt).getTime());
+        console.log(Date.now());
+        console.log(Date.now() - new Date(json.game.startAt).getTime());
+      }))
+
     Promise.all(promiseAll)
-      .then(([res1, res2]) => {
- 
+      .then((values) => {
+        console.log(values);
       })
       .catch(() => { })
-      .finally(() => { });*/
+      .finally(() => {
+        //setIsLoading(false);
+
+        console.log(timeDepart);
+      });*/
 
     fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
@@ -59,20 +71,19 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
     fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
       .then((json) => {
-        console.log(json);
         setConfig(json);
         setTime(json.json.limitTime)
         setIsLoading(false);
       })
 
-    fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
+    /*fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
       .then((res) => res.json())
       .then((json) => {
         setTimeDepart(new Date(json.game.startAt).getTime());
         console.log(new Date(json.game.startAt).getTime());
         console.log(Date.now());
         console.log(Date.now() - new Date(json.game.startAt).getTime());
-      })
+      })*/
 
   }, []);
 
@@ -206,10 +217,15 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
           zIndex: "1000",
           position: "absolute",
           backgroundColor: "#ee9158",
+          borderRadius: 20,
+          border: "2px solid black",
           marginLeft: "45%",
           marginRight: "50%",
-          padding: 30,
+          marginTop: "20px",
+          padding: 20,
           fontSize: 30,
+          fontWeight: "bold",
+          color: "white"
         }}
       >
         {heures}:{minutes}:{secondes}
