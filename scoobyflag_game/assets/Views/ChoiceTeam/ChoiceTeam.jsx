@@ -26,10 +26,6 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
     }
   }, [count]);
 
-  function startParty(){
-    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
-  }
-
   useEffect(() => {
     fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
@@ -223,12 +219,14 @@ const ChoixEquipe = ({
   HOST_PORT,
   MERCURE_PORT,
 }) => {
+
+  function startParty(){
+    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+  }
+
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
-    // setNomsEquipe(newListeEquipe);
-    console.log(id);
-    console.log(joueursConnectes);
-    console.log();
+    // setNomsEquipe(newListeEquipe);    
 
     fetch("http://127.0.0.1:8000/user/" + selected + "/team/" + id, {
       method: "PUT",
