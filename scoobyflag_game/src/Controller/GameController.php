@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Service\GameService;
 use DateTime;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpClient\HttpClient;
@@ -57,8 +58,9 @@ class GameController extends AbstractController
     #[Route('/game/start', name: 'game_start', methods: ['PUT'])]
     public function start()
     {
+
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
-        $game->setStartAt(new DateTime());
+        $game->setStartAt(new DateTimeImmutable());
 
         $this->gameService->save($game);
 
@@ -66,7 +68,7 @@ class GameController extends AbstractController
         // $endAt = new DateTime();
         // $endAt->modify($minutes);
 
-        $process = new Process(['php', 'bin/console', 'game:check-endat']);
+        $process = new Process(['php', 'bin/console', 'game-end-at']);
         $process->start();
 
 
