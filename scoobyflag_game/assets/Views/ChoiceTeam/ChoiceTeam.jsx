@@ -31,6 +31,18 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
       .then((res) => res.json())
       .then(setTeams);
 
+    fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
+      .then((res) => res.json())
+      .then(res => {
+        if(res.game.startAt){
+          document.location.href = "/game";
+        }
+      });
+
+      fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+      .then((res) => res.json())
+      .then(setTeams);
+
     fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
       .then((json) => {
@@ -134,7 +146,6 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (!teams.length) return;
       if(data.start){
         setStart(true);
@@ -171,11 +182,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
         flexDirection: "row",
       }}
     >
-      {start ? (
-      <div style={{backgroundColor:"rgba(0,0,0,.7)", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
+      {start ?
+      <div style={{backgroundColor:"rgba(0,0,0,.7)",display:"flex",flexDirection:"column", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
         <p style={{fontSize: "3rem", color:"#fff"}}>La partie commence dans ...</p>
         <p style={{fontSize: "4rem", color:"#fff"}}>{count}</p>
-      </div>): null}
+      </div>: null}
       <ListeJoueurs
         selected={selected}
         setSelected={setSelected}
@@ -208,12 +219,14 @@ const ChoixEquipe = ({
   HOST_PORT,
   MERCURE_PORT,
 }) => {
+
+  function startParty(){
+    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+  }
+
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
-    // setNomsEquipe(newListeEquipe);
-    console.log(id);
-    console.log(joueursConnectes);
-    console.log();
+    // setNomsEquipe(newListeEquipe);    
 
     fetch("http://127.0.0.1:8000/user/" + selected + "/team/" + id, {
       method: "PUT",
@@ -251,10 +264,10 @@ const ChoixEquipe = ({
             padding: 10,
             fontSize: 30,
             color: "white",
-            marginTop: 10,
+            marginTop: 10,  
           }}
           className="lancerPartie"
-          onClick={() => (document.location.href = "/game")}
+          onClick={startParty}
         >
           Lancer la partie
         </div>
