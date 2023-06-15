@@ -350,6 +350,7 @@ export default function Carte() {
   const clickSaveSupprimer = (e) => {
     var e = document.createEvent("Event");
     e.initEvent("click", true, true);
+    console.log(document.getElementsByClassName("leaflet-draw-actions-bottom")[0]);
     var cb = document.getElementsByClassName("leaflet-draw-actions-bottom")[0].children[0].children[0];
     return !cb.dispatchEvent(e);
   }
@@ -706,7 +707,6 @@ export default function Carte() {
               edit: false,
             }}
             onCreated={(e) => onCreated(e)}
-            onDeleted={(e) => onDeleted(e)}
             onEditStart={(e) => onEditStart(e)}
             onEditMove={(e) => onEditMove(e)}
             onEditVertex={(e) => onEditVertex(e)}
@@ -767,13 +767,13 @@ export default function Carte() {
           </div>
 
           <div className="detail" id="detailsMechants">
-            <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
-              <img src="../assets/mechant1.png" alt="" className="iconBar" />
-              Le Fantôme
-            </div>
             <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
               <img src="../assets/mechant2.png" alt="" className="iconBar" />
               Mineur Maudit
+            </div>
+            <div className="btnDetail desactive" onClick={(e) => chooseMechant(e, 4)}>
+              <img src="../assets/mechant1.png" alt="" className="iconBar" />
+              Le Fantôme
             </div>
           </div>
         </div>
