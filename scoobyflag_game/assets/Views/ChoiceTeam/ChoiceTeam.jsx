@@ -264,7 +264,7 @@ const ChoixEquipe = ({
             padding: 10,
             fontSize: 30,
             color: "white",
-            marginTop: 10,
+            marginTop: 10,  
           }}
           className="lancerPartie"
           onClick={startParty}

@@ -3,8 +3,8 @@ version: "3"
 services:
   app:
     build: .
-    # image: totomadne/game-server
-    image: sha256:b1f1047e1902267e6c11dc203a696dcaf758b2760d53550b7df8f8aad3104dc6
+    image: totomadne/game-server
+    # image: sha256:b1f1047e1902267e6c11dc203a696dcaf758b2760d53550b7df8f8aad3104dc6
     env_file: .env
     ports:
       - "${HOST_PORT}:80"
