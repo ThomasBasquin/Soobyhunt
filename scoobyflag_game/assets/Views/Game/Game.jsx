@@ -17,17 +17,52 @@ import mechant2 from "../../assets/mechant2.png";
 import ghost from "../../assets/ghost.png";
 import lunettes from "../../assets/lunettes.png";
 import sac from "../../assets/sac.png";
+import Loader from "../../Components/Loader";
 
-export default function Game({ MERCURE_PORT }) {
+export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
   const [joueurs, setJoueurs] = useState([]);
   const [map, setMap] = useState(null);
-
+  const [teams, setTeams] = useState(null);
+  const [config, setConfig] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [time, setTime] = useState(null);
 
   useEffect(() => {
-    fetch("http://172.29.0.4:"+HOST_PORT+"/team")
+    let promiseAll = [];
+
+    /*promiseAll.push(() => fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
-      .then(setTeams)
-      .finally(() => setIsLoading(false));
+      .then(setTeams));
+
+    promiseAll.push(() => fetch("https://scoobyhunt.fr/game/" + ID)
+      .then((res) => res.json())
+      .then((json) => {
+        setConfig(json);
+        console.log(json);
+        setTime(json.limitTime)
+      }
+      ));
+
+    Promise.all(promiseAll)
+      .then(([res1, res2]) => {
+
+      })
+      .catch(() => { })
+      .finally(() => { });*/
+
+    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+      .then((res) => res.json())
+      .then(setTeams);
+
+    fetch("https://scoobyhunt.fr/game/" + ID)
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+        setConfig(json);
+        setTime(json.json.limitTime)
+        setIsLoading(false);
+      })
+
   }, []);
 
   useEffect(() => {
@@ -45,7 +80,7 @@ export default function Game({ MERCURE_PORT }) {
     const eventSource = new EventSource(url);
 
     eventSource.onmessage = ({ data }) => {
-      console.log(data);
+      //console.log(data);
       const user = JSON.parse(JSON.parse(data));
       const alreadyExist = joueurs.find((u) => u.id == user.id);
       if (user.latitude || user.longitude) {
@@ -131,64 +166,6 @@ export default function Game({ MERCURE_PORT }) {
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
 
-  const jsonTemplate = {
-    name: "Sprint 1",
-    modeDeJeu: "Time",
-    limitTime: 600,
-    teams: [
-      { id: 0, nom: "", nbJoueur: 1 },
-      { id: 1, nom: "", nbJoueur: 1 },
-    ],
-    authorizedZone: [
-      { latitude: 48.531554876601575, longitude: 7.730319499969483 },
-      { latitude: 48.52597026236857, longitude: 7.733323574066163 },
-      { latitude: 48.52645343399219, longitude: 7.742335796356202 },
-      { latitude: 48.53102912493336, longitude: 7.746648788452149 },
-      { latitude: 48.53506448436637, longitude: 7.742335796356202 },
-      { latitude: 48.530105493919145, longitude: 7.735276222229005 },
-    ],
-    unauthorizedZone: [
-      [
-        { latitude: 48.53128489669709, longitude: 7.735104560852052 },
-        { latitude: 48.52442123990932, longitude: 7.73714303970337 },
-        { latitude: 48.5252028626682, longitude: 7.73115634918213 },
-        { latitude: 48.53151224829131, longitude: 7.726864814758302 },
-        { latitude: 48.533217352709855, longitude: 7.7295899391174325 },
-      ],
-    ],
-    mechants: [
-      {
-        name: "mechant1",
-        latitude: 48.52945183717502,
-        longitude: 7.739696502685548,
-      },
-      {
-        name: "mechant1",
-        latitude: 48.53270582741343,
-        longitude: 7.74263620376587,
-      },
-      {
-        name: "mechant2",
-        latitude: 48.52892606367095,
-        longitude: 7.733538150787354,
-      },
-    ],
-    items: [
-      {
-        name: "lunettes",
-        latitude: 48.527576079671896,
-        longitude: 7.739160060882569,
-      },
-      {
-        name: "ghost",
-        latitude: 48.5317822269836,
-        longitude: 7.740082740783692,
-      },
-    ],
-    private: true,
-    idCreator: "1",
-  };
-
   const InfosPartie = ({ time, setTime }) => {
     useEffect(() => {
       const interval = setInterval(() => {
@@ -196,6 +173,22 @@ export default function Game({ MERCURE_PORT }) {
       }, 1000);
       return () => clearInterval(interval);
     }, [time]);
+
+    var heures = 0;
+    var minutes = 0;
+    var secondes = 0;
+    var total = time;
+
+    if (total > 3600) {
+      heures = Math.trunc(total / 3600);
+      total -= heures * 3600;
+    }
+    if (total > 60) {
+      minutes = Math.trunc(total / 60);
+      total -= minutes * 60;
+    }
+    secondes = total;
+
     return (
       <div
         style={{
@@ -208,13 +201,12 @@ export default function Game({ MERCURE_PORT }) {
           fontSize: 30,
         }}
       >
-        {time}
+        {heures}:{minutes}:{secondes}
       </div>
     );
   };
 
-  const [time, setTime] = useState(jsonTemplate.limitTime);
-  return (
+  return isLoading ? <Loader /> :
     <MapContainer center={[48.530437, 7.735647777777776]} zoom={16}>
       <InfosPartie time={time} setTime={setTime} />
       <TileLayer
@@ -223,18 +215,18 @@ export default function Game({ MERCURE_PORT }) {
       />
       <Polygon
         pathOptions={{ color: "#6b2b94" }}
-        positions={jsonTemplate.authorizedZone.map((point) => [
+        positions={config.json.authorizedZone.map((point) => [
           point.latitude,
           point.longitude,
         ])}
       />
-      {jsonTemplate.unauthorizedZone.map((zone) => (
+      {config.json.unauthorizedZone.map((zone) => (
         <Polygon
           pathOptions={{ color: "#ee9158" }}
           positions={zone.map((point) => [point.latitude, point.longitude])}
         />
       ))}
-      {jsonTemplate.mechants.map((mechant, id) => {
+      {config.json.mechants.map((mechant, id) => {
         let mechantItem = "";
         if (mechant.name == "mechant1") {
           mechantItem = mechant1Icon;
@@ -250,8 +242,8 @@ export default function Game({ MERCURE_PORT }) {
         );
       })}
 
-      {jsonTemplate.items.map((item, id) => {
-        console.log(item);
+      {config.json.items.map((item, id) => {
+        //console.log(item);
         let iconItem = "";
         if (item.name === "ghost") {
           iconItem = ghostIcon;
@@ -271,7 +263,7 @@ export default function Game({ MERCURE_PORT }) {
         );
       })}
       {joueurs.map((joueur, id) => {
-        console.log(joueur);
+        //console.log(joueur);
 
         return (
           <Marker key={id} position={joueur.coordonnees} icon={playerIcon}>
@@ -280,12 +272,11 @@ export default function Game({ MERCURE_PORT }) {
         );
       })}
     </MapContainer>
-  );
-}
+};
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
 renderOnDomLoaded(
-  <Game
-    MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
-  />,
+  <Game MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
+    ID={document.querySelector("#ID").value}
+    HOST_PORT={document.querySelector("#HOST_PORT").value} />,
   "GameRoot"
 );

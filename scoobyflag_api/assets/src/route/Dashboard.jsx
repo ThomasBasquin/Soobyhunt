@@ -105,7 +105,7 @@ export default function Dashboard() {
       body: JSON.stringify({ ID: idGame }),
     };
 
-    fetch("https://thomasbasquin.fr/create", requestOptions)
+    fetch("https://thomasbasquin.fr:1234/create", requestOptions)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors de la requête.");
@@ -113,9 +113,12 @@ export default function Dashboard() {
         return response.json();
       })
       .then((data) => {
-        setStatus("fini");
-        console.log(data); // Les données renvoyées par le serveur
-        // Faites ce que vous voulez avec les données
+        console.log("ouais");
+        setTimeout(() => {
+          setStatus("fini");
+          setPort(data.AppPort);
+          console.log(data);
+        }, 15000)
       })
       .catch((error) => {
         console.error("Erreur:", error);
@@ -123,7 +126,7 @@ export default function Dashboard() {
   }
 
   function joinPartie() {
-    console.log(port);
+    window.open("http://thomasbasquin.fr:" + port);
   }
 
   function ChangeView() {
@@ -250,11 +253,11 @@ export default function Dashboard() {
               <button className="btnConfirm" onClick={cancelCreate}>Non</button>
             </div></>) : status == "creation" ? <>
               <h3>Création de la partie en cours...</h3>
-              <h5>{"Cela peut prendre quelques temps :)"}</h5>
+              <h5>Cela peut prendre quelques instants</h5>
               <Loader />
             </> : status == "fini" ? <>
               <h3>Partie créée avec succès</h3>
-              <button className="btnConfirm" onClick={joinPartie}>Rejoinde la partie</button>
+              <button className="btnConfirm" onClick={joinPartie}>Rejoindre la partie</button>
             </> : <></>}
         </div>
       </div >
