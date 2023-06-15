@@ -44,6 +44,7 @@ export default function Carte() {
   const [configLoaded, setConfigLoaded] = useState(null);
   const [modifs, setModifs] = useState(false);
   const [configId, setConfigId] = useState(null);
+  const [contenuPopUp, setContenuPopUp] = useState(null);
 
   const mapRef = useRef(null);
 
