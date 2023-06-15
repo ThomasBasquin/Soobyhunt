@@ -13,7 +13,7 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
   useEffect(() => {
     fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
-      .then(setTeams)
+      .then(setTeams);
 
     fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
@@ -46,11 +46,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
             cur.map((t) =>
               t.id == teamUser.id
                 ? {
-                  ...t,
-                  players: t.players.map((p) =>
-                    p.id == user.id ? { ...p, isReady: user.isReady } : p
-                  ),
-                }
+                    ...t,
+                    players: t.players.map((p) =>
+                      p.id == user.id ? { ...p, isReady: user.isReady } : p
+                    ),
+                  }
                 : t
             )
           );
@@ -59,19 +59,19 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
             cur.map((t) =>
               t.id == user.team.id
                 ? {
-                  ...t,
-                  players: [
-                    ...t.players,
-                    {
-                      pseudo: user.pseudo,
-                      id: user.id,
-                      isReady: user.isReady,
-                    },
-                  ],
-                }
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {
+                        pseudo: user.pseudo,
+                        id: user.id,
+                        isReady: user.isReady,
+                      },
+                    ],
+                  }
                 : t.id == teamUser.id
-                  ? { ...t, players: t.players.filter((p) => p.id !== user.id) }
-                  : t
+                ? { ...t, players: t.players.filter((p) => p.id !== user.id) }
+                : t
             )
           );
         }
@@ -84,16 +84,16 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
             cur.map((t) =>
               t.id == user.team.id
                 ? {
-                  ...t,
-                  players: [
-                    ...t.players,
-                    {
-                      pseudo: user.pseudo,
-                      id: user.id,
-                      isReady: user.isReady,
-                    },
-                  ],
-                }
+                    ...t,
+                    players: [
+                      ...t.players,
+                      {
+                        pseudo: user.pseudo,
+                        id: user.id,
+                        isReady: user.isReady,
+                      },
+                    ],
+                  }
                 : t
             )
           );
@@ -108,8 +108,8 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
 
     const eventSource = new EventSource(
       "http://207.154.194.125:" +
-      MERCURE_PORT +
-      "/.well-known/mercure".concat("?topic=", topic)
+        MERCURE_PORT +
+        "/.well-known/mercure".concat("?topic=", topic)
     );
 
     eventSource.onopen = (event) => {
@@ -185,7 +185,7 @@ const ChoixEquipe = ({
   HOST_PORT,
   MERCURE_PORT,
 }) => {
-  useEffect(() => { }, [joueursConnectes, teams]);
+  useEffect(() => {}, [joueursConnectes, teams]);
 
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
