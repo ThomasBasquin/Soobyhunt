@@ -9,6 +9,22 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
   const [joueursConnectes, setjoueursConnectes] = useState([]);
   const [selected, setSelected] = useState(null);
   const [nomPartie, setNomPartie] = useState("Hudog");
+  const [start, setStart] = useState(false);
+  const [count, setCount] = useState(5);
+
+  useEffect(() => {
+    if(!start)return;
+
+    const interval = setInterval(()=> setCount(cur => cur > 0 ? cur - 1 : cur),1000);
+    
+    return () => clearInterval(interval);
+  }, [start]);
+
+  useEffect(() => {
+    if(count == 0){
+      document.location.href = "/game";
+    }
+  }, [count]);
 
   useEffect(() => {
     fetch("http://207.154.194.125:" + HOST_PORT + "/team")
@@ -117,12 +133,14 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
     };
 
     eventSource.onmessage = (event) => {
-      const user = JSON.parse(JSON.parse(event.data));
-      console.log(user);
-      console.log(teams);
-      if (!user.id || user.isReady == null || !user.pseudo) return;
-
-      onMessageListen(user);
+      const data = JSON.parse(event.data);
+      console.log(data);
+      if (!teams.length) return;
+      if(data.start){
+        setStart(true);
+      }else{
+        onMessageListen(JSON.parse(data));
+      }
     };
 
     eventSource.onerror = (event) => {
@@ -153,6 +171,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
         flexDirection: "row",
       }}
     >
+      {start ? (
+      <div style={{backgroundColor:"rgba(0,0,0,.7)", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
+        <p style={{fontSize: "3rem", color:"#fff"}}>La partie commence dans ...</p>
+        <p style={{fontSize: "4rem", color:"#fff"}}>{count}</p>
+      </div>): null}
       <ListeJoueurs
         selected={selected}
         setSelected={setSelected}
@@ -185,8 +208,6 @@ const ChoixEquipe = ({
   HOST_PORT,
   MERCURE_PORT,
 }) => {
-  useEffect(() => { }, [joueursConnectes, teams]);
-
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
     // setNomsEquipe(newListeEquipe);
