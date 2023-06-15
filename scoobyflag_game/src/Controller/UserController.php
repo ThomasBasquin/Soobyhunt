@@ -152,6 +152,7 @@ class UserController extends AbstractController
     public function captureObjective(User $user, Objective $objective)
     {
         $objective->setUser($user);
+        $user->setObjectiveCaptured($user->getObjectiveCaptured() +1);
         $this->em->persist($objective);
         $this->em->flush();
 
