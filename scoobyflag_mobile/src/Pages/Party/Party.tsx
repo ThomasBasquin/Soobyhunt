@@ -11,11 +11,33 @@ import COLORS from '../../Constantes/colors';
 import useServer from '../../Constantes/Hooks/useServer';
 import {useEffect, useMemo, useState} from 'react';
 import useUrl from '../../Constantes/Hooks/useUrl';
+/** @ts-ignore */
+import { DateTime } from "luxon";
 
 function Party({route, navigation}: any) {
   const [{idUser}, setServer] = useServer();
   const [isLoading, setIsLoading] = useState(true);
   const {GAME} = useUrl();
+  const [party, setParty] = useState<any>(null);
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    if(!party?.game.startAt)return;
+    
+      const interval = setInterval(()=>{
+        const endAt = DateTime.fromISO(party.game.startAt).plus({seconds : party.game.limitTime});
+        
+        
+        const diff = endAt.diff(DateTime.now(), ["minutes"]);
+        
+        
+        setTimeLeft(diff.toFormat("hh'h' mm"));
+      },1000);
+
+
+      return () =>  clearInterval(interval);
+  }, [party]);
+  
 
   useEffect(()=>{
     refresh()
@@ -32,9 +54,7 @@ function Party({route, navigation}: any) {
     })
     .finally(() => setIsLoading(false));
   }
-
-  const [party, setParty] = useState<any>(null);
-
+  
 
   return (
     <ScrollView style={{backgroundColor: COLORS.secondary}}>
@@ -96,7 +116,7 @@ function Party({route, navigation}: any) {
                 fontWeight: '700',
                 color: COLORS.primary,
               }}>
-              {party.game.name}
+              TIME
             </Text>
           </View>
           <View
@@ -133,7 +153,7 @@ function Party({route, navigation}: any) {
                 textAlign: 'right',
                 fontWeight: '700',
                 color: COLORS.primary,
-              }}>{party.game.startAt}</Text>
+              }}>{DateTime.fromISO(party.game.startAt).toLocaleString(DateTime.DATETIME_SHORT)}</Text>
           </View>
         </View>
       </View>
@@ -153,7 +173,7 @@ function Party({route, navigation}: any) {
             fontWeight: '700',
             color: COLORS.primary,
           }}>
-          TODO
+          {timeLeft}
         </Text>
       </View>
       <View style={{margin: '2.5%'}}>

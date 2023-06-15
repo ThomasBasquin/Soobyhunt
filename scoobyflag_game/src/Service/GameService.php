@@ -189,15 +189,15 @@ class GameService
 
     public function checkObjectifAndSetPoint()
     {
-        $objectives = $this->objectiveRepository->findAll();
-        dump($objectives);
-        foreach ($objectives as $objective) {
-            if ($objective->getUser()) {
-                $user = $objective->getUser();
-                $objective->getUser()->setObjectiveCaptured($user->getObjectiveCaptured() + 1);
+        $users = $this->userRepository->findAll();
+
+        foreach ($users as $user) {
+            foreach ($user->getObjectives() as $objective) {
+                $user->setObjectiveCaptured($user->getObjectiveCaptured() + 1);
                 $this->em->persist($user);
             }
         }
+
         $this->em->flush();
     }
 }

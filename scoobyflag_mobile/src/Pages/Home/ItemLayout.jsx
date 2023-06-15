@@ -3,7 +3,7 @@ import {View, Text, Image, TouchableOpacity} from 'react-native';
 import BasicModal from '../../Components/BasicModal';
 import COLORS from '../../Constantes/colors';
 import GAME_CONFIG from '../../Constantes/gameConfig';
-import { findInfoItem, findPiture } from '../../Constantes/utils';
+import { findPiture } from '../../Constantes/utils';
 
 export default function ItemLayout({isMountedMap, items, setEffect}) {
   const [itemModal, setItemModal] = useState({open: false, item: null});
@@ -17,7 +17,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           onRequestClose={() => setItemModal({...itemModal, open: false})}
           onSubmit={() => setEffect(itemModal.item)}>
           <Text style={{fontSize: 17, color: COLORS.black}}>
-            Voulez-vous vraiment utiliser {findInfoItem(itemModal.item.name).slug} ?
+            Voulez-vous vraiment utiliser la loupe ?
           </Text>
         </BasicModal>
       ) : null}
@@ -45,7 +45,7 @@ export default function ItemLayout({isMountedMap, items, setEffect}) {
           }}>{`Mon sac à dos (${items.reduce((acc,i)=>acc+i.quantite,0)}/${GAME_CONFIG.item.max}) :`}</Text>
         <View style={{flexDirection: 'row'}}>
           {items.map((item, i) => {
-            const picture=findPiture(item.name);
+            const picture=findPiture("loupe");
             return (
               <TouchableOpacity
                 key={i}
