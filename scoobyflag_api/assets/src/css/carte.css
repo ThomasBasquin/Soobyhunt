@@ -58,6 +58,12 @@
   color: white;
 }
 
+.desactive {
+  pointer-events: none;
+  filter: grayscale(100%);
+  background-color: #bbb;
+}
+
 .sideBar {
   position: absolute;
   z-index: 2;
