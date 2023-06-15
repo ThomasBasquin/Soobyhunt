@@ -42,12 +42,11 @@ class GameEndAtCommand extends Command
     {
         $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
 
-        $minutes = '+ ' . $game->getLimitTime() . ' minutes';
+        $minutes = '+ ' . $game->getLimitTime() . ' seconds';
         if ($game->getStartAt()) {
 
-            $endAt = new DateTime();
+            $endAt = $game->getStartAt();
             $endAt->modify($minutes);
-
 
             while (new DateTime() < $endAt) {
 
