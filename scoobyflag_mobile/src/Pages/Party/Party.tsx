@@ -75,7 +75,7 @@ function Party({route, navigation}: any) {
           </Text>
         </Pressable>
       </View>
-      <Text style={{fontSize: 30, fontWeight: '800', color: '#fff'}}>
+      <Text style={{fontSize: 30, fontWeight: '800', color: '#fff',marginLeft:20}}>
         {party.game.name}
       </Text>
       <View style={{margin: '2.5%'}}>
@@ -188,7 +188,7 @@ function Party({route, navigation}: any) {
               alignItems: 'center',
               padding: 5,
             }}>
-            <Text style={{fontSize: 25, fontWeight: '700'}}>{team.team}</Text>
+            <Text style={{fontSize: 25, fontWeight: '700', color:"#000"}}>{team.team}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
               <Text
                 style={{

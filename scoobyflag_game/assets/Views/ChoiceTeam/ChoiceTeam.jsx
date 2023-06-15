@@ -26,6 +26,10 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
     }
   }, [count]);
 
+  function startParty(){
+    fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+  }
+
   useEffect(() => {
     fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
@@ -265,7 +269,7 @@ const ChoixEquipe = ({
             marginTop: 10,
           }}
           className="lancerPartie"
-          onClick={() => (document.location.href = "/game")}
+          onClick={startParty}
         >
           Lancer la partie
         </div>
