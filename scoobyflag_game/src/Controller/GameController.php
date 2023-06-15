@@ -34,13 +34,23 @@ class GameController extends AbstractController
     #[Route('/game/stat', name: 'get_stat', methods: ['GET'])]
     public function stat()
     {
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+        dump(
+            $this->gameService->stat(),
+            $this->gameService->formatData()
+        );
         return $this->json($this->gameService->stat());
     }
 
     #[Route('/game/info', name: 'get-info', methods: ['GET'])]
     public function info(GameService $gameService)
     {
-        $game = $gameService->find(1);
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+
+        dump(
+            $this->gameService->stat(),
+            $this->gameService->formatData()
+        );
         return $this->json(["teams" => $this->gameService->stat(), "game" => $game], 200, [], ["groups" => ["Info:read"]]);
     }
 
@@ -58,7 +68,7 @@ class GameController extends AbstractController
 
         $process = new Process(['php', 'bin/console', 'game:check-endat']);
         $process->start();
-    
+
 
         return $this->json($game, 200, [], ['groups' => ['Game:read']]);
     }
