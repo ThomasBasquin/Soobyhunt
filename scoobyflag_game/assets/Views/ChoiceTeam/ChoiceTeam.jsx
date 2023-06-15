@@ -3,17 +3,23 @@ import { useState, useEffect, useCallback } from "react";
 import renderOnDomLoaded from "../../Utils/renderOnDomLoaded";
 import Loader from "../../Components/Loader";
 
-function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
+function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
   const [isLoading, setIsLoading] = useState(true);
   const [teams, setTeams] = useState([]);
   const [joueursConnectes, setjoueursConnectes] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [nomPartie, setnomPartie] = useState("Hudog");
+  const [nomPartie, setNomPartie] = useState("Hudog");
 
   useEffect(() => {
     fetch("http://207.154.194.125/:" + HOST_PORT + "/team")
       .then((res) => res.json())
       .then(setTeams)
+
+    fetch("https://scoobyhunt.fr/game/" + ID)
+      .then((res) => res.json())
+      .then((json) => {
+        setNomPartie(json.json.name);
+      })
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -40,11 +46,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
             cur.map((t) =>
               t.id == teamUser.id
                 ? {
-                    ...t,
-                    players: t.players.map((p) =>
-                      p.id == user.id ? { ...p, isReady: user.isReady } : p
-                    ),
-                  }
+                  ...t,
+                  players: t.players.map((p) =>
+                    p.id == user.id ? { ...p, isReady: user.isReady } : p
+                  ),
+                }
                 : t
             )
           );
@@ -53,19 +59,19 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
             cur.map((t) =>
               t.id == user.team.id
                 ? {
-                    ...t,
-                    players: [
-                      ...t.players,
-                      {
-                        pseudo: user.pseudo,
-                        id: user.id,
-                        isReady: user.isReady,
-                      },
-                    ],
-                  }
+                  ...t,
+                  players: [
+                    ...t.players,
+                    {
+                      pseudo: user.pseudo,
+                      id: user.id,
+                      isReady: user.isReady,
+                    },
+                  ],
+                }
                 : t.id == teamUser.id
-                ? { ...t, players: t.players.filter((p) => p.id !== user.id) }
-                : t
+                  ? { ...t, players: t.players.filter((p) => p.id !== user.id) }
+                  : t
             )
           );
         }
@@ -78,16 +84,16 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
             cur.map((t) =>
               t.id == user.team.id
                 ? {
-                    ...t,
-                    players: [
-                      ...t.players,
-                      {
-                        pseudo: user.pseudo,
-                        id: user.id,
-                        isReady: user.isReady,
-                      },
-                    ],
-                  }
+                  ...t,
+                  players: [
+                    ...t.players,
+                    {
+                      pseudo: user.pseudo,
+                      id: user.id,
+                      isReady: user.isReady,
+                    },
+                  ],
+                }
                 : t
             )
           );
@@ -102,8 +108,8 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP }) {
 
     const eventSource = new EventSource(
       "http://207.154.194.125:" +
-        MERCURE_PORT +
-        "/.well-known/mercure".concat("?topic=", topic)
+      MERCURE_PORT +
+      "/.well-known/mercure".concat("?topic=", topic)
     );
 
     eventSource.onopen = (event) => {
@@ -179,7 +185,7 @@ const ChoixEquipe = ({
   HOST_PORT,
   MERCURE_PORT,
 }) => {
-  useEffect(() => {}, [joueursConnectes, teams]);
+  useEffect(() => { }, [joueursConnectes, teams]);
 
   const placerJoueur = (id) => {
     // newListeEquipe[id].listeDesJoueurs.push(joueursConnectes[selected-1]);
@@ -213,7 +219,7 @@ const ChoixEquipe = ({
             fontSize: 40,
           }}
         >
-          Partie de {nomPartie}
+          {nomPartie}
         </h1>
         <div
           style={{
@@ -365,6 +371,7 @@ renderOnDomLoaded(
     MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
     HOST_PORT={document.querySelector("#HOST_PORT").value}
     IP={document.querySelector("#IP").value}
+    ID={document.querySelector("#ID").value}
   />,
   "HomeRoot"
 );

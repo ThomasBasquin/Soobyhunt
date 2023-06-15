@@ -253,6 +253,7 @@ export default function Dashboard() {
               <button className="btnConfirm" onClick={cancelCreate}>Non</button>
             </div></>) : status == "creation" ? <>
               <h3>Création de la partie en cours...</h3>
+              <h5>Cela peut prendre quelques instants</h5>
               <Loader />
             </> : status == "fini" ? <>
               <h3>Partie créée avec succès</h3>
