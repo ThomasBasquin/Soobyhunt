@@ -357,7 +357,7 @@ export default function Home({route, navigation}) {
         borderRadius: 10,
         backgroundColor: COLORS.secondary,
       }}>
-      <Text style={{fontWeight: '800'}}>Retour</Text>
+      <Text style={{fontWeight: '800', color:"#000"}}>Menu</Text>
     </Pressable>
   ));
 

@@ -26,6 +26,8 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
   const [config, setConfig] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [time, setTime] = useState(null);
+  const [timeDepart, setTimeDepart] = useState(null);
+  const [timeFin, setTimeFin] = useState(null);
 
   useEffect(() => {
     let promiseAll = [];
@@ -33,7 +35,7 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
     /*promiseAll.push(() => fetch("http://207.154.194.125:" + HOST_PORT + "/team")
       .then((res) => res.json())
       .then(setTeams));
-
+ 
     promiseAll.push(() => fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
       .then((json) => {
@@ -42,10 +44,10 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
         setTime(json.limitTime)
       }
       ));
-
+ 
     Promise.all(promiseAll)
       .then(([res1, res2]) => {
-
+ 
       })
       .catch(() => { })
       .finally(() => { });*/
@@ -61,6 +63,15 @@ export default function Game({ MERCURE_PORT, ID, HOST_PORT }) {
         setConfig(json);
         setTime(json.json.limitTime)
         setIsLoading(false);
+      })
+
+    fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
+      .then((res) => res.json())
+      .then((json) => {
+        setTimeDepart(new Date(json.game.startAt).getTime());
+        console.log(new Date(json.game.startAt).getTime());
+        console.log(Date.now());
+        console.log(Date.now() - new Date(json.game.startAt).getTime());
       })
 
   }, []);
