@@ -19,7 +19,7 @@ function Party({route, navigation}: any) {
 
   useEffect(()=>{
     refresh()
-    const interval = setInterval(refresh,5000);
+    const interval = setInterval(refresh,60000);
 
     return () => clearInterval(interval);
   },[]);
@@ -35,11 +35,11 @@ function Party({route, navigation}: any) {
 
   const [party, setParty] = useState<any>(null);
 
-  if (isLoading || !party)
-    return <ActivityIndicator size="large" color={COLORS.secondary} />;
 
   return (
     <ScrollView style={{backgroundColor: COLORS.secondary}}>
+      {isLoading || !party ? <ActivityIndicator size="large" color={COLORS.primary} /> :
+      <>
       <View style={{flexDirection: 'row-reverse'}}>
         <Pressable
           onPress={() => navigation.navigate('Home')}
@@ -161,7 +161,7 @@ function Party({route, navigation}: any) {
         {party.teams.map((team:any) => {
           if(!team.playersScore.find((user:any) => user.id == idUser))return;
           return (
-        <View style={style.card}>
+            <View style={style.card}>
           <View
             style={{
               flexDirection: 'row',
@@ -284,6 +284,8 @@ function Party({route, navigation}: any) {
           ))}
         </View>
       </View>
+      </>
+      }
       <Pressable
         onPress={() => setServer({})}
         style={{

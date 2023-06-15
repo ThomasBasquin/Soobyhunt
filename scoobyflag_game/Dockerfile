@@ -24,7 +24,7 @@ COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-RUN apt-get clean && \
+RUN apt-get clean && \  
     rm -rf /var/lib/apt/lists/* && \
     apt-get update
 

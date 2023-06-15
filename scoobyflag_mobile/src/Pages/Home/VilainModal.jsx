@@ -15,7 +15,7 @@ export default function VilainModal({state, onRequestClose, onSubmit}) {
         <View style={{flexDirection: 'row'}}>
           <Text style={{fontSize: 16}}>{`Equipe actuelle : `}</Text>
           <Text style={{fontWeight: '700', fontSize: 16}}>
-            {state.vilain.team ? state.vilain.team : 'aucune'}
+            {state.vilain.user?.team?.name ? state.vilain.user?.team?.name : 'aucune'}
           </Text>
         </View>
       </BasicModal>

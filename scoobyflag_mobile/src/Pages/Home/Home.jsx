@@ -76,16 +76,26 @@ export default function Home({route, navigation}) {
     });
 
     eventSource.addEventListener('message', event => {
-      const user = JSON.parse(JSON.parse(event.data));
+      const data = JSON.parse(JSON.parse(event.data));
 
-      const alreadyInParty = userMarkers.find(u => {
-        return u.id == user.id;
-      });
-      setUserMarkers(cur =>
-        alreadyInParty
+      //C'ets un user
+      if(data.pseudo){
+        const user = data;
+        const alreadyInParty = userMarkers.find(u => {
+          return u.id == user.id;
+        });
+        setUserMarkers(cur =>
+          alreadyInParty
           ? cur.map(u => (u.id == user.id ? user : u))
           : [...cur, user],
-      );
+          );
+        }else if(data.quantity){
+          const item = data;
+          setItemMarkers(itemMarkers.map(i => i.id == item.id ? item : i))
+        }else{
+          const vilain = data;
+          setVilainMarkers(vilainMarkers.map(v => v.id == vilain.id ? vilain : v))
+        }
     });
 
     eventSource.addEventListener('error', event => {
@@ -104,7 +114,7 @@ export default function Home({route, navigation}) {
       eventSource.removeAllEventListeners();
       eventSource.close();
     };
-  }, [idUser]);
+  }, [idUser, itemMarkers, vilainMarkers]);
 
   useEffect(() => {
     if (currentPosition) return;
@@ -195,6 +205,21 @@ export default function Home({route, navigation}) {
       });
   }
 
+  function getVilain(){
+    fetch(GAME.getVilain.replace('{user}', idUser).replace("{objective}",stateVilainModal.vilain.id), {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'Application/json',
+      },
+      body: JSON.stringify({})
+    })
+    .then(res => res.json())
+    .then((vilain)=> {
+      console.log(vilain);
+      setVilainMarkers(vilainMarkers.map(v => v.id == vilain.id ? vilain : v));
+    })
+  }
+
   function getItem(){
     fetch(GAME.getItem.replace('{user}', idUser).replace("{item}",stateItemModal.item.id), {
       method: 'POST',
@@ -203,8 +228,6 @@ export default function Home({route, navigation}) {
       },
       body: JSON.stringify({})
     })
-    .then(res => res.json())
-    .then(res => console.log(res))
 
     setItemMarkers(
       itemMarkers.map(i =>
@@ -343,13 +366,7 @@ export default function Home({route, navigation}) {
       {stateVilainModal.isOpen ? (
         <VilainModal
           state={stateVilainModal}
-          onSubmit={vilain =>
-            setVilainMarkers(
-              vilainMarkers.map(v =>
-                v.id == vilain.id ? {...v, team: 'MOUGOU'} : v,
-              ),
-            )
-          } //TODO : Récupérer l'équipe du joueur
+          onSubmit={getVilain} //TODO : Récupérer l'équipe du joueur
           onRequestClose={() =>
             setStateVilainModal({...stateVilainModal, isOpen: false})
           }

@@ -10,7 +10,6 @@ import {
   Popup,
   Polygon,
 } from "react-leaflet";
-import { EditControl } from "react-leaflet-draw";
 import mechant1 from "../../assets/mechant1.png";
 import loupe from "../../assets/loupe.png";
 import player from "../../assets/points.png";
@@ -19,20 +18,17 @@ import ghost from "../../assets/ghost.png";
 import lunettes from "../../assets/lunettes.png";
 import sac from "../../assets/sac.png";
 
-export default function Game({ MERCURE_PORT, DB_PORT }) {
-  const [latitude, setLatitude] = useState(0.0);
-  const [longitude, setLongitude] = useState(0.0);
-  const [status, setStatus] = useState("");
-  const [menuConfig, setMenuConfig] = useState(false);
-  const [clickedSupprimer, setClickedSupprimer] = useState(false);
-  const [partieLancee, setPartieLancee] = useState(false);
-  const [zoneJeu, setZoneJeu] = useState([]);
-  const [zonesInterdites, setZonesInterdites] = useState([]);
-  const [mechants, setMechants] = useState([]);
-  const [items, setItems] = useState([]);
+export default function Game({ MERCURE_PORT }) {
   const [joueurs, setJoueurs] = useState([]);
-  console.log(DB_PORT);
-  console.log(MERCURE_PORT);
+  const [map, setMap] = useState(null);
+
+  useEffect(() => {
+    fetch("http://172.29.0.4:" + HOST_PORT + "/team")
+      .then((res) => res.json())
+      .then(setTeams)
+      .finally(() => setIsLoading(false));
+  }, []);
+
   useEffect(() => {
     const url = new URL(
       "http://207.154.194.125:" + MERCURE_PORT + "/.well-known/mercure"
@@ -133,8 +129,6 @@ export default function Game({ MERCURE_PORT, DB_PORT }) {
     );
     //setJoueurs([...joueurs, { id: idJoueur, coordonnees: coordonnees }])
   };
-
-  console.log(items);
 
   const jsonTemplate = {
     name: "Sprint 1",
@@ -240,7 +234,6 @@ export default function Game({ MERCURE_PORT, DB_PORT }) {
         />
       ))}
       {jsonTemplate.mechants.map((mechant, id) => {
-        console.log(mechant);
         let mechantItem = "";
         if (mechant.name == "mechant1") {
           mechantItem = mechant1Icon;
@@ -290,9 +283,6 @@ export default function Game({ MERCURE_PORT, DB_PORT }) {
 }
 //<button onClick={()=> document.location.href="/choiceTeam"}>Aller au choix des équipes</button>
 renderOnDomLoaded(
-  <Game
-    MERCURE_PORT={document.querySelector("#MERCURE_PORT").value}
-    DB_PORT={document.querySelector("#DB_PORT").value}
-  />,
+  <Game MERCURE_PORT={document.querySelector("#MERCURE_PORT").value} />,
   "GameRoot"
 );
