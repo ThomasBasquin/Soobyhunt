@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Game;
 use App\Repository\GameRepository;
 use App\Service\GameService;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -42,6 +44,25 @@ class GameController extends AbstractController
         return $this->json(["teams" => $this->gameService->stat(), "game" => $game], 200, [], ["groups" => ["Info:read"]]);
     }
 
+    #[Route('/game/start', name: 'game_start', methods: ['PUT'])]
+    public function start()
+    {
+        $game = $this->gameRepository->findOneBy([], ['id' => 'ASC']);
+        $game->setStartAt(new DateTime());
+
+        $this->gameService->save($game);
+
+        // $minutes = '+ '. $game->getLimitTime().' minutes';
+        // $endAt = new DateTime();
+        // $endAt->modify($minutes);
+
+        $process = new Process(['php', 'bin/console', 'game:check-endat']);
+        $process->start();
+    
+
+        return $this->json($game, 200, [], ['groups' => ['Game:read']]);
+    }
+
     #[Route('/game/end', name: 'game_end', methods: ['PUT'])]
     public function end()
     {
@@ -52,7 +73,7 @@ class GameController extends AbstractController
         $dotenv = new Dotenv();
         $dotenv->load(__DIR__ . '/../../.env');
         $projectName = $_ENV['PROJECT_NAME'];
-        
+
         $id = $_ENV['ID'];
         $url = 'https://scoobyhunt.fr/game/' . $id . '/end';
         // $url = 'https://127.0.0.1:8000/game/end/10';
@@ -68,12 +89,12 @@ class GameController extends AbstractController
                         'accept' => 'application/json',
                         'Content-Type' => 'application/json',
                     ],
-                    'body' => json_encode(['projectName' => $projectName, 'data'=> $data]),
+                    'body' => json_encode(['projectName' => $projectName, 'data' => $data]),
                 ]
             );
-    
+
             // Process the response as needed
-    
+
             return $this->json(['projectname' => $projectName, 'data' => $data], 200, [], ['groups' => ["Game:info", 'Item:read', 'Team:get', 'User:info']]);
         } catch (\Throwable $e) {
             // Handle the exception
