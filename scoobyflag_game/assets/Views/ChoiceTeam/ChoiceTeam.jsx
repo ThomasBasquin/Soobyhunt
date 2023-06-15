@@ -31,6 +31,18 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
       .then((res) => res.json())
       .then(setTeams);
 
+    fetch("http://207.154.194.125:" + HOST_PORT + "/game/info")
+      .then((res) => res.json())
+      .then(res => {
+        if(res.game.startAt){
+          document.location.href = "/game";
+        }
+      });
+
+      fetch("http://207.154.194.125:" + HOST_PORT + "/team")
+      .then((res) => res.json())
+      .then(setTeams);
+
     fetch("https://scoobyhunt.fr/game/" + ID)
       .then((res) => res.json())
       .then((json) => {
@@ -134,7 +146,6 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log(data);
       if (!teams.length) return;
       if(data.start){
         setStart(true);
@@ -171,11 +182,11 @@ function ChoiceTeam({ MERCURE_PORT, HOST_PORT, IP, ID }) {
         flexDirection: "row",
       }}
     >
-      {start ? (
-      <div style={{backgroundColor:"rgba(0,0,0,.7)", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
+      {start ?
+      <div style={{backgroundColor:"rgba(0,0,0,.7)",display:"flex",flexDirection:"column", justifyContent:"center", alignItems:"center", position:"absolute", top:0, bottom:0, right:0, left:0, zIndex:100}}>
         <p style={{fontSize: "3rem", color:"#fff"}}>La partie commence dans ...</p>
         <p style={{fontSize: "4rem", color:"#fff"}}>{count}</p>
-      </div>): null}
+      </div>: null}
       <ListeJoueurs
         selected={selected}
         setSelected={setSelected}

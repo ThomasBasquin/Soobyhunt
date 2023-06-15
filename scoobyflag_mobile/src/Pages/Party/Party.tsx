@@ -89,7 +89,7 @@ function Party({route, navigation}: any) {
               borderBottomWidth: 1,
               padding: 5,
             }}>
-            <Text>Nom du serveur :</Text>
+            <Text style={{color:"#000"}}>Nom du serveur :</Text>
             <Text
               style={{
                 flex: 1,
@@ -108,7 +108,7 @@ function Party({route, navigation}: any) {
               borderBottomWidth: 1,
               padding: 5,
             }}>
-            <Text>Mode de jeu :</Text>
+            <Text style={{color:"#000"}}>Mode de jeu :</Text>
             <Text
               style={{
                 flex: 1,
@@ -127,7 +127,7 @@ function Party({route, navigation}: any) {
               borderBottomWidth: 1,
               padding: 5,
             }}>
-            <Text>Nombre d'équipe :</Text>
+            <Text style={{color:"#000"}}>Nombre d'équipe :</Text>
             <Text
               style={{
                 flex: 1,
@@ -146,7 +146,7 @@ function Party({route, navigation}: any) {
               borderBottomWidth: 1,
               padding: 5,
             }}>
-            <Text>Début de la partie :</Text>
+            <Text style={{color:"#000"}}>Début de la partie :</Text>
             <Text
               style={{
                 flex: 1,
@@ -165,7 +165,7 @@ function Party({route, navigation}: any) {
           ...style.card,
           padding: 15,
         }}>
-        <Text>TEMPS RESTANT :</Text>
+        <Text style={{color:"#000"}}>TEMPS RESTANT :</Text>
         <Text
           style={{
             flex: 1,
@@ -219,7 +219,7 @@ function Party({route, navigation}: any) {
                   borderBottomWidth: 1,
                   padding: 5,
                 }}>
-                <Text>{p.pseudo}</Text>
+                <Text style={{color:"#000"}}>{p.pseudo}</Text>
                 <View
                   style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
                   <Text
