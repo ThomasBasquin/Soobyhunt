@@ -117,7 +117,6 @@ export default function Dashboard() {
         setTimeout(() => {
           setStatus("fini");
           setPort(data.AppPort);
-          console.log(data);
         }, 15000)
       })
       .catch((error) => {
@@ -127,6 +126,7 @@ export default function Dashboard() {
 
   function joinPartie() {
     window.open("http://thomasbasquin.fr:" + port);
+    document.querySelector(".fondSombre").style.display = "none";
   }
 
   function ChangeView() {

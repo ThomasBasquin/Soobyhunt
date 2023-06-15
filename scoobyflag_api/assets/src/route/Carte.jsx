@@ -394,14 +394,19 @@ export default function Carte() {
 
   function quitter() {
     if (modifs) {
-
+      document.querySelector("#quitterPU").style.display = "flex";
     }
     else {
-
+      document.location.assign("/app/dashboard");
     }
-    console.log(modifs);
-    //Verif modifs pour sauvegarde ?
-    document.location.assign("/app/dashboard")
+  }
+
+  function closeQuitter() {
+    document.querySelector("#quitterPU").style.display = "none";
+  }
+
+  function confirmQuitter() {
+    document.location.assign("/app/dashboard");
   }
 
   function openSave() {
@@ -463,7 +468,7 @@ export default function Carte() {
     }
 
     if (configOk) {
-      document.querySelector(".fondSombre").style.display = "flex";
+      document.querySelector("#sauvegardePU").style.display = "flex";
     }
     else {
       alert(message)
@@ -471,7 +476,7 @@ export default function Carte() {
   }
 
   function closeSave() {
-    document.querySelector(".fondSombre").style.display = "none";
+    document.querySelector("#sauvegardePU").style.display = "none";
   }
 
   async function saveConfig(e) {
@@ -506,7 +511,7 @@ export default function Carte() {
         .then((json) => {
           setConfigId(json.gameTemplate.id);
           setModifs(false);
-          document.querySelector(".fondSombre").style.display = "none";
+          document.querySelector("#sauvegardePU").style.display = "none";
         });
     }
     else {
@@ -523,7 +528,7 @@ export default function Carte() {
           }
         })
         .then((json) => {
-          document.querySelector(".fondSombre").style.display = "none";
+          document.querySelector("#sauvegardePU").style.display = "none";
         });
     }
   }
@@ -764,11 +769,11 @@ export default function Carte() {
           <div className="detail" id="detailsMechants">
             <div className="btnDetail" onClick={(e) => chooseMechant(e, 4)}>
               <img src="../assets/mechant1.png" alt="" className="iconBar" />
-              Méchant 1
+              Le Fantôme
             </div>
             <div className="btnDetail" onClick={(e) => chooseMechant(e, 5)}>
               <img src="../assets/mechant2.png" alt="" className="iconBar" />
-              Méchant 2
+              Mineur Maudit
             </div>
           </div>
         </div>
@@ -785,19 +790,19 @@ export default function Carte() {
           <div className="detail" id="detailsItems">
             <div className="btnDetail" onClick={(e) => chooseItem(e, 0)}>
               <img src="../assets/loupe.png" alt="" className="iconBar" />
-              Item 1
+              Loupe
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 1)}>
+            <div className="btnDetail desactive" onClick={(e) => chooseItem(e, 1)}>
               <img src="../assets/lunettes.png" alt="" className="iconBar" />
-              Item 2
+              Lunettes
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 2)}>
+            <div className="btnDetail desactive" onClick={(e) => chooseItem(e, 2)}>
               <img src="../assets/sac.png" alt="" className="iconBar" />
-              Item 3
+              Sac
             </div>
-            <div className="btnDetail" onClick={(e) => chooseItem(e, 3)}>
+            <div className="btnDetail desactive" onClick={(e) => chooseItem(e, 3)}>
               <img src="../assets/ghost.png" alt="" className="iconBar" />
-              Item 4
+              Inivisibilité
             </div>
           </div>
         </div>
@@ -826,7 +831,7 @@ export default function Carte() {
         Annuler les modifications
       </div>
 
-      <div className="fondSombre">
+      <div className="fondSombre" id="sauvegardePU">
         <div className="popUp">
           <h3>Sauvegarde de la configuration</h3>
           <form onSubmit={saveConfig} id="formConfig">
@@ -852,6 +857,16 @@ export default function Carte() {
               <input type="button" className="btnForm" value={"Annuler"} onClick={closeSave} />
             </div>
           </form>
+        </div>
+      </div>
+
+      <div className="fondSombre" id="quitterPU">
+        <div className="popUp">
+          <h3>Quitter sans sauvegarder ?</h3>
+          <div>
+            <button className="btnForm" onClick={closeQuitter}>Continuer à modifier</button>
+            <button className="btnForm" onClick={confirmQuitter}>Quitter sans sauvegarder</button>
+          </div>
         </div>
       </div>
     </>
