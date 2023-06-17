@@ -39,7 +39,6 @@ class GameService
     {
         $gameTemplate = new GameTemplate();
         $gameTemplate->setJson($data);
-dump($this->userRepository->find(1));
         // à terme mettre $data['idCreator'] dans le set gameTemplate
         $gameTemplate->setGameMaster($this->userRepository->find( $data['idCreator']));
 
